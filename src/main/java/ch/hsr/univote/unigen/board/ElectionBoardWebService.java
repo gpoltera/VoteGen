@@ -91,8 +91,14 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
     }
 
     public BlindedGenerator getBlindedGenerator(String electionId, String mixerId) throws ElectionBoardServiceFault {
-
-        return WahlGenerator.bg;
+        BlindedGenerator blindedGenerator = new BlindedGenerator();
+        for (int i = 0; i < WahlGenerator.mixers.length; i++) {
+            if(WahlGenerator.mixers[i] == mixerId) {
+                blindedGenerator = WahlGenerator.blindedGeneratorsList[i];
+            }
+        }
+        
+        return blindedGenerator;
     }
 
     public ElectionGenerator getElectionGenerator(String electionId) throws ElectionBoardServiceFault {

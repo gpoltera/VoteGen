@@ -5,9 +5,13 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
+import ch.bfh.univote.common.Ballot;
+import ch.bfh.univote.common.Ballots;
 import ch.bfh.univote.common.DecodedVotes;
+import ch.bfh.univote.common.DecryptedVotes;
 import ch.bfh.univote.common.ElectionData;
 import ch.bfh.univote.common.ElectionDefinition;
+import ch.bfh.univote.common.ElectionGenerator;
 import ch.bfh.univote.common.ElectionOptions;
 import ch.bfh.univote.common.ElectoralRoll;
 import ch.bfh.univote.common.EncryptionParameters;
@@ -129,11 +133,38 @@ public class SignatureGenerator {
 
         return signature;
     }
-    
-        public static Signature createSignature(ElectionData edat, RSAPrivateKey privateKey) throws Exception {
+
+    public static Signature createSignature(ElectionData edat, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
         SecureRandom random = new SecureRandom();
         byte[] sign = RSASignatur.sign(edat.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(Ballots bts, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(bts.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(DecryptedVotes dkv, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(dkv.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(ElectionGenerator electionGenerator, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(electionGenerator.toString().getBytes(), privateKey, random);
         signature.setValue(new BigInteger(sign));
 
         return signature;
