@@ -15,7 +15,7 @@ import ch.bfh.univote.common.Choice;
 public class ChoiceGenerator extends Choice {
     
     public static void addElectionId(String electionId) {
-        Choice choice = new ChoiceGenerator.1(); // instance of poly.1 class NOT the abstract my class
-        choice.setChoiceId(1);
+        //Choice choice = new ChoiceGenerator.1(); // instance of poly.1 class NOT the abstract my class
+        //choice.setChoiceId(1);
     }
 }
