@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<electionOptions>
+    <electionId>HSR2013</electionId>
+    <choice xsi:type="ns3:politicalList" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>1</choiceId>
+        <number>1</number>
+        <title>
+            <language>DE</language>
+            <text>HSR2013</text>
+        </title>
+        <partyName>
+            <language>DE</language>
+            <text>-</text>
+        </partyName>
+        <partyShortName>
+            <language>DE</language>
+            <text>-</text>
+        </partyShortName>
+    </choice>
+    <choice xsi:type="ns3:candidate" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>2</choiceId>
+        <number>1.1</number>
+        <lastName>Cadosch</lastName>
+        <firstName>Isabelle</firstName>
+        <sex>UNDEF</sex>
+        <yearOfBirth>0</yearOfBirth>
+        <studyBranch>
+            <language>DE</language>
+            <text>-</text>
+        </studyBranch>
+        <studyDegree>
+            <language>DE</language>
+            <text>-</text>
+        </studyDegree>
+        <semesterCount>0</semesterCount>
+        <status>UNDEF</status>
+        <listId>1</listId>
+        <cumulation>1</cumulation>
+    </choice>
+    <choice xsi:type="ns3:candidate" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>3</choiceId>
+        <number>1.2</number>
+        <lastName>Arquisch</lastName>
+        <firstName>Sven</firstName>
+        <sex>UNDEF</sex>
+        <yearOfBirth>0</yearOfBirth>
+        <studyBranch>
+            <language>DE</language>
+            <text>-</text>
+        </studyBranch>
+        <studyDegree>
+            <language>DE</language>
+            <text>-</text>
+        </studyDegree>
+        <semesterCount>0</semesterCount>
+        <status>UNDEF</status>
+        <listId>1</listId>
+        <cumulation>1</cumulation>
+    </choice>
+    <choice xsi:type="ns3:candidate" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>4</choiceId>
+        <number>1.3</number>
+        <lastName>Salvatore</lastName>
+        <firstName>Giovanni</firstName>
+        <sex>UNDEF</sex>
+        <yearOfBirth>0</yearOfBirth>
+        <studyBranch>
+            <language>DE</language>
+            <text>-</text>
+        </studyBranch>
+        <studyDegree>
+            <language>DE</language>
+            <text>-</text>
+        </studyDegree>
+        <semesterCount>0</semesterCount>
+        <status>UNDEF</status>
+        <listId>1</listId>
+        <cumulation>1</cumulation>
+    </choice>
+    <rule xsi:type="ns3:summationRule" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>1</choiceId>
+        <lowerBound>0</lowerBound>
+        <upperBound>0</upperBound>
+    </rule>
+    <rule xsi:type="ns3:forallRule" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>1</choiceId>
+        <lowerBound>0</lowerBound>
+        <upperBound>1</upperBound>
+    </rule>
+    <rule xsi:type="ns3:summationRule" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>2</choiceId>
+        <choiceId>3</choiceId>
+        <choiceId>4</choiceId>
+        <lowerBound>0</lowerBound>
+        <upperBound>3</upperBound>
+    </rule>
+    <rule xsi:type="ns3:forallRule" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>2</choiceId>
+        <choiceId>3</choiceId>
+        <choiceId>4</choiceId>
+        <lowerBound>0</lowerBound>
+        <upperBound>1</upperBound>
+    </rule>
+    <signature>
+        <signerId>Gian Poltera</signerId>
+        <timestamp>0113-11-05T16:35:16.000Z</timestamp>
+        <value>-74455673512273310094333289769646549664793263432694601542776360376668692843827302981510033520981709124471026970469143581016452479386515140319228575777682483851452811534848813154052742552932507711528747476833125686517078439958440237060104398128356696099224517967060738276616439816995422335859061583138490388028</value>
+    </signature>
+</electionOptions>
+
