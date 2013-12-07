@@ -53,20 +53,6 @@
             <version>3.0</version>     
         </dependency>
         <dependency>
-            <groupId>glassfish</groupId>
-            <artifactId>appserv-rt.jar</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>C:/AppServer/glassfish-4.0/glassfish/lib/appserv-rt.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>glassfish</groupId>
-            <artifactId>javaee.jar</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>C:/AppServer/glassfish-4.0/glassfish/lib/javaee.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.9</version>
