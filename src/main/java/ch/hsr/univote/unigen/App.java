@@ -1,9 +1,10 @@
 package ch.hsr.univote.unigen;
 
 import ch.bfh.univote.common.ElectionSystemInfo;
+import java.math.BigInteger;
 
 /**
- * Hello world!
+ * Test
  *
  */
 public class App
@@ -12,6 +13,10 @@ public class App
     {
         ElectionSystemInfo esi = new ElectionSystemInfo();
         esi.setElectionId("some-election-2013");
-        System.out.println( "Hello World!" );
+      
+        System.out.println(esi.getElectionId());
+        System.out.println("Wahlausgabe:");
+        System.out.println("p is not prime");
+        System.out.println("Schnorrsignatur");
     }
 }
