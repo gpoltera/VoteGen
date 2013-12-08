@@ -1,5 +1,6 @@
 package ch.hsr.univote.unigen;
 
+import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.hsr.univote.unigen.generator.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.generator.ElectionOptionsTask;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
@@ -11,7 +12,16 @@ import ch.hsr.univote.unigen.generator.DecryptedVotesTask;
 import ch.hsr.univote.unigen.generator.ElectionDataTask;
 import ch.hsr.univote.unigen.generator.ElectionGeneratorTask;
 import ch.hsr.univote.unigen.generator.ElectionResultsTask;
+import ch.hsr.univote.unigen.generator.ElectionSystemInfoTask;
 import ch.hsr.univote.unigen.generator.ElectoralRollTask;
+import ch.hsr.univote.unigen.generator.EncryptionKeyTask;
+import ch.hsr.univote.unigen.generator.EncryptionParametersTask;
+import ch.hsr.univote.unigen.generator.MixedVerificationKeysByTask;
+import ch.hsr.univote.unigen.generator.MixedVerificationKeysTask;
+import ch.hsr.univote.unigen.generator.PartiallyDecryptedVotesTask;
+import ch.hsr.univote.unigen.generator.SignatureParametersTask;
+import ch.hsr.univote.unigen.generator.SingleBallotTask;
+import ch.hsr.univote.unigen.generator.VoterCertsTask;
 import java.io.FileNotFoundException;
 import java.security.cert.CertificateException;
 import javax.xml.bind.JAXBException;
@@ -26,18 +36,7 @@ public class App
 {
     public static void main( String[] args ) throws JAXBException, FileNotFoundException, SAXException, DatatypeConfigurationException, CertificateException, Exception
     {
-        ElectionDefinitionTask.run();
-        ElectionOptionsTask.run();
-        ElectoralRollTask.run();
-        ElectionGeneratorTask.run();
-        BlindedGeneratorTask.run();
-        ElectionGeneratorTask.run();
-        ElectionDataTask.run();
-        BallotsTask.run();
-        DecodedVotesTask.run();
-        DecryptedVotesTask.run();
-        ElectionResultsTask.run();
-        WahlGenerator.addElectionId("HSR2013");
+        WahlGenerator.run();
         
         Publisher.main(args);
         

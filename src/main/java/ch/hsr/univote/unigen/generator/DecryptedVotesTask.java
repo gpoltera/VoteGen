@@ -42,6 +42,7 @@ public class DecryptedVotesTask {
         signature.setSignerId(ConfigHelper.getAdministrationId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
         decryptedVotes.setSignature(signature);
+        dyv.setSignature(signature);
     }
 
     private static void writeDecryptedVoted(DecryptedVotes decryptedVotes) {

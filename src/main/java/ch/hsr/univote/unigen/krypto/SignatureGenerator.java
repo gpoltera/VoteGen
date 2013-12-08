@@ -13,11 +13,20 @@ import ch.bfh.univote.common.ElectionData;
 import ch.bfh.univote.common.ElectionDefinition;
 import ch.bfh.univote.common.ElectionGenerator;
 import ch.bfh.univote.common.ElectionOptions;
+import ch.bfh.univote.common.ElectionSystemInfo;
 import ch.bfh.univote.common.ElectoralRoll;
+import ch.bfh.univote.common.EncryptedVotes;
+import ch.bfh.univote.common.EncryptionKey;
 import ch.bfh.univote.common.EncryptionParameters;
+import ch.bfh.univote.common.MixedEncryptedVotes;
+import ch.bfh.univote.common.MixedVerificationKey;
+import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.ObjectFactory;
+import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SignatureParameters;
+import ch.bfh.univote.common.VerificationKeys;
+import ch.bfh.univote.common.VoterCertificates;
 import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -165,6 +174,105 @@ public class SignatureGenerator {
         Signature signature = new Signature();
         SecureRandom random = new SecureRandom();
         byte[] sign = RSASignatur.sign(electionGenerator.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(ElectionSystemInfo electionSystemInfo, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(electionSystemInfo.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(EncryptedVotes encryptedVotes, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(encryptedVotes.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(EncryptionKey encryptionKey, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(encryptionKey.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(MixedVerificationKeys mixedVerificationKeys, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(mixedVerificationKeys.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(MixedVerificationKey mixedVerificationKey, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(mixedVerificationKey.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(VerificationKeys verificationKeys, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(verificationKeys.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(PartiallyDecryptedVotes partiallyDecryptedVotes, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(partiallyDecryptedVotes.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(SignatureParameters signatureParameters, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(signatureParameters.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(Ballot ballot, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(ballot.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(VoterCertificates voterCertificates, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(voterCertificates.toString().getBytes(), privateKey, random);
+        signature.setValue(new BigInteger(sign));
+
+        return signature;
+    }
+
+    public static Signature createSignature(MixedEncryptedVotes mixedEncrypted, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        SecureRandom random = new SecureRandom();
+        byte[] sign = RSASignatur.sign(mixedEncrypted.toString().getBytes(), privateKey, random);
         signature.setValue(new BigInteger(sign));
 
         return signature;

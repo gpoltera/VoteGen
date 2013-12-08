@@ -6,6 +6,7 @@
 package ch.hsr.univote.unigen.generator.prov;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -20,17 +21,15 @@ public class TimestampGenerator {
 
     public static final XMLGregorianCalendar generateTimestamp() throws DatatypeConfigurationException {
         Date date = new Date();
-        date.getDay();
-
         GregorianCalendar gcal = new GregorianCalendar();
-
+        
         XMLGregorianCalendar xgcal;
         xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal).normalize();
 
         xgcal.setTime(date.getHours(), date.getMinutes(), date.getSeconds());
-        xgcal.setDay(date.getDay());
-        xgcal.setMonth(date.getMonth());
-        xgcal.setYear(date.getYear());
+        xgcal.setDay(gcal.get(Calendar.DAY_OF_MONTH));
+        xgcal.setMonth(gcal.get(Calendar.MONTH));
+        xgcal.setYear(gcal.get(Calendar.YEAR));
         xgcal.setFractionalSecond(BigDecimal.ZERO);
         xgcal.setMillisecond(0);
         xgcal.setTimezone(0);
