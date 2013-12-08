@@ -31,6 +31,7 @@ public class App
         ElectoralRollTask.run();
         ElectionGeneratorTask.run();
         BlindedGeneratorTask.run();
+        ElectionGeneratorTask.run();
         ElectionDataTask.run();
         BallotsTask.run();
         DecodedVotesTask.run();

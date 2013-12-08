@@ -89,7 +89,9 @@ public class WahlGenerator {
     public static DecodedVotes dov = new DecodedVotes();
     public static EncryptedVote ec = new EncryptedVote();
     public static String[] mixers = ConfigHelper.getMixerIds();  
+    public static String[] talliers = ConfigHelper.getTallierIds();
     public static BlindedGenerator[] blindedGeneratorsList = new BlindedGenerator[mixers.length];
+    public static EncryptionKeyShare[] encryptionKeyShareList = new EncryptionKeyShare[talliers.length];
 
     public static void addElectionDefinition(ElectionDefinition definition) {
         ed = definition;
