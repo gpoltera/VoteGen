@@ -58,7 +58,7 @@ public class PrimeGenerator {
      */
     static boolean isPrime(BigInteger value) {       
         
-        return value.isProbablePrime(95);
+        return value.isProbablePrime(100);
     }
     
     /**
@@ -70,6 +70,6 @@ public class PrimeGenerator {
     static boolean isSafePrime(BigInteger prime) {
         BigInteger value = prime.multiply(new BigInteger("2")).add(BigInteger.ONE);
         
-        return value.isProbablePrime(95);
+        return value.isProbablePrime(100);
     }
 }

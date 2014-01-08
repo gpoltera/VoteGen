@@ -10,6 +10,7 @@ import ch.bfh.univote.common.Signature;
 import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.ep;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.krypto.PrimeGenerator;
 import ch.hsr.univote.unigen.krypto.RSAGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -24,7 +25,7 @@ public class EncryptionParametersTask {
     public static void run() throws Exception {
         EncryptionParameters encryptionParameters = new EncryptionParameters();
         encryptionParameters.setElectionId(ConfigHelper.getElectionId());
-        encryptionParameters.setPrime(BigInteger.TEN);
+        encryptionParameters.setPrime(PrimeGenerator.getSafePrime(1024));
         encryptionParameters.setGroupOrder(BigInteger.TEN);
         encryptionParameters.setGenerator(BigInteger.ONE);
         ep = encryptionParameters;

@@ -22,6 +22,7 @@ import ch.hsr.univote.unigen.generator.PartiallyDecryptedVotesTask;
 import ch.hsr.univote.unigen.generator.SignatureParametersTask;
 import ch.hsr.univote.unigen.generator.SingleBallotTask;
 import ch.hsr.univote.unigen.generator.VoterCertsTask;
+import ch.hsr.univote.unigen.krypto.PrimeGenerator;
 import java.io.FileNotFoundException;
 import java.security.cert.CertificateException;
 import javax.xml.bind.JAXBException;
@@ -36,9 +37,11 @@ public class App
 {
     public static void main( String[] args ) throws JAXBException, FileNotFoundException, SAXException, DatatypeConfigurationException, CertificateException, Exception
     {
-        WahlGenerator.run();
+       // PrimeGenerator.getSafePrime(1024); 
         
-        Publisher.main(args);
+       WahlGenerator.run();
+        
+       Publisher.main(args);
         
         System.out.println("WebService gestartet");
     } 
