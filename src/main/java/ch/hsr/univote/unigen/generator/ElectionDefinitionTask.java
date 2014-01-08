@@ -18,6 +18,7 @@ import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import ch.hsr.univote.unigen.krypto.RSAGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.helper.KeystoreHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -102,7 +103,7 @@ public class ElectionDefinitionTask {
     }
 
     private static void signDefinition(ElectionDefinition definition) throws Exception {
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
+        RSAPrivateKey privateKey = KeystoreHelper.getPrivateKey();
         Signature signature = SignatureGenerator.createSignature(definition, privateKey);
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
         signature.setSignerId(ConfigHelper.getAdministrationId());

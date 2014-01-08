@@ -1,16 +1,14 @@
 /*
- * Copyright (c) 2013 Berner Fachhochschule, Switzerland.
- * Bern University of Applied Sciences, Engineering and Information Technology,
- * Research Institute for Security in the Information Society, E-Voting Group,
- * Biel, Switzerland.
- *
- * Project UniVote.
- *
- * Distributable under GPL license.
- * See terms of license at gnu.org.
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
+
 package ch.hsr.univote.unigen.krypto;
 
+import ch.bfh.univote.common.Certificate;
+import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,20 +22,18 @@ import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
 import javax.security.auth.x500.X500Principal;
-import org.bouncycastle.x509.X509V1CertificateGenerator;
-import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.x509.X509V1CertificateGenerator;
 
 /**
- * This class provides methods to create an X509 certificate and to
- * store it in a key store. A PEM representation of a certificate can
- * also be obtained.
  *
- * @author Eric Dubuis &lt;eric.dubuis@bfh.ch&gt;
+ * @author Gian Poltéra
  */
 public class CertificateGenerator {
+    //Adapt to config file
     public static final String STORETYPE = "JKS";
-    public static final String KEYSTORE = "test.jks"; // CHECK WITH MICROSOFT WINDOWS
+    public static final String KEYSTORE = "keystore/";
     public static final String KEYALG = "RSA";
     public static final int KEYSIZE = 1024;
     public static final int VALIDITY = 1000; // days
@@ -48,12 +44,12 @@ public class CertificateGenerator {
 keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -alias vsuzh -file data\output\vsuzh.pem
      */
 
-    public static String main(String[] args) throws Exception {
+    public static String main(String alias) throws Exception {
         // @Stephan: Please adapt...
         CertificateGenerator ku = new CertificateGenerator();
-        X509Certificate cert = ku.createCertitificate("CN=VSUZH UniverstÃ¤t ZÃ¼rich");
-        KeyStore ks = ku.createAndPopulateKeyStore(cert, "vsuzh");
-        ku.persistKeyStore(ks, new File(KEYSTORE), "12345678");
+        X509Certificate cert = ku.createCertitificate("CN=" + ConfigHelper.getElectionId());
+        KeyStore ks = ku.createAndPopulateKeyStore(cert, alias);
+        ku.persistKeyStore(ks, new File(KEYSTORE + alias + ".jks"), "12345678");
         String pem = ku.x509ToBase64PEMString(cert);
         System.out.println(pem);
         
@@ -107,6 +103,7 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
 
         // get certificate
         X509Certificate cert = certGenerator.generate(keyPair.getPrivate(), "BC");
+        //System.out.println("PRIVATER KEY: " + keyPair.getPrivate());
         return cert;
     }
 

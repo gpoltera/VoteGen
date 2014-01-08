@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<decodedVotes>
+    <electionId>HSR2013</electionId>
+    <decodedVote>
+        <entry>
+            <choiceId>1</choiceId>
+            <count>1</count>
+        </entry>
+    </decodedVote>
+    <decodedVote>
+        <entry>
+            <choiceId>1</choiceId>
+            <count>1</count>
+        </entry>
+    </decodedVote>
+    <decodedVote>
+        <entry>
+            <choiceId>1</choiceId>
+            <count>1</count>
+        </entry>
+    </decodedVote>
+    <decodedVote>
+        <entry>
+            <choiceId>1</choiceId>
+            <count>1</count>
+        </entry>
+    </decodedVote>
+    <decodedVote>
+        <entry>
+            <choiceId>1</choiceId>
+            <count>1</count>
+        </entry>
+    </decodedVote>
+    <signature>
+        <signerId>Gian Poltera</signerId>
+        <timestamp>2014-01-08T23:34:07.000Z</timestamp>
+        <value>-56263927547352396248981002296953289049818891086718818201494901831484504116802116898176891171991105734982028234106247095438056143299314969641076709112173420648327007448540210572397997756550420559367744166703578458014814858500692327094266306370190434661425283808879490693064787916529113672111475054163633712481</value>
+    </signature>
+</decodedVotes>
+

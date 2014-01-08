@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<encryptionKeyShare[]>
+    <item>
+        <electionId>HSR2013</electionId>
+        <key>10</key>
+        <proof>
+            <commitment>10</commitment>
+            <response>1</response>
+        </proof>
+        <signature>
+            <signerId>Gian Poltera</signerId>
+            <timestamp>2014-01-08T23:34:06.000Z</timestamp>
+            <value>545465465465423121245484546512154487485452</value>
+        </signature>
+    </item>
+    <item>
+        <electionId>HSR2013</electionId>
+        <key>10</key>
+        <proof>
+            <commitment>10</commitment>
+            <response>1</response>
+        </proof>
+        <signature>
+            <signerId>Gian Poltera</signerId>
+            <timestamp>2014-01-08T23:34:06.000Z</timestamp>
+            <value>545465465465423121245484546512154487485452</value>
+        </signature>
+    </item>
+    <item>
+        <electionId>HSR2013</electionId>
+        <key>10</key>
+        <proof>
+            <commitment>10</commitment>
+            <response>1</response>
+        </proof>
+        <signature>
+            <signerId>Gian Poltera</signerId>
+            <timestamp>2014-01-08T23:34:06.000Z</timestamp>
+            <value>545465465465423121245484546512154487485452</value>
+        </signature>
+    </item>
+    <item>
+        <electionId>HSR2013</electionId>
+        <key>10</key>
+        <proof>
+            <commitment>10</commitment>
+            <response>1</response>
+        </proof>
+        <signature>
+            <signerId>Gian Poltera</signerId>
+            <timestamp>2014-01-08T23:34:06.000Z</timestamp>
+            <value>545465465465423121245484546512154487485452</value>
+        </signature>
+    </item>
+</encryptionKeyShare[]>
+

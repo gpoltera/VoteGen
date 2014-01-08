@@ -28,7 +28,7 @@ public class TimestampGenerator {
 
         xgcal.setTime(date.getHours(), date.getMinutes(), date.getSeconds());
         xgcal.setDay(gcal.get(Calendar.DAY_OF_MONTH));
-        xgcal.setMonth(gcal.get(Calendar.MONTH));
+        xgcal.setMonth(gcal.get(Calendar.JANUARY));
         xgcal.setYear(gcal.get(Calendar.YEAR));
         xgcal.setFractionalSecond(BigDecimal.ZERO);
         xgcal.setMillisecond(0);

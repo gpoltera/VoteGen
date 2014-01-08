@@ -25,7 +25,7 @@ public class EncryptedVotesTask {
     public static void run() throws Exception {
         ev.setElectionId(ConfigHelper.getElectionId());
         
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= ConfigHelper.getVotersNumber(); i++) {
             EncryptedVote encryptedVote = new EncryptedVote();
             encryptedVote.setFirstValue(BigInteger.TEN);
             encryptedVote.setSecondValue(BigInteger.TEN);

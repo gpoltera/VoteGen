@@ -27,11 +27,11 @@ public class PartiallyDecryptedVotesTask {
         for (int i = 0; i < talliers.length; i++) {
             PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
             partiallyDecryptedVotes.setElectionId(ConfigHelper.getElectionId());
-            for (int j = 0; j < 100; j++) {
+            for (int j = 0; j < 5; j++) {
                 partiallyDecryptedVotes.getVote().add(BigInteger.TEN);
             }
             Proof proof = new Proof();
-            for (int j = 0; j < 100; j++) {
+            for (int j = 0; j < ConfigHelper.getVotersNumber(); j++) {
                 proof.getCommitment().add(BigInteger.TEN);
             }
             proof.getResponse().add(BigInteger.TEN);

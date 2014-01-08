@@ -28,6 +28,7 @@ import ch.hsr.univote.unigen.krypto.RSAGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FormatException;
+import ch.hsr.univote.unigen.helper.KeystoreHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
 import java.io.File;
 import java.io.FileInputStream;
@@ -268,7 +269,7 @@ public class ElectionOptionsTask {
     }
 
     private static void signOptions(ElectionOptions options) throws Exception {
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
+        RSAPrivateKey privateKey = KeystoreHelper.getPrivateKey();
         Signature signature = SignatureGenerator.createSignature(options, privateKey);
         signature.setSignerId(ConfigHelper.getAdministrationId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());

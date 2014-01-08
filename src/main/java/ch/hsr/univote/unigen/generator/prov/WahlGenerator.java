@@ -39,7 +39,6 @@ import ch.hsr.univote.unigen.generator.ElectionDataTask;
 import ch.hsr.univote.unigen.generator.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.generator.ElectionGeneratorTask;
 import ch.hsr.univote.unigen.generator.ElectionOptionsTask;
-import ch.hsr.univote.unigen.generator.ElectionResultsTask;
 import ch.hsr.univote.unigen.generator.ElectionSystemInfoTask;
 import ch.hsr.univote.unigen.generator.ElectoralRollTask;
 import ch.hsr.univote.unigen.generator.EncryptedVotesTask;
@@ -57,6 +56,8 @@ import ch.hsr.univote.unigen.generator.SignatureParametersTask;
 import ch.hsr.univote.unigen.generator.SingleBallotTask;
 import ch.hsr.univote.unigen.generator.VoterCertsTask;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +67,7 @@ import java.util.List;
  */
 public class WahlGenerator {
 
-    public static SignatureParameters sp = new SignatureParameters();
+    public static SignatureParameters signatureParameters = new SignatureParameters();
     public static Certificate cert = new Certificate();
     public static Certificate cert2 = new Certificate();
     public static ElectionSystemInfo esi = new ElectionSystemInfo();
@@ -104,6 +105,10 @@ public class WahlGenerator {
     public static MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[mixers.length];
 
     public static void run() throws Exception {
+        sg.setSignerId("Gian Poltera");
+        sg.setTimestamp(TimestampGenerator.generateTimestamp());
+        sg.setValue(new BigInteger("545465465465423121245484546512154487485452"));
+        
         kei.getElectionId().add(ConfigHelper.getElectionId());
         BallotsTask.run();
         BlindedGeneratorTask.run();

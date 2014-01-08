@@ -32,7 +32,7 @@ public class BallotsTask {
 
         bts.setElectionId(ConfigHelper.getElectionId());
 
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= ConfigHelper.getVotersNumber(); i++) {
             // New Ballot
             Ballot bt = new Ballot();
             bt.setElectionId(ConfigHelper.getElectionId());

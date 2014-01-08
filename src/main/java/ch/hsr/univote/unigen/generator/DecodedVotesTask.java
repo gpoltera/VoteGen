@@ -29,7 +29,7 @@ public class DecodedVotesTask {
         // election id
         dov.setElectionId(ConfigHelper.getElectionId());
         
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= ConfigHelper.getVotersNumber(); i++) {
             DecodedVote dv = new DecodedVote();
             DecodedVoteEntry dve = new DecodedVoteEntry();
             dve.setChoiceId(1);

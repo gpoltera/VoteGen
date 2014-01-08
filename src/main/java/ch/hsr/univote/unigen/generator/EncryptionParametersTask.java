@@ -25,7 +25,7 @@ public class EncryptionParametersTask {
     public static void run() throws Exception {
         EncryptionParameters encryptionParameters = new EncryptionParameters();
         encryptionParameters.setElectionId(ConfigHelper.getElectionId());
-        encryptionParameters.setPrime(PrimeGenerator.getSafePrime(1024));
+        encryptionParameters.setPrime(PrimeGenerator.getSafePrime(ConfigHelper.getEncryptionKeyLength()));
         encryptionParameters.setGroupOrder(BigInteger.TEN);
         encryptionParameters.setGenerator(BigInteger.ONE);
         ep = encryptionParameters;

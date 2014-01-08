@@ -33,16 +33,13 @@ import org.xml.sax.SAXException;
  * Test
  *
  */
-public class App
-{
-    public static void main( String[] args ) throws JAXBException, FileNotFoundException, SAXException, DatatypeConfigurationException, CertificateException, Exception
-    {
+public class App {
+
+    public static void main(String[] args) throws JAXBException, FileNotFoundException, SAXException, DatatypeConfigurationException, CertificateException, Exception {
        // PrimeGenerator.getSafePrime(1024); 
-        
-       WahlGenerator.run();
-        
-       Publisher.main(args);
-        
+
+        WahlGenerator.run();
+        Publisher.main(args);
         System.out.println("WebService gestartet");
-    } 
+    }
 }

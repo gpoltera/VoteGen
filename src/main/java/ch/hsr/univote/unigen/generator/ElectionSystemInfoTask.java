@@ -5,12 +5,19 @@
  */
 package ch.hsr.univote.unigen.generator;
 
+import ch.bfh.univote.common.Certificate;
 import ch.bfh.univote.common.ElectionSystemInfo;
 import ch.bfh.univote.common.Signature;
 import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.cert;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.esi;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.helper.KeystoreHelper;
+import static ch.hsr.univote.unigen.helper.KeystoreHelper.createKeyPair;
+import static ch.hsr.univote.unigen.helper.KeystoreHelper.getPublicKey;
+import ch.hsr.univote.unigen.krypto.CertificateCreationHelperOrig;
+import ch.hsr.univote.unigen.krypto.CertificateGenerator;
+import ch.hsr.univote.unigen.krypto.CertificateHelperOrig;
 import ch.hsr.univote.unigen.krypto.RSAGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -22,26 +29,54 @@ import java.security.interfaces.RSAPrivateKey;
 public class ElectionSystemInfoTask {
 
     public static void run() throws Exception {
+        
+        
+        //EDIT THIS FILE
         esi.setElectionId(ConfigHelper.getElectionId());
-        esi.setCertificateAuthority(cert);
-        esi.setElectionAdministration(cert);
-        esi.setElectionManager(cert);
-        esi.getMixer().add(cert);
-        esi.getMixer().add(cert);
-        esi.getMixer().add(cert);
-        esi.getMixer().add(cert);
-        esi.getMixer().add(cert);
-        esi.getTallier().add(cert);
-        esi.getTallier().add(cert);
-        esi.getTallier().add(cert);
-        esi.getTallier().add(cert);
+        Certificate certificate = new Certificate();
+        
+        certificate.setValue(CertificateGenerator.main("CertificateAuthority").getBytes());
+        esi.setCertificateAuthority(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("ElectionManager").getBytes());
+        esi.setElectionAdministration(certificate);
+        
+        certificate.setValue(KeystoreHelper.createKeyPair().getEncoded());        
+        esi.setElectionManager(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Mixer").getBytes());
+        esi.getMixer().add(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Mixer").getBytes());
+        esi.getMixer().add(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Mixer").getBytes());
+        esi.getMixer().add(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Mixer").getBytes());
+        esi.getMixer().add(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Mixer").getBytes());
+        esi.getMixer().add(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Tallier").getBytes());
+        esi.getTallier().add(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Tallier").getBytes());
+        esi.getTallier().add(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Tallier").getBytes());
+        esi.getTallier().add(certificate);
+        
+        certificate.setValue(CertificateGenerator.main("Tallier").getBytes());
+        esi.getTallier().add(certificate);
 
         signElectionSystemInfo(esi);
     }
 
     private static void signElectionSystemInfo(ElectionSystemInfo electionSystemInfo) throws Exception {
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
-        // RSAPrivateKey privateKey = KeystoreHelper.getPrivateKey(); -> Original Zeile
+        //RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
+        RSAPrivateKey privateKey = KeystoreHelper.getPrivateKey();
         Signature signature = SignatureGenerator.createSignature(electionSystemInfo, privateKey);
         signature.setSignerId(ConfigHelper.getAdministrationId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());

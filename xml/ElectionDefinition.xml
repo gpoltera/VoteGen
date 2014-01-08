@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<electionDefinition>
+    <electionId>HSR2013</electionId>
+    <title>Präsidentschaftswahlen Studentenrat</title>
+    <keyLength>256</keyLength>
+    <mixerId>Gian</mixerId>
+    <mixerId>Ueli</mixerId>
+    <mixerId>Hans</mixerId>
+    <mixerId>Peter</mixerId>
+    <mixerId>Giachen</mixerId>
+    <tallierId>Sven</tallierId>
+    <tallierId>Beat</tallierId>
+    <tallierId>Bruno</tallierId>
+    <tallierId>Clemens</tallierId>
+    <votingPhaseBegin>2013-01-01T07:00:00.000Z</votingPhaseBegin>
+    <votingPhaseEnd>2013-01-01T11:00:00.000Z</votingPhaseEnd>
+    <signature>
+        <signerId>Gian Poltera</signerId>
+        <timestamp>2014-01-08T23:34:13.000Z</timestamp>
+        <value>3823615873965937960149718533913568319155050942729766516762979896488554797209691686521750223885762987911405704516185446499025194865894769467900196941535619</value>
+    </signature>
+</electionDefinition>
+

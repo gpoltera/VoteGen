@@ -35,21 +35,21 @@ public class EncryptionKeyShareTask {
             encryptionKeyShare.setKey(BigInteger.TEN);
             Proof proof = new Proof();
             proof.getCommitment().add(BigInteger.TEN);
-            proof.getResponse().add(BigInteger.TEN);
+            proof.getResponse().add(BigInteger.ONE);
             
             encryptionKeyShare.setProof(proof);
             encryptionKeyShare.setSignature(sg);
             WahlGenerator.encryptionKeyShareList[i] = encryptionKeyShare;
         }
-        //writeBlindedGenerator(bg);
+        writeEncryptionKeyShare(WahlGenerator.encryptionKeyShareList);
     }
 
-    private static void writeBlindedGenerator(BlindedGenerator blindedGenerator) {
+    private static void writeEncryptionKeyShare(EncryptionKeyShare[] encryptionKeyShare) {
         try {
-            PrintWriter writer = new PrintWriter(ConfigHelper.getBlindedGeneratorPath(), ConfigHelper.getCharEncoding());
-            writer.println(XMLHelper.serialize(blindedGenerator));
+            PrintWriter writer = new PrintWriter(ConfigHelper.getEncryptionKeySharePath(), ConfigHelper.getCharEncoding());
+            writer.println(XMLHelper.serialize(encryptionKeyShare));
             writer.close();
-            System.out.println("Der BlindedGenerator wurde in die Datei " + ConfigHelper.getBallotsPath() + " geschrieben");
+            System.out.println("Der EncryptionKeyShare wurde in die Datei " + ConfigHelper.getEncryptionKeySharePath() + " geschrieben");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

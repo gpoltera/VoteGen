@@ -28,7 +28,7 @@ public class DecryptedVotesTask {
     public static void run() throws Exception {
         dyv.setElectionId(ConfigHelper.getElectionId());
         
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= ConfigHelper.getVotersNumber(); i++) {
             dyv.getVote().add(BigInteger.ONE);
         }
 

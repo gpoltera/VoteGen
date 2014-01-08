@@ -186,6 +186,14 @@ public class ConfigHelper {
         return getProperty("blindedGeneratorPath", "Pfad des BlindedGenerator");
     }
 
+    public static String getEncryptionKeySharePath() {
+        return getProperty("encryptionKeySharePath", "Pfad des EncryptionKeyShare");
+    }
+
+    public static int getVotersNumber() {
+        return getIntProperty("voters", "Anzahl der Waehlenden");
+    }
+
     public static boolean getPartyListSystemIndicator() {
         String response = getProperty("partyListSystem", "Listenwahl");
         boolean rval = false;

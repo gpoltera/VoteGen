@@ -25,12 +25,12 @@ import java.security.interfaces.RSAPrivateKey;
  */
 public class ElectionDataTask {
     public static void run() throws Exception {
-        edat.setElectionGenerator(new BigInteger("2323"));
+        edat.setElectionGenerator(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
         edat.setElectionId(ConfigHelper.getElectionId());
-        edat.setEncryptionKey(new BigInteger("23243"));
-        edat.setGenerator(new BigInteger("4656"));
-        edat.setGroupOrder(new BigInteger("4567"));
-        edat.setPrime(PrimeGenerator.getPrime(1024));
+        edat.setEncryptionKey(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
+        edat.setGenerator(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
+        edat.setGroupOrder(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
+        edat.setPrime(PrimeGenerator.getSafePrime(ConfigHelper.getEncryptionKeyLength()));
         RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
         Signature signature = SignatureGenerator.createSignature(edat, privateKey);
         signature.setSignerId(ConfigHelper.getAdministrationId());

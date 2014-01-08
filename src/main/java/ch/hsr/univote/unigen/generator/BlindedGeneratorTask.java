@@ -8,8 +8,6 @@ package ch.hsr.univote.unigen.generator;
 import ch.bfh.univote.common.BlindedGenerator;
 import ch.bfh.univote.common.Proof;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.bg;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.bts;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.sg;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
