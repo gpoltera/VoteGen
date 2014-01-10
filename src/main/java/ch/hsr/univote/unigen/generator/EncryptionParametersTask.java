@@ -21,13 +21,35 @@ import java.security.interfaces.RSAPrivateKey;
  * @author Gian Poltéra
  */
 public class EncryptionParametersTask {
-
+    //elgamal parameters
     public static void run() throws Exception {
         EncryptionParameters encryptionParameters = new EncryptionParameters();
         encryptionParameters.setElectionId(ConfigHelper.getElectionId());
-        encryptionParameters.setPrime(PrimeGenerator.getSafePrime(ConfigHelper.getEncryptionKeyLength()));
-        encryptionParameters.setGroupOrder(BigInteger.TEN);
-        encryptionParameters.setGenerator(BigInteger.ONE);
+        
+        BigInteger q = PrimeGenerator.getSafePrime(256);
+        BigInteger p = q.multiply(new BigInteger("2")).add(BigInteger.ONE);
+        
+        boolean corg = false;
+        int i = 0;
+        BigInteger g = new BigInteger("2");
+        
+        while(corg == true) {
+            g = g.add(BigInteger.valueOf(i));
+            if(g.modPow(q, p).equals(BigInteger.ONE)){
+                corg = true;
+            } else {
+                i++;
+            }
+        }
+        
+        
+        //ElGamal's p, prime (SafePrime)
+        encryptionParameters.setPrime(p);
+        //ElGamal's q, 256 BIT
+        encryptionParameters.setGroupOrder(q);
+        //ElGamal's g, group order (g^2 mod p <> 1 & g^q mod p <> 1)
+        encryptionParameters.setGenerator(g);
+        
         ep = encryptionParameters;
         signEncryptioKey(encryptionParameters);
     }

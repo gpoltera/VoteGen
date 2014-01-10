@@ -23,11 +23,15 @@ public class PrimeGenerator {
      * @return prime-number
      */
     public static BigInteger getPrime(int bitlength) {
-        SecureRandom random = new SecureRandom();
-        BigInteger prime = BigInteger.probablePrime(bitlength, random);
-        System.out.println("Prime: " + prime);
-        
-        return prime;
+        boolean isprime = false;
+        while (isprime = true) {
+            SecureRandom random = new SecureRandom();
+            BigInteger birandom = new BigInteger(bitlength, random);
+            if (MillerRabin.millerRabinTest(birandom, 3)) {
+                    return birandom;
+            }
+        }
+        return null;
     }
     
     /**
@@ -56,9 +60,9 @@ public class PrimeGenerator {
      * @param value the number to check
      * @return boolean value true if is a prime and false if is not a prime
      */
-    static boolean isPrime(BigInteger value) {       
+    static boolean isPrime(BigInteger value, int secure) {       
         
-        return value.isProbablePrime(100);
+        return value.isProbablePrime(secure);
     }
     
     /**
@@ -70,6 +74,6 @@ public class PrimeGenerator {
     static boolean isSafePrime(BigInteger prime) {
         BigInteger value = prime.multiply(new BigInteger("2")).add(BigInteger.ONE);
         
-        return value.isProbablePrime(100);
+        return MillerRabin.millerRabinTest(value, 3);
     }
 }

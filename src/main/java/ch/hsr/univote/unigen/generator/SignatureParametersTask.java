@@ -23,7 +23,7 @@ public class SignatureParametersTask {
 
     public static void run() throws Exception {
         //Schnorr Signature Parameters (Public)
-        //Schnorr p
+        //Schnorr p (SafePrime)
         signatureParameters.setPrime(PrimeGenerator.getSafePrime(ConfigHelper.getSignatureKeyLength()));
         //Schnorr g?
         signatureParameters.setGroupOrder(PrimeGenerator.getPrime(ConfigHelper.getSignatureKeyLength()));
