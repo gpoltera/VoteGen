@@ -34,7 +34,6 @@ import ch.bfh.univote.common.VoterCertificates;
 import ch.hsr.univote.unigen.generator.BallotsTask;
 import ch.hsr.univote.unigen.generator.BlindedGeneratorTask;
 import ch.hsr.univote.unigen.generator.DecodedVotesTask;
-import ch.hsr.univote.unigen.generator.DecryptedVotesTask;
 import ch.hsr.univote.unigen.generator.ElectionDataTask;
 import ch.hsr.univote.unigen.generator.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.generator.ElectionGeneratorTask;
@@ -45,19 +44,16 @@ import ch.hsr.univote.unigen.generator.EncryptedVotesTask;
 import ch.hsr.univote.unigen.generator.EncryptionKeyShareTask;
 import ch.hsr.univote.unigen.generator.EncryptionKeyTask;
 import ch.hsr.univote.unigen.generator.EncryptionParametersTask;
-import ch.hsr.univote.unigen.generator.LatelyMixedVerificationKeysByTask;
-import ch.hsr.univote.unigen.generator.LatelyMixedVerificationKeysTask;
-import ch.hsr.univote.unigen.generator.LatelyRegistredVoterCertsTask;
 import ch.hsr.univote.unigen.generator.MixedEncryptedVotesByTask;
 import ch.hsr.univote.unigen.generator.MixedVerificationKeysByTask;
 import ch.hsr.univote.unigen.generator.MixedVerificationKeysTask;
 import ch.hsr.univote.unigen.generator.PartiallyDecryptedVotesTask;
 import ch.hsr.univote.unigen.generator.SignatureParametersTask;
-import ch.hsr.univote.unigen.generator.SingleBallotTask;
 import ch.hsr.univote.unigen.generator.VoterCertsTask;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
-import java.security.PrivateKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,36 +100,64 @@ public class WahlGenerator {
     public static PartiallyDecryptedVotes[] partiallyDecryptedVotesList = new PartiallyDecryptedVotes[talliers.length];
     public static MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[mixers.length];
 
+    public static RSAPrivateKey certificateAuthorityPrivateKey;
+    public static RSAPublicKey certificateAuthorityPublicKey;
+
+    public static RSAPrivateKey electionManagerPrivateKey;
+    public static RSAPublicKey electionManagerPublicKey;
+
+    public static RSAPrivateKey electionAdministratorPrivateKey;
+    public static RSAPublicKey electionAdministratorPublicKey;
+
+    public static RSAPrivateKey[] mixersPrivateKey = new RSAPrivateKey[mixers.length];
+    public static RSAPublicKey[] mixersPublicKey = new RSAPublicKey[mixers.length];
+
+    public static RSAPrivateKey[] talliersPrivateKey = new RSAPrivateKey[talliers.length];
+    public static RSAPublicKey[] talliersPublicKey = new RSAPublicKey[talliers.length];
+
+    public static RSAPrivateKey[] votersPrivateKey = new RSAPrivateKey[ConfigHelper.getVotersNumber()];
+    public static RSAPublicKey[] votersPublicKey = new RSAPublicKey[ConfigHelper.getVotersNumber()];
+
     public static void run() throws Exception {
-        sg.setSignerId("Gian Poltera");
-        sg.setTimestamp(TimestampGenerator.generateTimestamp());
-        sg.setValue(new BigInteger("545465465465423121245484546512154487485452"));
-        
+
         kei.getElectionId().add(ConfigHelper.getElectionId());
+        //Certificates
+        ElectionSystemInfoTask.run();
+
+        //Voter Certificates
+        VoterCertsTask.run();
+
+        //ElGamal Parameter
+        EncryptionParametersTask.run();
+
+        //ElectionOptions
+        ElectionOptionsTask.run();
+        ElectionDataTask.run();
+
         BallotsTask.run();
         BlindedGeneratorTask.run();
         DecodedVotesTask.run();
-        DecryptedVotesTask.run();
-        ElectionDataTask.run();
+        //DecryptedVotesTask.run();
+
         ElectionDefinitionTask.run();
         ElectionGeneratorTask.run();
-        ElectionOptionsTask.run();
-        ElectionSystemInfoTask.run();
+
         ElectoralRollTask.run();
         EncryptedVotesTask.run();
+        //Encryption Key
         EncryptionKeyTask.run();
         EncryptionKeyShareTask.run();
-        EncryptionParametersTask.run();
-        LatelyMixedVerificationKeysTask.run();
-        LatelyMixedVerificationKeysByTask.run();
-        LatelyRegistredVoterCertsTask.run();
+
         MixedEncryptedVotesByTask.run();
         MixedVerificationKeysTask.run();
         MixedVerificationKeysByTask.run();
         PartiallyDecryptedVotesTask.run();
-        SignatureParametersTask.run();    
-        SingleBallotTask.run();      
-        VoterCertsTask.run();
+        SignatureParametersTask.run();
+        //SingleBallotTask.run();
+
+        //LatelyMixedVerificationKeysTask.run();
+        //LatelyMixedVerificationKeysByTask.run();
+        //LatelyRegistredVoterCertsTask.run();
     }
 
     public static void addElectionDefinition(ElectionDefinition definition) {

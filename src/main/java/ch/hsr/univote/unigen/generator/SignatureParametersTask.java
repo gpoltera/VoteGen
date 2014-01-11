@@ -10,9 +10,10 @@ import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.signatureParameters;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.PrimeGenerator;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
+import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 
 /**
@@ -34,11 +35,11 @@ public class SignatureParametersTask {
         Signature signature = new Signature();
         
         // False -> Sign with Administrators private key?
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
+        //PrivateKey privateKey = RSA.getRSAKeyPair("sdsd").getPrivate();
         
-        signature = SignatureGenerator.createSignature(signatureParameters, privateKey);
-        signature.setSignerId(ConfigHelper.getAdministrationId());
-        signature.setTimestamp(TimestampGenerator.generateTimestamp());
-        signatureParameters.setSignature(signature);
+        //signature = SignatureGenerator.createSignature(signatureParameters, privateKey);
+        //signature.setSignerId(ConfigHelper.getAdministrationId());
+        //signature.setTimestamp(TimestampGenerator.generateTimestamp());
+        //signatureParameters.setSignature(signature);
     }
 }

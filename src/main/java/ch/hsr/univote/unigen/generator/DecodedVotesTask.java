@@ -8,22 +8,19 @@ package ch.hsr.univote.unigen.generator;
 import ch.bfh.univote.common.DecodedVote;
 import ch.bfh.univote.common.DecodedVoteEntry;
 import ch.bfh.univote.common.DecodedVotes;
-import ch.bfh.univote.common.Signature;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
+import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.dov;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.interfaces.RSAPrivateKey;
 
 /**
  *
  * @author Gian
  */
-public class DecodedVotesTask {
+public class DecodedVotesTask extends WahlGenerator {
 
     public static void run() throws Exception {
         // election id
@@ -43,11 +40,7 @@ public class DecodedVotesTask {
         writeDecodedVotes(dov);
     }
         private static void signDecodedVotes(DecodedVotes dov) throws Exception {
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
-        Signature signature = SignatureGenerator.createSignature(dov, privateKey);
-        signature.setSignerId(ConfigHelper.getAdministrationId());
-        signature.setTimestamp(TimestampGenerator.generateTimestamp());
-        dov.setSignature(signature);
+        dov.setSignature(SignatureGenerator.createSignature(dov, electionManagerPrivateKey));
     }
 
     private static void writeDecodedVotes(DecodedVotes dov) {

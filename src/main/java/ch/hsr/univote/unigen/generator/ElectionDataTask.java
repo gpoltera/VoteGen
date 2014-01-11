@@ -6,17 +6,21 @@
 
 package ch.hsr.univote.unigen.generator;
 
+import ch.bfh.univote.common.EncryptionParameters;
 import ch.bfh.univote.common.Signature;
 import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.ed;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.edat;
+import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.electionManagerPrivateKey;
+import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.ep;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.sg;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.PrimeGenerator;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
+import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.RSASignatur;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 
 /**
@@ -31,11 +35,8 @@ public class ElectionDataTask {
         edat.setGenerator(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
         edat.setGroupOrder(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
         edat.setPrime(PrimeGenerator.getSafePrime(ConfigHelper.getEncryptionKeyLength()));
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
-        Signature signature = SignatureGenerator.createSignature(edat, privateKey);
-        signature.setSignerId(ConfigHelper.getAdministrationId());
-        signature.setTimestamp(TimestampGenerator.generateTimestamp());
-        edat.setSignature(signature);
-        edat.setTitle(ConfigHelper.getElectionId());  
+        edat.setTitle(ConfigHelper.getElectionId());
+        //sign by electionamanger
+        edat.setSignature(SignatureGenerator.createSignature(edat, electionManagerPrivateKey));
     }
 }

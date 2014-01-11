@@ -14,6 +14,7 @@ import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.bts;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.sg;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
+import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
@@ -22,13 +23,9 @@ import java.math.BigInteger;
  *
  * @author Gian Poltéra
  */
-public class EncryptionKeyShareTask {
+public class EncryptionKeyShareTask extends WahlGenerator {
 
     public static void run() throws Exception {
-        // Talliers from the ConfigFile
-        String[] talliers = ConfigHelper.getTallierIds();
-        
-        
         for (int i = 0; i < talliers.length; i++) {
             EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
             encryptionKeyShare.setElectionId(ConfigHelper.getElectionId());
@@ -38,10 +35,10 @@ public class EncryptionKeyShareTask {
             proof.getResponse().add(BigInteger.ONE);
             
             encryptionKeyShare.setProof(proof);
-            encryptionKeyShare.setSignature(sg);
-            WahlGenerator.encryptionKeyShareList[i] = encryptionKeyShare;
+            encryptionKeyShare.setSignature(SignatureGenerator.createSignature(talliers[i], encryptionKeyShare, talliersPrivateKey[i]));
+            encryptionKeyShareList[i] = encryptionKeyShare;
         }
-        writeEncryptionKeyShare(WahlGenerator.encryptionKeyShareList);
+        writeEncryptionKeyShare(encryptionKeyShareList);
     }
 
     private static void writeEncryptionKeyShare(EncryptionKeyShare[] encryptionKeyShare) {

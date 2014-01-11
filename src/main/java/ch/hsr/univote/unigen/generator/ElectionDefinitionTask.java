@@ -13,16 +13,11 @@ package ch.hsr.univote.unigen.generator;
 
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import ch.bfh.univote.common.ElectionDefinition;
-import ch.bfh.univote.common.Signature;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.helper.KeystoreHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
+import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.interfaces.RSAPrivateKey;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -37,7 +32,7 @@ import javax.xml.datatype.DatatypeFactory;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectionDefinitionTask {
+public class ElectionDefinitionTask extends WahlGenerator {
 
     public static void run() throws Exception {
         ElectionDefinition definition = createDefinition();
@@ -103,11 +98,7 @@ public class ElectionDefinitionTask {
     }
 
     private static void signDefinition(ElectionDefinition definition) throws Exception {
-        RSAPrivateKey privateKey = KeystoreHelper.getPrivateKey();
-        Signature signature = SignatureGenerator.createSignature(definition, privateKey);
-        signature.setTimestamp(TimestampGenerator.generateTimestamp());
-        signature.setSignerId(ConfigHelper.getAdministrationId());
-        definition.setSignature(signature);
+        definition.setSignature(SignatureGenerator.createSignature(definition, electionAdministratorPrivateKey));
     }
 
     private static void writeDefinition(ElectionDefinition definition) {

@@ -8,9 +8,9 @@
             <response>1</response>
         </proof>
         <signature>
-            <signerId>Gian Poltera</signerId>
-            <timestamp>2014-01-10T03:11:24.000Z</timestamp>
-            <value>545465465465423121245484546512154487485452</value>
+            <signerId>Sven</signerId>
+            <timestamp>2014-01-11T01:33:29.000Z</timestamp>
+            <value>5111954047137273350909081277578321186878730488460224126569451186667440231207308405666256250870183514900470623441983333191803580383367553095643267001198698</value>
         </signature>
     </item>
     <item>
@@ -21,9 +21,9 @@
             <response>1</response>
         </proof>
         <signature>
-            <signerId>Gian Poltera</signerId>
-            <timestamp>2014-01-10T03:11:24.000Z</timestamp>
-            <value>545465465465423121245484546512154487485452</value>
+            <signerId>Beat</signerId>
+            <timestamp>2014-01-11T01:33:29.000Z</timestamp>
+            <value>6188145136291215883432964385975487830303304250893666413116512153250164580494072256207099078893163852444862812448058427958310149896247047082716408139024898</value>
         </signature>
     </item>
     <item>
@@ -34,9 +34,9 @@
             <response>1</response>
         </proof>
         <signature>
-            <signerId>Gian Poltera</signerId>
-            <timestamp>2014-01-10T03:11:24.000Z</timestamp>
-            <value>545465465465423121245484546512154487485452</value>
+            <signerId>Bruno</signerId>
+            <timestamp>2014-01-11T01:33:29.000Z</timestamp>
+            <value>101732893662032237282160991167817006029002958097758091936174264792762302218789920414272080294008579770617189389253461311444384100291113291350097317608680</value>
         </signature>
     </item>
     <item>
@@ -47,9 +47,9 @@
             <response>1</response>
         </proof>
         <signature>
-            <signerId>Gian Poltera</signerId>
-            <timestamp>2014-01-10T03:11:24.000Z</timestamp>
-            <value>545465465465423121245484546512154487485452</value>
+            <signerId>Clemens</signerId>
+            <timestamp>2014-01-11T01:33:29.000Z</timestamp>
+            <value>1237182008655632100328018074211223591734110946786512651702833023604507742142198473713095587945275914722261598799165497633195402299870498905728925992882405</value>
         </signature>
     </item>
 </encryptionKeyShare[]>

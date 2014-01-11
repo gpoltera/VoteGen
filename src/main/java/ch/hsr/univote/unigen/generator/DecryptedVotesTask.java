@@ -11,11 +11,12 @@ import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.dyv;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
+import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.ArrayList;
 
@@ -37,7 +38,7 @@ public class DecryptedVotesTask {
     }
 
     private static void signDecryptedVotes(DecryptedVotes decryptedVotes) throws Exception {      
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
+        PrivateKey privateKey = RSA.getRSAKeyPair("sdsd").getPrivate();
         Signature signature = SignatureGenerator.createSignature(decryptedVotes, privateKey);
         signature.setSignerId(ConfigHelper.getAdministrationId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());

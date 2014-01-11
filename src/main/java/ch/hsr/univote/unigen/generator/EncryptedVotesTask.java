@@ -6,21 +6,17 @@
 package ch.hsr.univote.unigen.generator;
 
 import ch.bfh.univote.common.EncryptedVote;
-import ch.bfh.univote.common.EncryptedVotes;
-import ch.bfh.univote.common.Signature;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
+import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.ev;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
-import java.security.interfaces.RSAPrivateKey;
 
 /**
  *
  * @author Gian Poltéra
  */
-public class EncryptedVotesTask {
+public class EncryptedVotesTask extends WahlGenerator {
 
     public static void run() throws Exception {
         ev.setElectionId(ConfigHelper.getElectionId());
@@ -31,15 +27,6 @@ public class EncryptedVotesTask {
             encryptedVote.setSecondValue(BigInteger.TEN);
             ev.getVote().add(encryptedVote);
         }       
-        
-        signEncryptedVotesTask(ev);
-    }
-    
-    private static void signEncryptedVotesTask(EncryptedVotes encryptedVotes) throws Exception {
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
-        Signature signature = SignatureGenerator.createSignature(encryptedVotes, privateKey);
-        signature.setSignerId(ConfigHelper.getAdministrationId());
-        signature.setTimestamp(TimestampGenerator.generateTimestamp());
-        ev.setSignature(signature);
+        ev.setSignature(SignatureGenerator.createSignature(ev, electionAdministratorPrivateKey));
     }
 }

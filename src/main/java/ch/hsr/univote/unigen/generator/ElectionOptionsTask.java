@@ -14,7 +14,6 @@ package ch.hsr.univote.unigen.generator;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import ch.bfh.univote.common.Candidate;
 import ch.bfh.univote.common.CandidateStatus;
-import ch.bfh.univote.common.ElectionDefinition;
 import ch.bfh.univote.common.ElectionOptions;
 import ch.bfh.univote.common.ForallRule;
 import ch.bfh.univote.common.LanguageCode;
@@ -23,20 +22,16 @@ import ch.bfh.univote.common.PoliticalList;
 import ch.bfh.univote.common.Sex;
 import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SummationRule;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
+import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.electionAdministratorPrivateKey;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FormatException;
-import ch.hsr.univote.unigen.helper.KeystoreHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.security.interfaces.RSAPrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -50,7 +45,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectionOptionsTask {
+public class ElectionOptionsTask extends WahlGenerator {
 
     public static void run() throws FileNotFoundException, FormatException, Exception {
         List<CandidateList> lists = getCandidateLists();
@@ -269,10 +264,8 @@ public class ElectionOptionsTask {
     }
 
     private static void signOptions(ElectionOptions options) throws Exception {
-        RSAPrivateKey privateKey = KeystoreHelper.getPrivateKey();
-        Signature signature = SignatureGenerator.createSignature(options, privateKey);
-        signature.setSignerId(ConfigHelper.getAdministrationId());
-        signature.setTimestamp(TimestampGenerator.generateTimestamp());
+        //sign by election-admin
+        Signature signature = SignatureGenerator.createSignature(options, electionAdministratorPrivateKey);
         options.setSignature(signature);
     }
 

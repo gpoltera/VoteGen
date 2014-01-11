@@ -33,7 +33,6 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
 public class CertificateGenerator {
     //Adapt to config file
     public static final String STORETYPE = "JKS";
-    public static final String KEYSTORE = "keystore/";
     public static final String KEYALG = "RSA";
     public static final int KEYSIZE = 1024;
     public static final int VALIDITY = 1000; // days
@@ -44,12 +43,11 @@ public class CertificateGenerator {
 keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -alias vsuzh -file data\output\vsuzh.pem
      */
 
-    public static String main(String alias) throws Exception {
+    public static String main(String alias, KeyPair keyPair) throws Exception {
         // @Stephan: Please adapt...
         CertificateGenerator ku = new CertificateGenerator();
-        X509Certificate cert = ku.createCertitificate("CN=" + ConfigHelper.getElectionId());
+        X509Certificate cert = ku.createCertitificate("CN=" + ConfigHelper.getElectionId(), keyPair);
         KeyStore ks = ku.createAndPopulateKeyStore(cert, alias);
-        ku.persistKeyStore(ks, new File(KEYSTORE + alias + ".jks"), "12345678");
         String pem = ku.x509ToBase64PEMString(cert);
         System.out.println(pem);
         
@@ -63,7 +61,7 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
      * @return an X%09 V1 certificate
      * @throws Exception
      */
-    public X509Certificate createCertitificate(String cname)
+    public X509Certificate createCertitificate(String cname, KeyPair keyPair)
         throws Exception
     {
         // See also:
@@ -85,9 +83,6 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
         // public/private key pair
         // See also:
         // http://stackoverflow.com/questions/1709441/generate-rsa-key-pair-and-encode-private-as-string
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
-        keyGenerator.initialize(KEYSIZE);
-        KeyPair keyPair = keyGenerator.generateKeyPair();
 
 
         // construct certificate
@@ -124,19 +119,6 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
         // add certificate, associate it with the given alias
         ks.setCertificateEntry(alias, certificate);
         return ks;
-    }
-
-    /**
-     * Persists the given key store in a file with given name, abd
-     * protects its integrity with given password.
-     * @param ks a key store
-     * @param file the name of the key store file
-     * @param storePassword a password for the integrity protection
-     * @throws Exception if there is an error
-     */
-    public void persistKeyStore(KeyStore ks, File file, String storePassword) throws Exception {
-        FileOutputStream fos = new FileOutputStream(file);
-        ks.store(fos, storePassword.toCharArray());
     }
 
     /**

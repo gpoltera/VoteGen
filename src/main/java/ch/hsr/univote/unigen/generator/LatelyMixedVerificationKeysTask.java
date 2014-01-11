@@ -14,9 +14,10 @@ import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.latelyMixedVeri
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.mixers;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.mvk;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
+import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 
 /**
@@ -37,7 +38,7 @@ public class LatelyMixedVerificationKeysTask {
             proof.getResponse().add(BigInteger.TEN);
             mixedVerificationKey.setProof(proof);
 
-            RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
+            PrivateKey privateKey = RSA.getRSAKeyPair("sdsd").getPrivate();
             Signature signature = SignatureGenerator.createSignature(mixedVerificationKey, privateKey);
             signature.setSignerId(mixers[i]);
             signature.setTimestamp(TimestampGenerator.generateTimestamp());

@@ -11,6 +11,7 @@ import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.sg;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
+import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
@@ -19,13 +20,9 @@ import java.math.BigInteger;
  *
  * @author Gian Poltéra
  */
-public class BlindedGeneratorTask {
+public class BlindedGeneratorTask extends WahlGenerator{
 
-    public static void run() throws Exception {
-        // Mixers from the ConfigFile
-        String[] mixers = ConfigHelper.getMixerIds();
-        
-        
+    public static void run() throws Exception {   
         for (int i = 0; i < mixers.length; i++) {
             BlindedGenerator blindedGenerator = new BlindedGenerator();
             blindedGenerator.setElectionId(ConfigHelper.getElectionId());
@@ -35,8 +32,8 @@ public class BlindedGeneratorTask {
             proof.getResponse().add(BigInteger.TEN);
             
             blindedGenerator.setProof(proof);
-            blindedGenerator.setSignature(sg);
-            WahlGenerator.blindedGeneratorsList[i] = blindedGenerator;
+            blindedGenerator.setSignature(SignatureGenerator.createSignature(mixers[i], blindedGenerator, mixersPrivateKey[i]));
+            blindedGeneratorsList[i] = blindedGenerator;
         }
         //writeBlindedGenerator(bg);
     }

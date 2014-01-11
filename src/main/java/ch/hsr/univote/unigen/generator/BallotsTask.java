@@ -12,21 +12,22 @@ import ch.bfh.univote.common.Proof;
 import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.VoterSignature;
 import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
+import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.bts;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
+import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.security.interfaces.RSAPrivateKey;
+import java.security.PrivateKey;
 
 /**
  *
  * @author Gian Poltéra
  */
-public class BallotsTask {
+public class BallotsTask extends WahlGenerator{
 
     public static void run() throws Exception {
 
@@ -66,11 +67,7 @@ public class BallotsTask {
     }
 
     private static void signBallots(Ballots bts) throws Exception {
-        RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
-        Signature signature = SignatureGenerator.createSignature(bts, privateKey);
-        signature.setSignerId(ConfigHelper.getAdministrationId());
-        signature.setTimestamp(TimestampGenerator.generateTimestamp());
-        bts.setSignature(signature);
+         bts.setSignature(SignatureGenerator.createSignature(bts, electionManagerPrivateKey));
     }
 
     private static void writeBallots(Ballots bts) {

@@ -49,7 +49,6 @@ public class PrimeGenerator {
             issafeprime = isSafePrime(prime);
         }
         BigInteger safeprime = prime;
-        System.out.println("SafePrime: " + safeprime);
         
         return safeprime;
     }

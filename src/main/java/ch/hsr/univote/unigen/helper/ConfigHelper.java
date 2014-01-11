@@ -11,7 +11,6 @@
  */
 package ch.hsr.univote.unigen.helper;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -34,8 +33,16 @@ public class ConfigHelper {
     private static Scanner scanner = new Scanner(System.in);
     private static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-    public static String getAdministrationId() {
-        return getProperty("administrationId", "Identifikator der Wahladministration");
+    public static String getCertificateAuthorityId() {
+        return getProperty("certificateAuthorityId", "Identifikator der ZertifikatAuthority");
+    }
+    
+    public static String getElectionManagerId() {
+        return getProperty("electionManagerId", "Identifikator des Wahlmanagers");
+    }
+
+    public static String getElectionAdministratorId() {
+        return getProperty("electionAdministratorId", "Identifikator der Wahladministration");
     }
 
     public static String getElectionId() {

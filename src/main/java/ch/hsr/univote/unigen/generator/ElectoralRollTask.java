@@ -13,12 +13,9 @@ package ch.hsr.univote.unigen.generator;
 
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import ch.bfh.univote.common.ElectoralRoll;
-import ch.bfh.univote.common.Signature;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FormatException;
 import ch.hsr.univote.unigen.helper.XMLHelper;
-import ch.hsr.univote.unigen.krypto.RSAGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +26,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -39,7 +35,7 @@ import java.util.Scanner;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectoralRollTask {
+public class ElectoralRollTask extends WahlGenerator{
 
 	public static void run() throws FileNotFoundException, FormatException, NoSuchAlgorithmException, Exception {
 		List<String> voterIds = getVoters();
@@ -118,12 +114,7 @@ public class ElectoralRollTask {
 	}
 
 	private static void signRoll(ElectoralRoll roll) throws Exception {
-                RSAPrivateKey privateKey = RSAGenerator.getPrivateKey();
-		// RSAPrivateKey privateKey = KeystoreHelper.getPrivateKey(); -> Original Zeile
-		Signature signature = SignatureGenerator.createSignature(roll, privateKey);
-		signature.setSignerId(ConfigHelper.getAdministrationId());
-                signature.setTimestamp(TimestampGenerator.generateTimestamp());
-		roll.setSignature(signature);
+                roll.setSignature(SignatureGenerator.createSignature(roll, electionAdministratorPrivateKey));
 	}
 
 	private static void writeRoll(ElectoralRoll roll) throws FileNotFoundException, UnsupportedEncodingException {
