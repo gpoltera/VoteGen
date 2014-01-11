@@ -34,24 +34,29 @@ import ch.bfh.univote.common.VoterCertificates;
 import ch.hsr.univote.unigen.generator.BallotsTask;
 import ch.hsr.univote.unigen.generator.BlindedGeneratorTask;
 import ch.hsr.univote.unigen.generator.DecodedVotesTask;
+import ch.hsr.univote.unigen.generator.DecryptedVotesTask;
 import ch.hsr.univote.unigen.generator.ElectionDataTask;
 import ch.hsr.univote.unigen.generator.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.generator.ElectionGeneratorTask;
 import ch.hsr.univote.unigen.generator.ElectionOptionsTask;
+import ch.hsr.univote.unigen.generator.ElectionResultsTask;
 import ch.hsr.univote.unigen.generator.ElectionSystemInfoTask;
 import ch.hsr.univote.unigen.generator.ElectoralRollTask;
 import ch.hsr.univote.unigen.generator.EncryptedVotesTask;
 import ch.hsr.univote.unigen.generator.EncryptionKeyShareTask;
 import ch.hsr.univote.unigen.generator.EncryptionKeyTask;
 import ch.hsr.univote.unigen.generator.EncryptionParametersTask;
+import ch.hsr.univote.unigen.generator.LatelyMixedVerificationKeysByTask;
+import ch.hsr.univote.unigen.generator.LatelyMixedVerificationKeysTask;
+import ch.hsr.univote.unigen.generator.LatelyRegistredVoterCertsTask;
 import ch.hsr.univote.unigen.generator.MixedEncryptedVotesByTask;
 import ch.hsr.univote.unigen.generator.MixedVerificationKeysByTask;
 import ch.hsr.univote.unigen.generator.MixedVerificationKeysTask;
 import ch.hsr.univote.unigen.generator.PartiallyDecryptedVotesTask;
 import ch.hsr.univote.unigen.generator.SignatureParametersTask;
+import ch.hsr.univote.unigen.generator.SingleBallotTask;
 import ch.hsr.univote.unigen.generator.VoterCertsTask;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import java.math.BigInteger;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
@@ -136,14 +141,15 @@ public class WahlGenerator {
 
         BallotsTask.run();
         BlindedGeneratorTask.run();
-        DecodedVotesTask.run();
-        //DecryptedVotesTask.run();
+        
+        DecryptedVotesTask.run();
 
         ElectionDefinitionTask.run();
         ElectionGeneratorTask.run();
 
         ElectoralRollTask.run();
         EncryptedVotesTask.run();
+        
         //Encryption Key
         EncryptionKeyTask.run();
         EncryptionKeyShareTask.run();
@@ -153,11 +159,14 @@ public class WahlGenerator {
         MixedVerificationKeysByTask.run();
         PartiallyDecryptedVotesTask.run();
         SignatureParametersTask.run();
-        //SingleBallotTask.run();
+        SingleBallotTask.run();
 
-        //LatelyMixedVerificationKeysTask.run();
-        //LatelyMixedVerificationKeysByTask.run();
-        //LatelyRegistredVoterCertsTask.run();
+        LatelyMixedVerificationKeysTask.run();
+        LatelyMixedVerificationKeysByTask.run();
+        LatelyRegistredVoterCertsTask.run();
+        DecodedVotesTask.run();
+        
+        ElectionResultsTask.run();
     }
 
     public static void addElectionDefinition(ElectionDefinition definition) {

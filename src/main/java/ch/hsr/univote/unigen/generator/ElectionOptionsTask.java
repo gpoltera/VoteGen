@@ -205,6 +205,7 @@ public class ElectionOptionsTask extends WahlGenerator {
         System.out.println("Total: " + list.getCandidates().size());
         Scanner scanner = new Scanner(System.in);
         Boolean result = null;
+        result = true;
         while (result == null) {
             System.out.print("Ist diese Kandidierendenliste korrekt (ja/nein)? ");
             String answer = scanner.nextLine();

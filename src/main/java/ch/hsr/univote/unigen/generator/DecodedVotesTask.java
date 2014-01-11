@@ -26,13 +26,16 @@ public class DecodedVotesTask extends WahlGenerator {
         // election id
         dov.setElectionId(ConfigHelper.getElectionId());
         
-        for (int i = 1; i <= ConfigHelper.getVotersNumber(); i++) {
+        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
             DecodedVote dv = new DecodedVote();
-            DecodedVoteEntry dve = new DecodedVoteEntry();
-            dve.setChoiceId(1);
-            dve.setCount(1);
-            dv.getEntry().add(dve);
-
+            for (int j = 1; j < 4; j++) {
+                DecodedVoteEntry dve = new DecodedVoteEntry();
+                int x = (int) (Math.random()*3+1);
+                int y = (int) (Math.random()*3+1);
+                dve.setChoiceId(x);
+                dve.setCount(y);
+                dv.getEntry().add(dve);
+            }
             dov.getDecodedVote().add(dv);
         }
         

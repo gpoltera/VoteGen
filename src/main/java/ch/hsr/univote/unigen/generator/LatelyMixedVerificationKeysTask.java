@@ -10,21 +10,17 @@ import ch.bfh.univote.common.Proof;
 import ch.bfh.univote.common.Signature;
 import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.latelyMixedVerificationKeysList;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.mixers;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.mvk;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
-import java.security.PrivateKey;
-import java.security.interfaces.RSAPrivateKey;
+
 
 /**
  *
  * @author Gian Poltéra
  */
-public class LatelyMixedVerificationKeysTask {
+public class LatelyMixedVerificationKeysTask extends WahlGenerator {
 
     public static void run() throws Exception {
 
@@ -37,14 +33,8 @@ public class LatelyMixedVerificationKeysTask {
             proof.getCommitment().add(BigInteger.TEN);
             proof.getResponse().add(BigInteger.TEN);
             mixedVerificationKey.setProof(proof);
-
-            PrivateKey privateKey = RSA.getRSAKeyPair("sdsd").getPrivate();
-            Signature signature = SignatureGenerator.createSignature(mixedVerificationKey, privateKey);
-            signature.setSignerId(mixers[i]);
-            signature.setTimestamp(TimestampGenerator.generateTimestamp());
-            mixedVerificationKey.setSignature(signature);
-            WahlGenerator.lmvk.add(mixedVerificationKey);
+            mixedVerificationKey.setSignature(SignatureGenerator.createSignature(mixers[i], mixedVerificationKey, mixersPrivateKey[i]));
+            lmvk.add(mixedVerificationKey);
         }
-        
     }
 }

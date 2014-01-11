@@ -83,8 +83,9 @@ public class ElectionDefinitionTask extends WahlGenerator {
         System.out.println("--------------------------------------------------");
         Scanner scanner = new Scanner(System.in);
         Boolean result = null;
+        result = true;
         while (result == null) {
-            System.out.print("Ist diese Definition korrekt (ja/nein)? ");
+            System.out.print("Ist diese Definition korrekt (ja/nein)? ");  
             String answer = scanner.nextLine();
             if (answer.equals("ja")) {
                 result = true;

@@ -27,6 +27,7 @@ import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.bfh.univote.common.EncryptionParameters;
 import ch.bfh.univote.common.ForallRule;
 import ch.bfh.univote.common.MixedEncryptedVotes;
+import ch.bfh.univote.common.MixedVerificationKey;
 import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.bfh.univote.common.PoliticalList;
@@ -820,6 +821,37 @@ public class SignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
+        signature.setValue(RSASignatur.signRSA(res, privateKey));
+
+        return signature;
+    }
+
+    public static Signature createSignature(String mixerName, MixedVerificationKey mixedVerificationKey, RSAPrivateKey privateKey) throws Exception {
+        Signature signature = new Signature();
+        signature.setSignerId(mixerName);
+        signature.setTimestamp(TimestampGenerator.generateTimestamp());
+
+        //concatenate to (id|vk|(()|()))|timestamp - WARNING: The proof is not yet implemented.
+        StringConcatenator sc = new StringConcatenator();
+        sc.pushLeftDelim();
+
+        sc.pushObjectDelimiter(mixedVerificationKey.getElectionId(), StringConcatenator.INNER_DELIMITER);
+        sc.pushObjectDelimiter(mixedVerificationKey.getKey(), StringConcatenator.INNER_DELIMITER);
+
+        //empty proof
+        sc.pushLeftDelim();
+        sc.pushList(mixedVerificationKey.getProof().getCommitment(), true);
+        sc.pushInnerDelim();
+        sc.pushList(mixedVerificationKey.getProof().getResponse(), true);
+        sc.pushRightDelim();
+        //end empty proof
+
+        sc.pushRightDelim();
+        sc.pushInnerDelim();
+        sc.pushObject(signature.getTimestamp());
+
+        String res = sc.pullAll();
+
         signature.setValue(RSASignatur.signRSA(res, privateKey));
 
         return signature;

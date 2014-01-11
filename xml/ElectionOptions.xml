@@ -6,7 +6,7 @@
         <number>1</number>
         <title>
             <language>DE</language>
-            <text>HSR2013</text>
+            <text>Lehrer</text>
         </title>
         <partyName>
             <language>DE</language>
@@ -77,13 +77,51 @@
         <listId>1</listId>
         <cumulation>1</cumulation>
     </choice>
+    <choice xsi:type="ns3:politicalList" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>5</choiceId>
+        <number>2</number>
+        <title>
+            <language>DE</language>
+            <text>Informatiker</text>
+        </title>
+        <partyName>
+            <language>DE</language>
+            <text>-</text>
+        </partyName>
+        <partyShortName>
+            <language>DE</language>
+            <text>-</text>
+        </partyShortName>
+    </choice>
+    <choice xsi:type="ns3:candidate" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <choiceId>6</choiceId>
+        <number>2.1</number>
+        <lastName>Poltera</lastName>
+        <firstName>Gian</firstName>
+        <sex>UNDEF</sex>
+        <yearOfBirth>0</yearOfBirth>
+        <studyBranch>
+            <language>DE</language>
+            <text>-</text>
+        </studyBranch>
+        <studyDegree>
+            <language>DE</language>
+            <text>-</text>
+        </studyDegree>
+        <semesterCount>0</semesterCount>
+        <status>UNDEF</status>
+        <listId>5</listId>
+        <cumulation>1</cumulation>
+    </choice>
     <rule xsi:type="ns3:summationRule" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <choiceId>1</choiceId>
+        <choiceId>5</choiceId>
         <lowerBound>0</lowerBound>
         <upperBound>0</upperBound>
     </rule>
     <rule xsi:type="ns3:forallRule" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <choiceId>1</choiceId>
+        <choiceId>5</choiceId>
         <lowerBound>0</lowerBound>
         <upperBound>1</upperBound>
     </rule>
@@ -91,20 +129,22 @@
         <choiceId>2</choiceId>
         <choiceId>3</choiceId>
         <choiceId>4</choiceId>
+        <choiceId>6</choiceId>
         <lowerBound>0</lowerBound>
-        <upperBound>3</upperBound>
+        <upperBound>4</upperBound>
     </rule>
     <rule xsi:type="ns3:forallRule" xmlns:ns3="http://univote.bfh.ch/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <choiceId>2</choiceId>
         <choiceId>3</choiceId>
         <choiceId>4</choiceId>
+        <choiceId>6</choiceId>
         <lowerBound>0</lowerBound>
-        <upperBound>1</upperBound>
+        <upperBound>100</upperBound>
     </rule>
     <signature>
         <signerId>Gian Poltéra</signerId>
-        <timestamp>2014-01-11T01:33:26.000Z</timestamp>
-        <value>3178594860617209140667531640984665070339846988666326086554314548266660589339963071967938584488525969383353563309023332006649776229947995371057174448335482</value>
+        <timestamp>2014-01-11T04:10:49.000Z</timestamp>
+        <value>7043721474892608909638176998993598911637758849446308332558712831934332415514550742859520780509713322702302582337751799363036113269496342275869719780481375</value>
     </signature>
 </electionOptions>
 

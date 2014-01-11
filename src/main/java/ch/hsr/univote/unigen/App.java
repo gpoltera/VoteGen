@@ -36,10 +36,12 @@ import org.xml.sax.SAXException;
 public class App {
 
     public static void main(String[] args) throws JAXBException, FileNotFoundException, SAXException, DatatypeConfigurationException, CertificateException, Exception {
-       // PrimeGenerator.getSafePrime(1024); 
 
         WahlGenerator.run();
         Publisher.main(args);
         System.out.println("WebService gestartet");
+        //Runtime.getRuntime().exec(new String[]{"java","-jar","C:/NetBeans/VoteVerifier/target/VoteVerifier-1.1-SNAPSHOT-demo-jar-with-dependencies.jar"});
+        Thread.sleep(60000);
+        System.exit(0);
     }
 }

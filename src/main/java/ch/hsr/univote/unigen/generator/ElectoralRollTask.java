@@ -88,6 +88,7 @@ public class ElectoralRollTask extends WahlGenerator{
 		System.out.println("Total: " + voterIds.size());
 		Scanner scanner = new Scanner(System.in);
 		Boolean result = null;
+                result = true;
 		while (result == null) {
 			System.out.print("Ist diese Waehlendenliste korrekt (ja/nein)? ");
 			String answer = scanner.nextLine();

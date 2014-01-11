@@ -6,28 +6,21 @@
 
 package ch.hsr.univote.unigen.generator;
 
-import ch.bfh.univote.common.EncryptionParameters;
-import ch.bfh.univote.common.Signature;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.ed;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.edat;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.electionManagerPrivateKey;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.ep;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.sg;
+import ch.bfh.univote.common.Choice;
+import ch.bfh.univote.common.Rule;
+import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.PrimeGenerator;
-import ch.hsr.univote.unigen.krypto.RSA;
-import ch.hsr.univote.unigen.krypto.RSASignatur;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.math.BigInteger;
-import java.security.PrivateKey;
-import java.security.interfaces.RSAPrivateKey;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Gian
  */
-public class ElectionDataTask {
+public class ElectionDataTask extends WahlGenerator {
+    
     public static void run() throws Exception {
         edat.setElectionGenerator(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
         edat.setElectionId(ConfigHelper.getElectionId());
@@ -36,6 +29,9 @@ public class ElectionDataTask {
         edat.setGroupOrder(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
         edat.setPrime(PrimeGenerator.getSafePrime(ConfigHelper.getEncryptionKeyLength()));
         edat.setTitle(ConfigHelper.getElectionId());
+        edat.getChoice().addAll(eo.getChoice());
+        edat.getRule().addAll(eo.getRule());
+
         //sign by electionamanger
         edat.setSignature(SignatureGenerator.createSignature(edat, electionManagerPrivateKey));
     }

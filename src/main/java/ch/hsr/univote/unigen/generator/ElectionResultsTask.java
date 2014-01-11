@@ -18,8 +18,7 @@ import ch.bfh.univote.common.DecodedVoteEntry;
 import ch.bfh.univote.common.DecodedVotes;
 import ch.bfh.univote.common.ElectionData;
 import ch.bfh.univote.common.PoliticalList;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.dov;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.edat;
+import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,7 +33,7 @@ import java.util.Map;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectionResultsTask {
+public class ElectionResultsTask extends WahlGenerator {
 
     public static void run() {
         List<Choice> choices = getChoices();
