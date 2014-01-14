@@ -6,14 +6,10 @@
 
 package ch.hsr.univote.unigen.generator;
 
-import ch.bfh.univote.common.Choice;
-import ch.bfh.univote.common.Rule;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.PrimeGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -22,12 +18,12 @@ import java.util.List;
 public class ElectionDataTask extends WahlGenerator {
     
     public static void run() throws Exception {
-        edat.setElectionGenerator(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
+        edat.setElectionGenerator(eg.getGenerator());
         edat.setElectionId(ConfigHelper.getElectionId());
-        edat.setEncryptionKey(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
-        edat.setGenerator(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
-        edat.setGroupOrder(PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength()));
-        edat.setPrime(PrimeGenerator.getSafePrime(ConfigHelper.getEncryptionKeyLength()));
+        edat.setEncryptionKey(ek.getKey());
+        edat.setGenerator(encryptionParameters.getGenerator());
+        edat.setGroupOrder(encryptionParameters.getGroupOrder());
+        edat.setPrime(encryptionParameters.getPrime());
         edat.setTitle(ConfigHelper.getElectionId());
         edat.getChoice().addAll(eo.getChoice());
         edat.getRule().addAll(eo.getRule());

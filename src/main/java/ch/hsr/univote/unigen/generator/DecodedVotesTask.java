@@ -7,14 +7,10 @@ package ch.hsr.univote.unigen.generator;
 
 import ch.bfh.univote.common.DecodedVote;
 import ch.bfh.univote.common.DecodedVoteEntry;
-import ch.bfh.univote.common.DecodedVotes;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.dov;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.helper.XMLHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  *
@@ -25,35 +21,23 @@ public class DecodedVotesTask extends WahlGenerator {
     public static void run() throws Exception {
         // election id
         dov.setElectionId(ConfigHelper.getElectionId());
-        
-        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
+
+       for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
             DecodedVote dv = new DecodedVote();
-            for (int j = 1; j < 4; j++) {
-                DecodedVoteEntry dve = new DecodedVoteEntry();
-                int x = (int) (Math.random()*3+1);
-                int y = (int) (Math.random()*3+1);
-                dve.setChoiceId(x);
-                dve.setCount(y);
-                dv.getEntry().add(dve);
+            for (int j = 0; j < 2; j++) {
+
+            int x = (int) (Math.random() * 3 + 1);
+            int y = (int) (Math.random() * 3 + 1);
+            DecodedVoteEntry dve = new DecodedVoteEntry();
+            dve.setChoiceId(1);
+            dve.setCount(3);
+            dv.getEntry().add(dve);
+
             }
+            
             dov.getDecodedVote().add(dv);
         }
         
-        signDecodedVotes(dov);
-        writeDecodedVotes(dov);
-    }
-        private static void signDecodedVotes(DecodedVotes dov) throws Exception {
         dov.setSignature(SignatureGenerator.createSignature(dov, electionManagerPrivateKey));
-    }
-
-    private static void writeDecodedVotes(DecodedVotes dov) {
-        try {
-            PrintWriter writer = new PrintWriter(ConfigHelper.getDecodedVotesPath(), ConfigHelper.getCharEncoding());
-            writer.println(XMLHelper.serialize(dov));
-            writer.close();
-            System.out.println("Die Wahlzettel wurden in die Datei " + ConfigHelper.getDecodedVotesPath() + " geschrieben");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -31,6 +31,7 @@ import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
 import ch.bfh.univote.election.ElectionBoardServiceFault;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
+import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.knownElectionIds;
 import java.math.BigInteger;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -60,7 +61,7 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
 
     public KnownElectionIds getKnownElectionIds() throws ElectionBoardServiceFault {
 
-        return WahlGenerator.kei;
+        return WahlGenerator.knownElectionIds;
     }
 
     public ElectionSystemInfo getElectionSystemInfo(String electionId) throws ElectionBoardServiceFault {
@@ -75,7 +76,7 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
 
     public EncryptionParameters getEncryptionParameters(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.ep;
+        return WahlGenerator.encryptionParameters;
     }
 
     public EncryptionKeyShare getEncryptionKeyShare(String electionId, String tallierId) throws ElectionBoardServiceFault {

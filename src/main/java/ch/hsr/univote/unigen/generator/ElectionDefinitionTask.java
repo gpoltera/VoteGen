@@ -39,9 +39,8 @@ public class ElectionDefinitionTask extends WahlGenerator {
         if (!verifyDefinition(definition)) {
             return;
         }
-        signDefinition(definition);
-        writeDefinition(definition);
-        submitDefinition(definition);
+        definition.setSignature(SignatureGenerator.createSignature(definition, electionAdministratorPrivateKey));
+        ed = definition;
     }
 
     private static ElectionDefinition createDefinition() {
@@ -96,24 +95,5 @@ public class ElectionDefinitionTask extends WahlGenerator {
         }
         System.out.println();
         return result;
-    }
-
-    private static void signDefinition(ElectionDefinition definition) throws Exception {
-        definition.setSignature(SignatureGenerator.createSignature(definition, electionAdministratorPrivateKey));
-    }
-
-    private static void writeDefinition(ElectionDefinition definition) {
-        try {
-            PrintWriter writer = new PrintWriter(ConfigHelper.getElectionDefinitionPath(), ConfigHelper.getCharEncoding());
-            writer.println(XMLHelper.serialize(definition));
-            writer.close();
-            System.out.println("Die Wahldefinition wurde in die Datei " + ConfigHelper.getElectionDefinitionPath() + " geschrieben");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void submitDefinition(ElectionDefinition definition) {
-        WahlGenerator.addElectionDefinition(definition);
     }
 }

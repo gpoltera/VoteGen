@@ -6,14 +6,12 @@
 
 package ch.hsr.univote.unigen.generator;
 
-import ch.bfh.univote.common.ElectionGenerator;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.eg;
+import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.mixers;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.helper.XMLHelper;
+import ch.hsr.univote.unigen.krypto.SchnorrSignature;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigInteger;
 
 /**
@@ -23,20 +21,22 @@ import java.math.BigInteger;
 public class ElectionGeneratorTask extends WahlGenerator {
      public static void run() throws Exception {
         eg.setElectionId(ConfigHelper.getElectionId());
-        eg.setGenerator(BigInteger.TEN);
-        eg.setSignature(SignatureGenerator.createSignature(eg, electionManagerPrivateKey));
+        BigInteger g = signatureParameters.getGenerator();
         
-        writeElectionGenerator(eg);
-    }
+        for (int i = 0; i < mixers.length; i++) {
+            BigInteger keyPair[] = SchnorrSignature.getKeyPair(
+                    signatureParameters.getPrime(), 
+                    signatureParameters.getGroupOrder(), 
+                    g);
+            mixersSignatureKey[i] = keyPair[0];
+            mixersVerificationKey[i] = keyPair[1];
 
-    private static void writeElectionGenerator(ElectionGenerator electionGenerator) {
-        try {
-            PrintWriter writer = new PrintWriter(ConfigHelper.getElectionGeneratorPath(), ConfigHelper.getCharEncoding());
-            writer.println(XMLHelper.serialize(electionGenerator));
-            writer.close();
-            System.out.println("Der ElectionGenerator wurde in die Datei " + ConfigHelper.getElectionGeneratorPath() + " geschrieben");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            g = g.modPow(mixersSignatureKey[i], signatureParameters.getPrime());
+            
+            mixersGenerator[i] = g;
         }
+        
+        eg.setGenerator(g);
+        eg.setSignature(SignatureGenerator.createSignature(eg, electionManagerPrivateKey));
     }
 }

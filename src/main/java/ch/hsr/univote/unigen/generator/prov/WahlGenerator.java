@@ -8,6 +8,7 @@ package ch.hsr.univote.unigen.generator.prov;
 import ch.bfh.univote.common.Ballot;
 import ch.bfh.univote.common.Ballots;
 import ch.bfh.univote.common.BlindedGenerator;
+import ch.bfh.univote.common.Candidate;
 import ch.bfh.univote.common.Certificate;
 import ch.bfh.univote.common.DecodedVotes;
 import ch.bfh.univote.common.DecryptedVotes;
@@ -27,6 +28,7 @@ import ch.bfh.univote.common.MixedEncryptedVotes;
 import ch.bfh.univote.common.MixedVerificationKey;
 import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
+import ch.bfh.univote.common.PoliticalList;
 import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SignatureParameters;
 import ch.bfh.univote.common.VerificationKeys;
@@ -57,6 +59,9 @@ import ch.hsr.univote.unigen.generator.SignatureParametersTask;
 import ch.hsr.univote.unigen.generator.SingleBallotTask;
 import ch.hsr.univote.unigen.generator.VoterCertsTask;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.krypto.ElGamal;
+import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
@@ -70,12 +75,11 @@ public class WahlGenerator {
 
     public static SignatureParameters signatureParameters = new SignatureParameters();
     public static Certificate cert = new Certificate();
-    public static Certificate cert2 = new Certificate();
     public static ElectionSystemInfo esi = new ElectionSystemInfo();
     public static ElectionDefinition ed = new ElectionDefinition();
-    public static EncryptionParameters ep = new EncryptionParameters();
+    public static EncryptionParameters encryptionParameters = new EncryptionParameters();
     public static EncryptionKeyShare eks = new EncryptionKeyShare();
-    public static KnownElectionIds kei = new KnownElectionIds();
+    public static KnownElectionIds knownElectionIds = new KnownElectionIds();
     public static Ballots bts = new Ballots();
     public static Ballot bt = new Ballot();
     public static VoterCertificates vc = new VoterCertificates();
@@ -105,6 +109,7 @@ public class WahlGenerator {
     public static PartiallyDecryptedVotes[] partiallyDecryptedVotesList = new PartiallyDecryptedVotes[talliers.length];
     public static MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[mixers.length];
 
+    public static KeyPair caKeyPair;
     public static RSAPrivateKey certificateAuthorityPrivateKey;
     public static RSAPublicKey certificateAuthorityPublicKey;
 
@@ -123,61 +128,78 @@ public class WahlGenerator {
     public static RSAPrivateKey[] votersPrivateKey = new RSAPrivateKey[ConfigHelper.getVotersNumber()];
     public static RSAPublicKey[] votersPublicKey = new RSAPublicKey[ConfigHelper.getVotersNumber()];
 
+    public static List<PoliticalList> politicalLists = new ArrayList<PoliticalList>();
+    public static List<Candidate> candidateList = new ArrayList<Candidate>();
+
+    public static BigInteger[] talliersDecryptionKey = new BigInteger[talliers.length];
+    public static BigInteger[] talliersEncryptionKey = new BigInteger[talliers.length];
+
+    public static BigInteger[] mixersSignatureKey = new BigInteger[mixers.length];
+    public static BigInteger[] mixersVerificationKey = new BigInteger[mixers.length];
+    public static BigInteger[] mixersGenerator = new BigInteger[mixers.length];
+
     public static void run() throws Exception {
+            
+        //Add the election id
+        knownElectionIds.getElectionId().add(ConfigHelper.getElectionId());
 
-        kei.getElectionId().add(ConfigHelper.getElectionId());
-        //Certificates
-        ElectionSystemInfoTask.run();
+        //Generate the certificates
+        ElectionSystemInfoTask.run(); // -> OK
 
-        //Voter Certificates
-        VoterCertsTask.run();
-
-        //ElGamal Parameter
-        EncryptionParametersTask.run();
-
-        //ElectionOptions
-        ElectionOptionsTask.run();
-        ElectionDataTask.run();
-
-        BallotsTask.run();
-        BlindedGeneratorTask.run();
+        /* 1.3.3 Registration */
+        VoterCertsTask.run(); //Generate the voters certificates -> OK
+                
+        /* 1.3.4 Election Setup */
+        //b) Election Definition 
+        ElectionDefinitionTask.run(); // -> OK
         
-        DecryptedVotesTask.run();
-
-        ElectionDefinitionTask.run();
-        ElectionGeneratorTask.run();
-
-        ElectoralRollTask.run();
-        EncryptedVotesTask.run();
+        //c) Parameter Generation
+        EncryptionParametersTask.run(); //Set the ElGamal Parameters -> OK
         
-        //Encryption Key
-        EncryptionKeyTask.run();
-        EncryptionKeyShareTask.run();
+        //d) Distributed Key Generation
+        EncryptionKeyTask.run(); // -> OK
+        EncryptionKeyShareTask.run(); // -> OK
+        
+        SignatureParametersTask.run(); //Set the Schnorr Parameters -> OK
+        
+        //e) Constructing the Election Generator
+        ElectionGeneratorTask.run(); // -> OK
+        BlindedGeneratorTask.run(); // -> OK
+        
+        /* 1.3.5 Election Preparation */
+        //a) Definition of Election Options
+        ElectionOptionsTask.run(); //Set the ElectionOptions -> OK
+        
+        //b) Publication of Election Data
+        ElectionDataTask.run(); //Add the results to the electionData -> OK
 
-        MixedEncryptedVotesByTask.run();
+        //c) Electoral Roll Preparation       
+        ElectoralRollTask.run(); //Lists the votersid -> OK
+        
+        //d) Mixing the Public Verification Keys
         MixedVerificationKeysTask.run();
         MixedVerificationKeysByTask.run();
-        PartiallyDecryptedVotesTask.run();
-        SignatureParametersTask.run();
-        SingleBallotTask.run();
+        
+        /* 1.3.6 Election Period */
+        //a) Late Registration
+        LatelyRegistredVoterCertsTask.run(); //NOT YET IMPLEMENTED
+        LatelyMixedVerificationKeysTask.run(); //NOT YET IMPLEMENTED
+        LatelyMixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
 
-        LatelyMixedVerificationKeysTask.run();
-        LatelyMixedVerificationKeysByTask.run();
-        LatelyRegistredVoterCertsTask.run();
+        //c) Vote Creation and Casting
+        BallotsTask.run(); //Create the ballots
+        SingleBallotTask.run();
+        EncryptedVotesTask.run();
+        
+        /* 1.3.7 Mixing and Tallying */
+        //a) Mixing the Encryptions
+        MixedEncryptedVotesByTask.run();
+        
+        //b) Decrypting the Votes
+        PartiallyDecryptedVotesTask.run();  
+        DecryptedVotesTask.run();
         DecodedVotesTask.run();
         
-        ElectionResultsTask.run();
-    }
-
-    public static void addElectionDefinition(ElectionDefinition definition) {
-        ed = definition;
-    }
-
-    public static void addElectionOptions(ElectionOptions options) {
-        eo = options;
-    }
-
-    public static void addElectionRoll(ElectoralRoll roll) {
-        er = roll;
+        ElectionResultsTask.run(); //Performing the election results     
     }
 }

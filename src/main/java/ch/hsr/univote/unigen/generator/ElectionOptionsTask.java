@@ -56,9 +56,8 @@ public class ElectionOptionsTask extends WahlGenerator {
         }
         boolean partyListSystem = ConfigHelper.getPartyListSystemIndicator();
         ElectionOptions options = createOptions(lists, partyListSystem);
-        signOptions(options);
-        writeOptions(options);
-        submitOptions(options);
+        options.setSignature(SignatureGenerator.createSignature(options, electionAdministratorPrivateKey));
+        eo = options;
     }
 
     private static List<CandidateList> getCandidateLists() throws FileNotFoundException, FormatException {
@@ -262,27 +261,6 @@ public class ElectionOptionsTask extends WahlGenerator {
         options.getRule().add(candidateSummationRule);
         options.getRule().add(candidateForallRule);
         return options;
-    }
-
-    private static void signOptions(ElectionOptions options) throws Exception {
-        //sign by election-admin
-        Signature signature = SignatureGenerator.createSignature(options, electionAdministratorPrivateKey);
-        options.setSignature(signature);
-    }
-
-    private static void writeOptions(ElectionOptions options) {
-        try {
-            PrintWriter writer = new PrintWriter(ConfigHelper.getElectionOptionsPath(), ConfigHelper.getCharEncoding());
-            writer.println(XMLHelper.serialize(options));
-            writer.close();
-            System.out.println("Die Wahloptionen wurden in die Datei " + ConfigHelper.getElectionOptionsPath() + " geschrieben");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    private static void submitOptions(ElectionOptions options) {
-        WahlGenerator.addElectionOptions(options);
     }
 }
 

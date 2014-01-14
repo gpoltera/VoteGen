@@ -11,8 +11,12 @@ import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.mixedVerificationKeysList;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.mixers;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import static ch.hsr.univote.unigen.krypto.CertificateHelperOrig.fromByteArrayToX509Certificate;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
+import java.security.cert.X509Certificate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -24,13 +28,13 @@ public class MixedVerificationKeysByTask extends WahlGenerator {
         for (int i = 0; i < mixers.length; i++) {
             MixedVerificationKeys mixedVerificationKeys = new MixedVerificationKeys();
             mixedVerificationKeys.setElectionId(ConfigHelper.getElectionId());
-            for (int j = 0; j < ConfigHelper.getVotersNumber(); j++) {
-                mixedVerificationKeys.getKey().add(BigInteger.TEN);
-            }
+            
             Proof proof = new Proof();
-            proof.getCommitment().add(BigInteger.TEN);
-            proof.getCommitment().add(BigInteger.TEN);
-            proof.getResponse().add(BigInteger.TEN);
+            
+            for (int j = 0; j < ConfigHelper.getVotersNumber(); j++) {
+                mixedVerificationKeys.getKey().add(new BigInteger(votersPublicKey[j].getEncoded()));
+            }
+           
             mixedVerificationKeys.setProof(proof);
             mixedVerificationKeys.setSignature(SignatureGenerator.createSignature(mixers[i], mixedVerificationKeys, mixersPrivateKey[i]));
             mixedVerificationKeysList[i] = mixedVerificationKeys;

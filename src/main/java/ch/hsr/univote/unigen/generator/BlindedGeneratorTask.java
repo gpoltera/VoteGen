@@ -6,46 +6,38 @@
 package ch.hsr.univote.unigen.generator;
 
 import ch.bfh.univote.common.BlindedGenerator;
-import ch.bfh.univote.common.Proof;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.sg;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.helper.XMLHelper;
+import ch.hsr.univote.unigen.krypto.ProofGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigInteger;
 
 /**
  *
  * @author Gian Poltéra
  */
-public class BlindedGeneratorTask extends WahlGenerator{
+public class BlindedGeneratorTask extends WahlGenerator {
 
-    public static void run() throws Exception {   
+    public static void run() throws Exception {
+        BigInteger previousGenerator;
         for (int i = 0; i < mixers.length; i++) {
             BlindedGenerator blindedGenerator = new BlindedGenerator();
             blindedGenerator.setElectionId(ConfigHelper.getElectionId());
-            blindedGenerator.setGenerator(BigInteger.TEN);
-            Proof proof = new Proof();
-            proof.getCommitment().add(BigInteger.TEN);
-            proof.getResponse().add(BigInteger.TEN);
-            
-            blindedGenerator.setProof(proof);
+            blindedGenerator.setGenerator(mixersGenerator[i]);
+            if (i == 0) {
+                previousGenerator = WahlGenerator.signatureParameters.getGenerator();
+            } else {
+                previousGenerator = mixersGenerator[i - 1];
+            }
+            blindedGenerator.setProof(ProofGenerator.getProof(
+                    mixers[i],
+                    mixersSignatureKey[i],
+                    mixersVerificationKey[i],
+                    WahlGenerator.signatureParameters.getPrime(),
+                    WahlGenerator.signatureParameters.getGroupOrder(),
+                    previousGenerator));
             blindedGenerator.setSignature(SignatureGenerator.createSignature(mixers[i], blindedGenerator, mixersPrivateKey[i]));
             blindedGeneratorsList[i] = blindedGenerator;
-        }
-        //writeBlindedGenerator(bg);
-    }
-
-    private static void writeBlindedGenerator(BlindedGenerator blindedGenerator) {
-        try {
-            PrintWriter writer = new PrintWriter(ConfigHelper.getBlindedGeneratorPath(), ConfigHelper.getCharEncoding());
-            writer.println(XMLHelper.serialize(blindedGenerator));
-            writer.close();
-            System.out.println("Der BlindedGenerator wurde in die Datei " + ConfigHelper.getBallotsPath() + " geschrieben");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

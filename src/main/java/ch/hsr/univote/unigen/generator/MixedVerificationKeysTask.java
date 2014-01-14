@@ -20,9 +20,11 @@ public class MixedVerificationKeysTask extends WahlGenerator {
     public static void run() throws Exception {
 
         vk.setElectionId(ConfigHelper.getElectionId());
-        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
-            vk.getKey().add(BigInteger.TEN);
+        
+        for (int i = 0; i < mixers.length; i++) {
+            vk.getKey().add(mixersVerificationKey[i]);
         }
+        
         vk.setSignature(SignatureGenerator.createSignature(vk, electionManagerPrivateKey));
     }
 }

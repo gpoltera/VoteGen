@@ -5,6 +5,7 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,9 +15,20 @@ import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
  *
  * @author Gian
  */
-public class SchnorrSignatur {
+public class SchnorrSignature {
 
-    private static final BigInteger[] sign(BigInteger m, BigInteger p, BigInteger q, BigInteger g, BigInteger sk) throws NoSuchAlgorithmException {
+    public static BigInteger[] getKeyPair(BigInteger p, BigInteger q, BigInteger g) {
+        BigInteger[] keyPair = new BigInteger[2];
+        BigInteger sk = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger vk = g.modPow(sk, p);
+
+        keyPair[0] = sk;
+        keyPair[1] = vk;
+
+        return keyPair;
+    }
+
+    private static BigInteger[] sign(BigInteger m, BigInteger p, BigInteger q, BigInteger g, BigInteger sk) throws NoSuchAlgorithmException {
 
         BigInteger r = PrimeGenerator.getPrime(1024).mod(q);
         byte[] gr = g.modPow(r, p).toByteArray();

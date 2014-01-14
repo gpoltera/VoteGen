@@ -5,23 +5,20 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
+import ch.bfh.univote.common.ElectionDefinition;
+import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.math.BigInteger;
-import java.security.Key;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.Signature;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
+import java.util.ArrayList;
+import java.util.List;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
@@ -34,16 +31,20 @@ public class RSA {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    // Noch anpassen
+    //get a new RSA KeyPair
     public static KeyPair getRSAKeyPair() throws Exception {
-
         KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(ConfigHelper.getSignatureKeyType());
         keyGenerator.initialize(ConfigHelper.getSignatureKeyLength());
         KeyPair keyPair = keyGenerator.generateKeyPair();
 
-        
         return keyPair;
     }
-    
-    // todo save in db
+
+    //sign the hash over the value with RSA
+    public static BigInteger signRSA(String value, RSAPrivateKey privateKey) throws NoSuchAlgorithmException {
+        BigInteger hash = Hash.getSHA256(value);
+        BigInteger signature = hash.modPow(privateKey.getPrivateExponent(), privateKey.getModulus());
+
+        return signature;
+    }
 }

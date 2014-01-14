@@ -6,19 +6,18 @@
 
 package ch.hsr.univote.unigen.krypto;
 
-import ch.bfh.univote.common.Certificate;
-import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Calendar;
 import java.util.Date;
 import javax.security.auth.x500.X500Principal;
@@ -43,13 +42,12 @@ public class CertificateGenerator {
 keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -alias vsuzh -file data\output\vsuzh.pem
      */
 
-    public static String main(String alias, KeyPair keyPair) throws Exception {
+    public static String main(String alias, RSAPrivateKey privateKey, RSAPublicKey publicKey) throws Exception {
         // @Stephan: Please adapt...
         CertificateGenerator ku = new CertificateGenerator();
-        X509Certificate cert = ku.createCertitificate("CN=" + ConfigHelper.getElectionId(), keyPair);
+        X509Certificate cert = ku.createCertitificate("CN=" + ConfigHelper.getElectionId(), privateKey, publicKey);
         KeyStore ks = ku.createAndPopulateKeyStore(cert, alias);
         String pem = ku.x509ToBase64PEMString(cert);
-        System.out.println(pem);
         
         return pem;
     }
@@ -61,7 +59,7 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
      * @return an X%09 V1 certificate
      * @throws Exception
      */
-    public X509Certificate createCertitificate(String cname, KeyPair keyPair)
+    public X509Certificate createCertitificate(String cname, RSAPrivateKey privateKey, RSAPublicKey publicKey)
         throws Exception
     {
         // See also:
@@ -93,12 +91,11 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
         certGenerator.setNotBefore(startDate);
         certGenerator.setNotAfter(expiryDate);
         certGenerator.setSubjectDN(dnName);     // note: same as issuer
-        certGenerator.setPublicKey(keyPair.getPublic());
+        certGenerator.setPublicKey(publicKey);
         certGenerator.setSignatureAlgorithm(SIGNATUREALGSPEC);
 
         // get certificate
-        X509Certificate cert = certGenerator.generate(keyPair.getPrivate(), "BC");
-        //System.out.println("PRIVATER KEY: " + keyPair.getPrivate());
+        X509Certificate cert = certGenerator.generate(privateKey, "BC");
         return cert;
     }
 

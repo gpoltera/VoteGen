@@ -6,11 +6,13 @@
 
 package ch.hsr.univote.unigen.generator;
 
+import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
+
 /**
  *
  * @author Gian Poltéra
  */
-public class LatelyRegistredVoterCertsTask {
+public class LatelyRegistredVoterCertsTask extends WahlGenerator {
     public static void run() throws Exception {
         
     }

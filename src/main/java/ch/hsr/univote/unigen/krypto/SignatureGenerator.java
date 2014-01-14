@@ -101,7 +101,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -211,7 +211,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -234,7 +234,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -283,7 +283,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -309,7 +309,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -439,7 +439,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -501,7 +501,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -520,7 +520,7 @@ public class SignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -545,7 +545,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -582,7 +582,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -602,7 +602,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -631,7 +631,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -652,7 +652,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -686,7 +686,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -717,7 +717,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -748,7 +748,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
         return signature;
     }
 
@@ -776,7 +776,7 @@ public class SignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -821,7 +821,7 @@ public class SignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }
@@ -852,7 +852,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSASignatur.signRSA(res, privateKey));
+        signature.setValue(RSA.signRSA(res, privateKey));
 
         return signature;
     }

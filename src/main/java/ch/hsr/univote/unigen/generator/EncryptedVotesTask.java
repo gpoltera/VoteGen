@@ -21,7 +21,7 @@ public class EncryptedVotesTask extends WahlGenerator {
     public static void run() throws Exception {
         ev.setElectionId(ConfigHelper.getElectionId());
         
-        for (int i = 1; i <= ConfigHelper.getVotersNumber(); i++) {
+        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
             EncryptedVote encryptedVote = new EncryptedVote();
             encryptedVote.setFirstValue(BigInteger.TEN);
             encryptedVote.setSecondValue(BigInteger.TEN);

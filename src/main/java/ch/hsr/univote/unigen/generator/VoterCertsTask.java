@@ -6,22 +6,14 @@
 package ch.hsr.univote.unigen.generator;
 
 import ch.bfh.univote.common.Certificate;
-import ch.bfh.univote.common.Signature;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
 import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.esi;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.talliers;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.talliersPrivateKey;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.talliersPublicKey;
 import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.vc;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator2.electionSystemInfo;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.CertificateGenerator;
-import ch.hsr.univote.unigen.krypto.CertificateHelperOrig;
 import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import java.security.Key;
 import java.security.KeyPair;
-import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -38,8 +30,9 @@ public class VoterCertsTask extends WahlGenerator{
             KeyPair keyPair = RSA.getRSAKeyPair();
             votersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
             votersPublicKey[i] = (RSAPublicKey) keyPair.getPublic();
+                               
             Certificate certificate = new Certificate();
-            certificate.setValue(CertificateGenerator.main("voter" + i+1, keyPair).getBytes());
+            certificate.setValue(CertificateGenerator.main("voter" + i + 1, certificateAuthorityPrivateKey, votersPublicKey[i]).getBytes());
             vc.getCertificate().add(certificate);
         }
         

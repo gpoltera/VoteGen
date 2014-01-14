@@ -32,10 +32,11 @@ public class ElectionSystemInfoTask extends WahlGenerator {
 
         //CertificateAuthority
         KeyPair caKeyPair = RSA.getRSAKeyPair();
+        WahlGenerator.caKeyPair = caKeyPair;
         certificateAuthorityPrivateKey = (RSAPrivateKey) caKeyPair.getPrivate();
         certificateAuthorityPublicKey = (RSAPublicKey) caKeyPair.getPublic();
         Certificate caCertificate = new Certificate();
-        caCertificate.setValue(CertificateGenerator.main(ConfigHelper.getCertificateAuthorityId(), caKeyPair).getBytes());
+        caCertificate.setValue(CertificateGenerator.main(ConfigHelper.getCertificateAuthorityId(), certificateAuthorityPrivateKey, certificateAuthorityPublicKey).getBytes());
         esi.setCertificateAuthority(caCertificate);
 
         //ElectionManager
@@ -43,7 +44,7 @@ public class ElectionSystemInfoTask extends WahlGenerator {
         electionManagerPrivateKey = (RSAPrivateKey) emKeyPair.getPrivate();
         electionManagerPublicKey = (RSAPublicKey) emKeyPair.getPublic();
         Certificate emCertificate = new Certificate();
-        emCertificate.setValue(CertificateGenerator.main(ConfigHelper.getElectionManagerId(), emKeyPair).getBytes());
+        emCertificate.setValue(CertificateGenerator.main(ConfigHelper.getElectionManagerId(), electionManagerPrivateKey, electionManagerPublicKey).getBytes());
         esi.setElectionManager(emCertificate);
 
         //ElectionAdministrator
@@ -51,7 +52,7 @@ public class ElectionSystemInfoTask extends WahlGenerator {
         electionAdministratorPrivateKey = (RSAPrivateKey) eaKeyPair.getPrivate();
         electionAdministratorPublicKey = (RSAPublicKey) eaKeyPair.getPublic();
         Certificate eaCertificate = new Certificate();
-        eaCertificate.setValue(CertificateGenerator.main(ConfigHelper.getElectionAdministratorId(), eaKeyPair).getBytes());
+        eaCertificate.setValue(CertificateGenerator.main(ConfigHelper.getElectionAdministratorId(), electionAdministratorPrivateKey, electionAdministratorPublicKey).getBytes());
         esi.setElectionAdministration(eaCertificate);
 
         //Mixers
@@ -60,7 +61,7 @@ public class ElectionSystemInfoTask extends WahlGenerator {
             mixersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
             mixersPublicKey[i] = (RSAPublicKey) keyPair.getPublic();
             Certificate certificate = new Certificate();
-            certificate.setValue(CertificateGenerator.main(mixers[i], keyPair).getBytes());
+            certificate.setValue(CertificateGenerator.main(mixers[i], mixersPrivateKey[i], mixersPublicKey[i]).getBytes());
             esi.getMixer().add(certificate);
         }
 
@@ -70,7 +71,7 @@ public class ElectionSystemInfoTask extends WahlGenerator {
             talliersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
             talliersPublicKey[i] = (RSAPublicKey) keyPair.getPublic();
             Certificate certificate = new Certificate();
-            certificate.setValue(CertificateGenerator.main(talliers[i], keyPair).getBytes());
+            certificate.setValue(CertificateGenerator.main(talliers[i], talliersPrivateKey[i], talliersPublicKey[i]).getBytes());
             esi.getTallier().add(certificate);
         }
 
