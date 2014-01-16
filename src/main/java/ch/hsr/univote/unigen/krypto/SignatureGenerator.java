@@ -36,9 +36,9 @@ import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SummationRule;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
-import ch.hsr.univote.unigen.common.StringConcatenator;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
-import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
+import ch.hsr.univote.unigen.helper.StringConcatenator;
+import ch.hsr.univote.unigen.helper.TimestampGenerator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -320,7 +320,7 @@ public class SignatureGenerator {
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //change this when it will be available - ToDo
-        String eaIdentifier = WahlGenerator.eo.getSignature().getSignerId();
+        String eaIdentifier = ElectionBoard.eo.getSignature().getSignerId();
 
         //concatenate to (id|EA|descr|P|Q|G|y|g^|(c1|...|cn)|(r1|...|rn))|timestamp
         StringConcatenator sc = new StringConcatenator();
@@ -540,8 +540,6 @@ public class SignatureGenerator {
         sc.pushInnerDelim();
         sc.pushRightDelim();
         sc.pushInnerDelim();
-        //get the timestamp when we will know where it is
-        //sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
 

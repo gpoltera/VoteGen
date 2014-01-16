@@ -8,9 +8,9 @@ package ch.hsr.univote.unigen.krypto;
 import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.bfh.univote.common.Proof;
-import ch.hsr.univote.unigen.common.StringConcatenator;
-import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.signatureParameters;
+import ch.hsr.univote.unigen.helper.StringConcatenator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import static ch.hsr.univote.unigen.board.ElectionBoard.signatureParameters;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
@@ -52,19 +52,35 @@ public class ProofGenerator {
         return proof;
     }
     
-    public static Proof getProof(String tallierName, EncryptionKeyShare encryptionKeyShare, PartiallyDecryptedVotes partiallyDecryptedVotes) {
+    public static Proof getProof(String tallierName, BigInteger a, EncryptionKeyShare encryptionKeyShare, PartiallyDecryptedVotes partiallyDecryptedVotes, BigInteger p, BigInteger q, BigInteger g) throws NoSuchAlgorithmException {
+        Proof proof = new Proof();
         
-        
-        
+        BigInteger w = PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength());
         
         StringConcatenator sc = new StringConcatenator();
-        
         sc.pushObject(encryptionKeyShare.getKey());
         
         for (int i = 0; i < partiallyDecryptedVotes.getVote().size(); i++) {
-            //sc.pushObject(partiallyDecryptedVotes.getProof())
+            sc.pushObject(partiallyDecryptedVotes.getVote().get(i));
+            BigInteger t = g.modPow(w, p);
+            // Proof commitment
+            proof.getCommitment().add(t);
         }
         
-        return null;
+        for (int i = 0; i < proof.getCommitment().size(); i++) {
+            sc.pushObject(proof.getCommitment().get(i));
+        }
+        
+        sc.pushObject(tallierName);
+        
+        String res = sc.pullAll();
+        
+        BigInteger c = Hash.getSHA256(res).mod(q);
+        BigInteger s = c.multiply(a).add(w);
+        
+        
+        proof.getResponse().add(s);
+        
+        return proof;
     }
 }

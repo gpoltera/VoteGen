@@ -28,33 +28,6 @@ public class MillerRabin {
     private static final BigInteger BIGINT61 = BigInteger.valueOf(61);  
     private static final BigInteger BIGINT73 = BigInteger.valueOf(73); 
 
-    public static void main(String[] args) {
-        int k = 0;
-        int u = 0;
-        int a = 0;
-        int w = 100000000;
-        int r = 100000000;
-        int l = w - r;
-        for (int i = l; i < w; i++) {
-            double j = w - l;
-            double z = ((i - l) / j * 100);
-            int g = (int) z;
-            k++;
-            if (r / 10 == k) {
-                System.out.println(g + "%");
-                k = 0;
-            }
-            if (millerRabinTest(BigInteger.valueOf(i), 3)) {
-                u++;
-                if (!BigInteger.valueOf(i).isProbablePrime(2)) {
-                    a++;
-                }
-            }
-        }
-        System.out.println("Gefundene Primzahlen: " + u);
-        System.out.println("Falsche Zahlen gefunden: " + a);
-    }
-
     public static boolean millerRabinTest(BigInteger n, int s) {
         if (n.equals(BIGINT2) || n.equals(BIGINT3) || n.equals(BIGINT5) || n.equals(BIGINT7)) {
             return true;
@@ -97,7 +70,6 @@ public class MillerRabin {
     //n = natuerliche ungerade Zahl groesser 2 als Funktion einbinden
     private static boolean isPrime(BigInteger n, BigInteger a) {
         int j = 0;
-        //n-1
         BigInteger n_1 = n.subtract(BIGINT1);
 
         while (n_1.divide(BIGINT2.pow(j)).mod(BIGINT2).compareTo(BIGINT0) == 0) {
@@ -106,12 +78,8 @@ public class MillerRabin {
 
         BigInteger d = n_1.divide(BIGINT2.pow(j));
 
-        //System.out.println("j: " + j);
-        //System.out.println("d: " + d);
-        //System.out.println(n_1 + "=" + d + "*2^" + j);
         BigInteger y0;
         BigInteger y1 = a.modPow(d, n);
-        //System.out.println(y1);
 
         if (y1.compareTo(BIGINT1) == 0) {
             return true;
@@ -123,8 +91,6 @@ public class MillerRabin {
         for (int i = 1; i < j; i++) {
             y0 = y1;
             y1 = y0.modPow(BIGINT2, n);
-            //System.out.println(y1);
-            //if (y1.compareTo(BigInteger.ONE) == 0 && y0.compareTo(BigInteger.ONE) != 0 && y0.compareTo(n_1) != 0) {
             if (y1.compareTo(n_1) == 0) {
                 return true;
             }

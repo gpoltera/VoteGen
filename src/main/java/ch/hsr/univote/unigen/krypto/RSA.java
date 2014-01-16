@@ -6,7 +6,7 @@
 package ch.hsr.univote.unigen.krypto;
 
 import ch.bfh.univote.common.ElectionDefinition;
-import ch.hsr.univote.unigen.generator.prov.TimestampGenerator;
+import ch.hsr.univote.unigen.helper.TimestampGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 import java.security.KeyPair;

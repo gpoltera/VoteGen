@@ -30,9 +30,9 @@ import ch.bfh.univote.common.SignatureParameters;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
 import ch.bfh.univote.election.ElectionBoardServiceFault;
-import ch.hsr.univote.unigen.generator.prov.WahlGenerator;
-import static ch.hsr.univote.unigen.generator.prov.WahlGenerator.knownElectionIds;
+import static ch.hsr.univote.unigen.board.ElectionBoard.knownElectionIds;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
@@ -51,39 +51,39 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
 
     public SignatureParameters getSignatureParameters() throws ElectionBoardServiceFault {
 
-        return WahlGenerator.signatureParameters;
+        return ElectionBoard.signatureParameters;
     }
 
     public Certificate getRootCertificate() throws ElectionBoardServiceFault {
 
-        return WahlGenerator.cert;
+        return ElectionBoard.cert;
     }
 
     public KnownElectionIds getKnownElectionIds() throws ElectionBoardServiceFault {
 
-        return WahlGenerator.knownElectionIds;
+        return ElectionBoard.knownElectionIds;
     }
 
     public ElectionSystemInfo getElectionSystemInfo(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.esi;
+        return ElectionBoard.esi;
     }
 
     public ElectionDefinition getElectionDefinition(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.ed;
+        return ElectionBoard.ed;
     }
 
     public EncryptionParameters getEncryptionParameters(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.encryptionParameters;
+        return ElectionBoard.encryptionParameters;
     }
 
     public EncryptionKeyShare getEncryptionKeyShare(String electionId, String tallierId) throws ElectionBoardServiceFault {
         EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
-        for (int i = 0; i < WahlGenerator.talliers.length; i++) {
-            if (WahlGenerator.talliers[i].equals(tallierId)) {
-                encryptionKeyShare = WahlGenerator.encryptionKeyShareList[i];
+        for (int i = 0; i < ElectionBoard.talliers.length; i++) {
+            if (ElectionBoard.talliers[i].equals(tallierId)) {
+                encryptionKeyShare = ElectionBoard.encryptionKeyShareList[i];
             }
         }
 
@@ -92,14 +92,14 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
 
     public EncryptionKey getEncryptionKey(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.ek;
+        return ElectionBoard.ek;
     }
 
     public BlindedGenerator getBlindedGenerator(String electionId, String mixerId) throws ElectionBoardServiceFault {
         BlindedGenerator blindedGenerator = new BlindedGenerator();
-        for (int i = 0; i < WahlGenerator.mixers.length; i++) {
-            if (WahlGenerator.mixers[i].equals(mixerId)) {
-                blindedGenerator = WahlGenerator.blindedGeneratorsList[i];
+        for (int i = 0; i < ElectionBoard.mixers.length; i++) {
+            if (ElectionBoard.mixers[i].equals(mixerId)) {
+                blindedGenerator = ElectionBoard.blindedGeneratorsList[i];
             }
         }
 
@@ -108,34 +108,35 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
 
     public ElectionGenerator getElectionGenerator(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.eg;
+        return ElectionBoard.eg;
     }
 
     public ElectionOptions getElectionOptions(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.eo;
+        return ElectionBoard.eo;
     }
 
     public ElectionData getElectionData(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.edat;
+        return ElectionBoard.edat;
     }
 
     public ElectoralRoll getElectoralRoll(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.er;
+        return ElectionBoard.er;
     }
 
     public VoterCertificates getVoterCertificates(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.vc;
+        return ElectionBoard.vc;
     }
 
     public MixedVerificationKeys getVerificationKeysMixedBy(String electionId, String mixerId) throws ElectionBoardServiceFault {
         MixedVerificationKeys mixedVerificationKeys = new MixedVerificationKeys();
-        for (int i = 0; i < WahlGenerator.mixers.length; i++) {
-            if (WahlGenerator.mixers[i].equals(mixerId)) {
-                mixedVerificationKeys = WahlGenerator.mixedVerificationKeysList[i];
+        for (int i = 0; i < ElectionBoard.mixers.length; i++) {
+            if (ElectionBoard.mixers[i].equals(mixerId)) {
+                mixedVerificationKeys = ElectionBoard.mixedVerificationKeysList[i];
+                break;
             }
         }
 
@@ -144,41 +145,54 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
 
     public VerificationKeys getMixedVerificationKeys(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.vk;
+        return ElectionBoard.vk;
     }
 
     public List<Certificate> getLatelyRegisteredVoterCertificates(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.lcert;
+        return ElectionBoard.lcert;
     }
 
     public List<MixedVerificationKey> getVerificationKeysLatelyMixedBy(String electionId, String mixerId) throws ElectionBoardServiceFault {
-        // HIER AUCH AENDERUNGEN
+        List<MixedVerificationKey> mixedVerificationKeys = new ArrayList<MixedVerificationKey>();
 
-        return WahlGenerator.lmvk;
+        for (int i = 0; i < ElectionBoard.mixers.length; i++) {
+            if (ElectionBoard.mixers[i].equals(mixerId)) {
+                mixedVerificationKeys.add(ElectionBoard.lmvk.get(i));
+                break;
+            }
+        }
+
+        return mixedVerificationKeys;
     }
 
     public List<MixedVerificationKey> getLatelyMixedVerificationKeys(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.lmvk;
+        return ElectionBoard.lmvk;
     }
 
     public Ballot getBallot(String electionId, BigInteger verificationKey) throws ElectionBoardServiceFault {
-        // HMM??
+        Ballot vkballot = null;
+        for (Ballot ballot : ElectionBoard.bts.getBallot()) {
+            if (ballot.getVerificationKey().equals(verificationKey)) {
+                vkballot = ballot;
+                break;
+            }
+        }
 
-        return WahlGenerator.bt;
+        return vkballot;
     }
 
     public Ballots getBallots(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.bts;
+        return ElectionBoard.bts;
     }
 
     public MixedEncryptedVotes getEncryptedVotesMixedBy(String electionId, String mixerId) throws ElectionBoardServiceFault {
         MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
-        for (int i = 0; i < WahlGenerator.mixers.length; i++) {
-            if (WahlGenerator.mixers[i].equals(mixerId)) {
-                mixedEncryptedVotes = WahlGenerator.mixedEncryptedVotesList[i];
+        for (int i = 0; i < ElectionBoard.mixers.length; i++) {
+            if (ElectionBoard.mixers[i].equals(mixerId)) {
+                mixedEncryptedVotes = ElectionBoard.mixedEncryptedVotesList[i];
             }
         }
 
@@ -187,14 +201,14 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
 
     public EncryptedVotes getEncryptedVotes(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.ev;
+        return ElectionBoard.ev;
     }
 
     public PartiallyDecryptedVotes getPartiallyDecryptedVotes(String electionId, String tallierId) throws ElectionBoardServiceFault {
         PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
-        for (int i = 0; i < WahlGenerator.talliers.length; i++) {
-            if (WahlGenerator.talliers[i].equals(tallierId)) {
-                partiallyDecryptedVotes = WahlGenerator.partiallyDecryptedVotesList[i];
+        for (int i = 0; i < ElectionBoard.talliers.length; i++) {
+            if (ElectionBoard.talliers[i].equals(tallierId)) {
+                partiallyDecryptedVotes = ElectionBoard.partiallyDecryptedVotesList[i];
             }
         }
 
@@ -203,11 +217,11 @@ public class ElectionBoardWebService implements ch.bfh.univote.election.Election
 
     public DecryptedVotes getDecryptedVotes(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.dyv;
+        return ElectionBoard.dyv;
     }
 
     public DecodedVotes getDecodedVotes(String electionId) throws ElectionBoardServiceFault {
 
-        return WahlGenerator.dov;
+        return ElectionBoard.dov;
     }
 }
