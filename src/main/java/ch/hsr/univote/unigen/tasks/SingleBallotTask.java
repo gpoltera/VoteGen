@@ -7,14 +7,10 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptedVote;
 import ch.bfh.univote.common.Proof;
-import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.VoterSignature;
 import static ch.hsr.univote.unigen.board.ElectionBoard.bt;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.RSA;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
-import java.security.interfaces.RSAPrivateKey;
 
 /**
  *

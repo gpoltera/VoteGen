@@ -12,9 +12,6 @@ import static ch.hsr.univote.unigen.board.ElectionBoard.mixedVerificationKeysLis
 import static ch.hsr.univote.unigen.board.ElectionBoard.mixers;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.math.BigInteger;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *

@@ -5,7 +5,6 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.bfh.univote.common.EncryptionParameters;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;

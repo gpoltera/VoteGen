@@ -28,7 +28,7 @@ import java.util.Scanner;
 public class ConfigHelper {
 
     private static final String SYSTEM_CONFIG_FILE = "system.properties";
-    private static final String ADMIN_CONFIG_FILE = "admin.properties";
+    private static final String FAULT_CONFIG_FILE = "fault.properties";
     private static Properties properties;
     private static Scanner scanner = new Scanner(System.in);
     private static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
@@ -36,7 +36,7 @@ public class ConfigHelper {
     public static String getCertificateAuthorityId() {
         return getProperty("certificateAuthorityId", "Identifikator der ZertifikatAuthority");
     }
-    
+
     public static String getElectionManagerId() {
         return getProperty("electionManagerId", "Identifikator des Wahlmanagers");
     }
@@ -201,6 +201,44 @@ public class ConfigHelper {
         return getIntProperty("voters", "Anzahl der Waehlenden");
     }
 
+    //Fault Config
+    public static boolean[] getFaults() {
+        boolean[] faults = new boolean[31];
+        faults[0] = getBooleanProperty("schnorrP_isprime", "schnorrP_isprime");
+        faults[1] = getBooleanProperty("schnorrQ_isprime", "schnorrQ_isprime");
+        faults[2] = getBooleanProperty("schnorrG_isgenerator", "schnorrG_isgenerator");
+        faults[3] = getBooleanProperty("schnorrP_issafeprime", "schnorrP_issafeprime");
+        faults[4] = getBooleanProperty("schnorrParameterLength", "schnorrParameterLength");
+        faults[5] = getBooleanProperty("elGamalP_isprime", "elGamalP_isprime");
+        faults[6] = getBooleanProperty("elGamalQ_isprime", "elGamalQ_isprime");
+        faults[7] = getBooleanProperty("elGamalG_isprime", "elGamalG_isprime");
+        faults[8] = getBooleanProperty("elGamalP_issafeprime", "elGamalP_issafeprime");
+        faults[9] = getBooleanProperty("elGamalParameterLength", "elGamalParameterLength");
+        faults[10] = getBooleanProperty("encryptionKey", "encryptionKey");
+        faults[11] = getBooleanProperty("electionGenerator", "electionGenerator");
+        faults[12] = getBooleanProperty("verificationKeys", "verificationKeys");
+        faults[13] = getBooleanProperty("caCertificate", "caCertificate");
+        faults[14] = getBooleanProperty("emCertificate", "emCertificate");
+        faults[15] = getBooleanProperty("eaCertificate", "eaCertificate");
+        faults[16] = getBooleanProperty("tallierCertificate", "tallierCertificate");
+        faults[17] = getBooleanProperty("mixerCertificate", "mixerCertificate");
+        faults[18] = getBooleanProperty("votersCertificate", "votersCertificate");
+        faults[19] = getBooleanProperty("eaCertificateSignature", "eaCertificateSignature");
+        faults[20] = getBooleanProperty("electionBasicParametersSignature", "electionBasicParametersSignature");
+        faults[21] = getBooleanProperty("tallierMixerCertificateSignature", "tallierMixerCertificateSignature");
+        faults[22] = getBooleanProperty("elGamalParameterSignature", "elGamalParameterSignature");
+        faults[23] = getBooleanProperty("tallierNIZKPSignature", "tallierNIZKPSignature");
+        faults[24] = getBooleanProperty("encryptionKeysSignature", "encryptionKeysSignature");
+        faults[25] = getBooleanProperty("mixersNIZKPBlindedGeneratorSignature", "mixersNIZKPBlindedGeneratorSignature");
+        faults[26] = getBooleanProperty("electionGeneratorSignature", "electionGeneratorSignature");
+        faults[27] = getBooleanProperty("electionOptionsSignature", "electionOptionsSignature");
+        faults[28] = getBooleanProperty("electionDataSignature", "electionDataSignature");
+        faults[29] = getBooleanProperty("tallierNIZKPEncryptionKeyShare", "tallierNIZKPEncryptionKeyShare");
+        faults[30] = getBooleanProperty("mixerNIZKPBlindedGenerator", "mixerNIZKPBlindedGenerator");
+
+        return faults;
+    }
+
     public static boolean getPartyListSystemIndicator() {
         String response = getProperty("partyListSystem", "Listenwahl");
         boolean rval = false;
@@ -234,6 +272,15 @@ public class ConfigHelper {
         }
     }
 
+    private static boolean getBooleanProperty(String key, String label) {
+        String value = getProperty(key, label + " (true/false)");
+        try {
+            return Boolean.parseBoolean(value);
+        } catch (Exception e) {
+            throw new ConfigException(label + ": " + value + " ist nicht true/false");
+        }
+    }
+
     private static Date getDateProperty(String key, String label) {
         String value = getProperty(key, label + " (Format TT.MM.JJJJ hh:mm)");
         try {
@@ -260,9 +307,9 @@ public class ConfigHelper {
                 throw new ConfigException("Die Konfigurationsdatei " + SYSTEM_CONFIG_FILE + " konnte nicht gelesen werden", e);
             }
             try {
-                properties.load(new FileInputStream(ADMIN_CONFIG_FILE));
+                properties.load(new FileInputStream(FAULT_CONFIG_FILE));
             } catch (IOException e) {
-                throw new ConfigException("Die Konfigurationsdatei " + ADMIN_CONFIG_FILE + " konnte nicht gelesen werden", e);
+                throw new ConfigException("Die Konfigurationsdatei " + FAULT_CONFIG_FILE + " konnte nicht gelesen werden", e);
             }
         }
         return properties;

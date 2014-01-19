@@ -139,7 +139,7 @@ public class MillerRabin {
                 BigInteger R;
                 do {
                     R = new BigInteger(n.subtract(BIGINT2).bitLength(), seed).add(BIGINT1);
-                } while (R.compareTo(n) > 0);
+                } while (R.compareTo(n.subtract(BIGINT1)) > 0);
                 a.add(R);
             }
         }

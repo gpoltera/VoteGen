@@ -6,7 +6,6 @@
 
 package ch.hsr.univote.unigen.tasks;
 
-import ch.bfh.univote.common.Certificate;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 
 /**

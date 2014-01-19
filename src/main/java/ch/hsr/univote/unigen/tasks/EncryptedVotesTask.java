@@ -5,13 +5,10 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.bfh.univote.common.EncryptedVote;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.ev;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.math.BigInteger;
 
 /**
  *

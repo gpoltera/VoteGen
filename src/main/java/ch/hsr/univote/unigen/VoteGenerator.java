@@ -36,7 +36,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * Test
+ * VoteGenerator
  *
  */
 public class VoteGenerator {
@@ -46,78 +46,108 @@ public class VoteGenerator {
         electionSequence();
         Publisher.main(args);
         System.out.println("WebService gestartet");
-        
+
         //Runtime.getRuntime().exec(new String[]{"java","-jar","C:/NetBeans/VoteVerifier/target/VoteVerifier-1.1-SNAPSHOT-demo-jar-with-dependencies.jar"});
         Thread.sleep(60000);
         System.exit(0);
     }
+
     
-    private static void electionSequence() throws Exception {
-        //Add the election id
-        ElectionBoard.knownElectionIds.getElectionId().add(ConfigHelper.getElectionId());
-        
+    private static void electionSequence() throws Exception {    
+        phase1();
+        phase2();
+        phase3();
+        phase4();
+        phase5();
+        phase6();
+        phase7();
+        phase8();
+    }
+    
+    /* 1.3.1 Public Parameters */
+    private static void phase1() throws Exception {
         //Set the Signature Parameters
         SignatureParametersTask.run(); //Set the Schnorr Parameters -> OK
-        
-        //Generate the certificates
+    }
+    
+    /* 1.3.2 Public Indentifiers and Keys */
+    private static void phase2() throws Exception {
+        //Generate the certificates and keys
         ElectionSystemInfoTask.run(); // -> OK
-
-        /* 1.3.3 Registration */
+    }
+    
+    /* 1.3.3 Registration */
+    private static void phase3() throws Exception {
         VoterCertsTask.run(); //Generate the voters certificates -> OK
-                
-        /* 1.3.4 Election Setup */
+    }
+
+    /* 1.3.4 Election Setup */
+    private static void phase4() throws Exception {
+        //a) Initialization
+        ElectionBoard.knownElectionIds.getElectionId().add(ConfigHelper.getElectionId()); //Add the election id
+        
         //b) Election Definition 
         ElectionDefinitionTask.run(); // -> OK
-        
+
         //c) Parameter Generation
         EncryptionParametersTask.run(); //Set the ElGamal Parameters -> OK
-        
+
         //d) Distributed Key Generation
         EncryptionKeyTask.run(); // -> OK
         EncryptionKeyShareTask.run(); // -> OK
-        
-        
-        
+
         //e) Constructing the Election Generator
         ElectionGeneratorTask.run(); // -> OK
         BlindedGeneratorTask.run(); // -> OK
+    }
+    
+    /* 1.3.5 Election Preparation */
+    private static void phase5() throws Exception {
         
-        /* 1.3.5 Election Preparation */
         //a) Definition of Election Options
         ElectionOptionsTask.run(); //Set the ElectionOptions -> OK
-        
+
         //b) Publication of Election Data
         ElectionDataTask.run(); //Add the results to the electionData -> OK
 
         //c) Electoral Roll Preparation       
         ElectoralRollTask.run(); //Lists the votersid -> OK
-        
+
         //d) Mixing the Public Verification Keys
         MixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
         MixedVerificationKeysTask.run(); //NOT YET IMPLEMENTED
-                
-        /* 1.3.6 Election Period */
+    }
+    
+    /* 1.3.6 Election Period */
+    private static void phase6() throws Exception {
+        
         //a) Late Registration
         LatelyRegistredVoterCertsTask.run(); //NOT YET IMPLEMENTED
         LatelyMixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
         LatelyMixedVerificationKeysTask.run(); //NOT YET IMPLEMENTED
-        
+
         //c) Vote Creation and Casting
         BallotsTask.run(); //Create the ballots
         SingleBallotTask.run();
         EncryptedVotesTask.run();
+    }
+    
+    /* 1.3.7 Mixing and Tallying */
+    private static void phase7() throws Exception {
         
-        /* 1.3.7 Mixing and Tallying */
         //a) Mixing the Encryptions
         MixedEncryptedVotesByTask.run();
-        
+
         //b) Decrypting the Votes
-        PartiallyDecryptedVotesTask.run();  
+        PartiallyDecryptedVotesTask.run();
         DecryptedVotesTask.run();
         DecodedVotesTask.run();
-        
-        ElectionResultsTask.run(); //Performing the election results 
-        
+
+        ElectionResultsTask.run(); //Performing the election results  
+    }
+    
+    /* Fault Implementation */
+    private static void phase8() throws Exception {
         //Implements the Faults
         FaultGeneratorTask.run();
     }

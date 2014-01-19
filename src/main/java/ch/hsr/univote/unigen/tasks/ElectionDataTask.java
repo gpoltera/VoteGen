@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.PrimeGenerator;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
 /**

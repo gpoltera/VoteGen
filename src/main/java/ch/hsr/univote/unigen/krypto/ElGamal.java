@@ -32,12 +32,12 @@ public class ElGamal {
             g = g.add(BigInteger.valueOf(i));
         }
 
-        BigInteger[] keys = new BigInteger[3];
-        keys[0] = p;
-        keys[1] = q;
-        keys[2] = g;
+        BigInteger[] parameters = new BigInteger[3];
+        parameters[0] = p;
+        parameters[1] = q;
+        parameters[2] = g;
 
-        return keys;
+        return parameters;
     }
 
     /**
@@ -48,10 +48,10 @@ public class ElGamal {
      * @return KeyPair (x,y), (private-key, public-key)
      */
     public static BigInteger[] getKeyPair(BigInteger p, BigInteger q, BigInteger g) {
-        BigInteger[] keyPair = new BigInteger[2];
         BigInteger x = PrimeGenerator.getPrime(q.bitLength() - 1);
         BigInteger y = g.modPow(x, p);
-
+        
+        BigInteger[] keyPair = new BigInteger[2];   
         keyPair[0] = x;
         keyPair[1] = y;
 
@@ -65,14 +65,14 @@ public class ElGamal {
      * @param p ElGamal prime
      * @param q ElGamal group order
      * @param g ElGamal generator
-     * @return Encrypted pair (a,b)
+     * @return encrypted pair (a,b)
      */
     public static BigInteger[] getEncryption(BigInteger m, BigInteger y, BigInteger p, BigInteger q, BigInteger g) {
-        BigInteger[] encrypted = new BigInteger[2];
         BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
         BigInteger a = g.modPow(r, p);
         BigInteger b = m.multiply(y.modPow(r, p)).mod(p);
 
+        BigInteger[] encrypted = new BigInteger[2];
         encrypted[0] = a;
         encrypted[1] = b;
 
@@ -85,7 +85,7 @@ public class ElGamal {
      * @param b Encrypted b
      * @param x private key
      * @param p ElGamal prime
-     * @return 
+     * @return decrypted m
      */
     public static BigInteger getDecryption(BigInteger a, BigInteger b, BigInteger x, BigInteger p) {
         BigInteger m = a.modPow(p.subtract(BigInteger.ONE).subtract(x).mod(p), p).multiply(b).mod(p);

@@ -5,17 +5,14 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.bfh.univote.common.EncryptionParameters;
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
-import ch.bfh.univote.common.Proof;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.partiallyDecryptedVotesList;
 import static ch.hsr.univote.unigen.board.ElectionBoard.talliers;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
-import ch.hsr.univote.unigen.krypto.ProofGenerator;
+import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.math.BigInteger;
 
 /**
  *
@@ -36,7 +33,7 @@ public class PartiallyDecryptedVotesTask extends ElectionBoard {
                         encryptionParameters.getPrime()));
             }
 
-            partiallyDecryptedVotes.setProof(ProofGenerator.getProof(
+            partiallyDecryptedVotes.setProof(NIZKP.getProof(
                     talliers[i], 
                     talliersDecryptionKey[i], 
                     encryptionKeyShareList[i], 

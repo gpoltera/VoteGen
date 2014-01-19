@@ -6,9 +6,6 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.Certificate;
-import ch.bfh.univote.common.ElectionSystemInfo;
-import ch.bfh.univote.common.Signature;
-import ch.hsr.univote.unigen.helper.TimestampGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.esi;
 import ch.hsr.univote.unigen.helper.ConfigHelper;

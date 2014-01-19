@@ -8,11 +8,8 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.helper.XMLHelper;
-import ch.hsr.univote.unigen.krypto.ProofGenerator;
+import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  *
@@ -27,7 +24,7 @@ public class EncryptionKeyShareTask extends ElectionBoard {
             encryptionKeyShare.setKey(talliersEncryptionKey[i]);
             
             //set the proof
-            encryptionKeyShare.setProof(ProofGenerator.getProof(
+            encryptionKeyShare.setProof(NIZKP.getProof(
                     talliers[i], 
                     talliersDecryptionKey[i], 
                     talliersEncryptionKey[i], 
