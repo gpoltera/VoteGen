@@ -6,6 +6,8 @@
 package ch.hsr.univote.unigen.tasks;
 
 import static ch.hsr.univote.unigen.board.ElectionBoard.signatureParameters;
+import ch.hsr.univote.unigen.db.DB4O;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 
 /**
@@ -21,5 +23,8 @@ public class SignatureParametersTask {
         signatureParameters.setGroupOrder(new BigInteger("65133683824381501983523684796057614145070427752690897588060462960319251776021"));
         //Schnorr Signature, Generator g
         signatureParameters.setGenerator(new BigInteger("109291242937709414881219423205417309207119127359359243049468707782004862682441897432780127734395596275377218236442035534825283725782836026439537687695084410797228793004739671835061419040912157583607422965551428749149162882960112513332411954585778903685207256083057895070357159920203407651236651002676481874709"));
+
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), signatureParameters);
     }
 }

@@ -8,6 +8,7 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.Certificate;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.vc;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.CertificateGenerator;
 import ch.hsr.univote.unigen.krypto.RSA;
@@ -42,5 +43,8 @@ public class VoterCertsTask extends ElectionBoard{
         
         /*sign by electionamanger*/
         vc.setSignature(SignatureGenerator.createSignature(vc, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(),vc);
     }
 }

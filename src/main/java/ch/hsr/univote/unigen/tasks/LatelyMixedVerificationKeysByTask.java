@@ -10,6 +10,7 @@ import ch.bfh.univote.common.Proof;
 import static ch.hsr.univote.unigen.board.ElectionBoard.lmvk;
 import static ch.hsr.univote.unigen.board.ElectionBoard.mixers;
 import static ch.hsr.univote.unigen.board.ElectionBoard.mixersPrivateKey;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -34,5 +35,7 @@ public class LatelyMixedVerificationKeysByTask {
             mixedVerificationKey.setSignature(SignatureGenerator.createSignature(mixers[i], mixedVerificationKey, mixersPrivateKey[i]));
             lmvk.add(mixedVerificationKey);
         }
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), lmvk);
     }
 }

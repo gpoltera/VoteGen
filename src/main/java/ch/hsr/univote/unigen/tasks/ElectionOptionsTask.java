@@ -22,6 +22,7 @@ import ch.bfh.univote.common.PoliticalList;
 import ch.bfh.univote.common.Sex;
 import ch.bfh.univote.common.SummationRule;
 import static ch.hsr.univote.unigen.board.ElectionBoard.electionAdministratorPrivateKey;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FormatException;
@@ -55,6 +56,9 @@ public class ElectionOptionsTask extends ElectionBoard {
         ElectionOptions options = createOptions(lists, partyListSystem);
         options.setSignature(SignatureGenerator.createSignature(options, electionAdministratorPrivateKey));
         eo = options;
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), eo);
     }
 
     private static List<CandidateList> getCandidateLists() throws FileNotFoundException, FormatException {

@@ -6,6 +6,7 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
@@ -25,5 +26,8 @@ public class MixedVerificationKeysTask extends ElectionBoard {
         }
         
         vk.setSignature(SignatureGenerator.createSignature(vk, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), vk);
     }
 }

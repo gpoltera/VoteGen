@@ -9,6 +9,7 @@ import ch.bfh.univote.common.DecodedVote;
 import ch.bfh.univote.common.DecodedVoteEntry;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.dov;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
@@ -35,5 +36,8 @@ public class DecodedVotesTask extends ElectionBoard {
         }
         
         dov.setSignature(SignatureGenerator.createSignature(dov, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(),dov);
     }
 }

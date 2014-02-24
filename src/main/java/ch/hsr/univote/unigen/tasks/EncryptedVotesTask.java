@@ -7,6 +7,7 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.ev;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
@@ -23,5 +24,8 @@ public class EncryptedVotesTask extends ElectionBoard {
             ev.getVote().add(bts.getBallot().get(i).getEncryptedVote());
         }       
         ev.setSignature(SignatureGenerator.createSignature(ev, electionAdministratorPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), ev);
     }
 }

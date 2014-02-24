@@ -13,6 +13,7 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.bfh.univote.common.ElectionDefinition;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.XMLHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -41,6 +42,9 @@ public class ElectionDefinitionTask extends ElectionBoard {
         }
         definition.setSignature(SignatureGenerator.createSignature(definition, electionAdministratorPrivateKey));
         ed = definition;
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(),ed);
     }
 
     private static ElectionDefinition createDefinition() {

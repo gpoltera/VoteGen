@@ -10,6 +10,7 @@ import ch.bfh.univote.common.Choice;
 import ch.bfh.univote.common.PoliticalList;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 import java.util.Random;
@@ -61,5 +62,7 @@ public class DecryptedVotesTask extends ElectionBoard {
             //
             // cId 6  5  4  3  2  1  
         }
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), dyv);
     }
 }

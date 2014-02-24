@@ -29,10 +29,8 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
 public class CertificateGenerator {
     //Adapt to config file
     public static final String STORETYPE = "JKS";
-    public static final String KEYALG = "RSA";
     public static final int KEYSIZE = 1024;
     public static final int VALIDITY = 1000; // days
-    public static final String SIGNATUREALGSPEC = "SHA256WithRSA";
 
     /*
      * keytool -genkeypair -storetype JKS -keystore config\keystore.jks -storepass %password% -keypass %password% -alias vsuzh -keyalg RSA -keysize 1024 -dname "CN=VSUZH UniverstÃ¤t ZÃ¼rich" -validity 1000
@@ -40,7 +38,7 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
      */
 
     public static String main(String alias, RSAPrivateKey privateKey, RSAPublicKey publicKey) throws Exception {
-        // @Stephan: Please adapt...
+        // 
         CertificateGenerator ku = new CertificateGenerator();
         X509Certificate cert = ku.createCertitificate("CN=" + ConfigHelper.getElectionId(), privateKey, publicKey);
         KeyStore ks = ku.createAndPopulateKeyStore(cert, alias);
@@ -89,7 +87,7 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
         certGenerator.setNotAfter(expiryDate);
         certGenerator.setSubjectDN(dnName);     // note: same as issuer
         certGenerator.setPublicKey(publicKey);
-        certGenerator.setSignatureAlgorithm(SIGNATUREALGSPEC);
+        certGenerator.setSignatureAlgorithm(ConfigHelper.getSignatureAlgorithm());
 
         // get certificate
         X509Certificate cert = certGenerator.generate(privateKey, "BC");

@@ -9,6 +9,7 @@ package ch.hsr.univote.unigen.tasks;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.eg;
 import static ch.hsr.univote.unigen.board.ElectionBoard.mixers;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SchnorrSignature;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -39,5 +40,8 @@ public class ElectionGeneratorTask extends ElectionBoard {
         
         eg.setGenerator(g);
         eg.setSignature(SignatureGenerator.createSignature(eg, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), eg);
     }
 }

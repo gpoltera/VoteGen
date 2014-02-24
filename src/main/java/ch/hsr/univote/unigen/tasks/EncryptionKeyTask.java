@@ -10,6 +10,7 @@ import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.ek;
 import static ch.hsr.univote.unigen.board.ElectionBoard.encryptionParameters;
 import static ch.hsr.univote.unigen.board.ElectionBoard.talliers;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -42,5 +43,8 @@ public class EncryptionKeyTask extends ElectionBoard {
         encryptionKey.setKey(y.mod(encryptionParameters.getPrime()));
         ek = encryptionKey;
         ek.setSignature(SignatureGenerator.createSignature(encryptionKey, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), ek);
     }
 }

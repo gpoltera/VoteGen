@@ -6,6 +6,7 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -32,5 +33,8 @@ public class EncryptionParametersTask extends ElectionBoard {
 
         //sign by electionamanger
         ElectionBoard.encryptionParameters.setSignature(SignatureGenerator.createSignature(encryptionParameters, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), encryptionParameters);
     }
 }

@@ -7,6 +7,7 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
@@ -29,5 +30,8 @@ public class ElectionDataTask extends ElectionBoard {
 
         //sign by electionamanger
         edat.setSignature(SignatureGenerator.createSignature(edat, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), edat);
     }
 }

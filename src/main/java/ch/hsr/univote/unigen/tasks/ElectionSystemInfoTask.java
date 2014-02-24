@@ -8,6 +8,7 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.Certificate;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.esi;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.CertificateGenerator;
 import ch.hsr.univote.unigen.krypto.RSA;
@@ -74,5 +75,8 @@ public class ElectionSystemInfoTask extends ElectionBoard {
 
         /*sign by electionamanger*/
         esi.setSignature(SignatureGenerator.createSignature(esi, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), esi);
     }
 }

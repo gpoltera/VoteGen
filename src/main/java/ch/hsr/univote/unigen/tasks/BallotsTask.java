@@ -11,6 +11,7 @@ import ch.bfh.univote.common.Proof;
 import ch.bfh.univote.common.VoterSignature;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import static ch.hsr.univote.unigen.board.ElectionBoard.bts;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -64,5 +65,8 @@ public class BallotsTask extends ElectionBoard{
             bts.getBallot().add(bt);
         }
         bts.setSignature(SignatureGenerator.createSignature(bts, electionManagerPrivateKey));
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), bts);
     }
 }
