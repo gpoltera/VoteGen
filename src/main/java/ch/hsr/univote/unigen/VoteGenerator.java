@@ -48,8 +48,6 @@ public class VoteGenerator {
         System.out.println("WebService gestartet");
 
         //Runtime.getRuntime().exec(new String[]{"java","-jar","C:/NetBeans/VoteVerifier/target/VoteVerifier-1.1-SNAPSHOT-demo-jar-with-dependencies.jar"});
-        Thread.sleep(60000);
-        System.exit(0);
     }
 
     
