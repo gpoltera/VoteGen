@@ -19,6 +19,11 @@
             <id>source.db4o</id>
             <url>http://source.db4o.com/maven</url>
         </repository>
+        <repository>
+            <id>unknown-jars-temp-repo</id>
+            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+            <url>file:${project.basedir}/lib</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -86,10 +91,9 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>ch.hsr.univote</groupId>
-            <artifactId>votegen</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
+            <groupId>unknown.binary</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>

@@ -6,13 +6,11 @@
 package ch.hsr.univote.unigen.gui;
 
 import ch.hsr.univote.unigen.VoteGenerator;
-import java.io.FileNotFoundException;
-import java.security.cert.CertificateException;
+import ch.hsr.univote.unigen.board.Publisher;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.xml.datatype.DatatypeConfigurationException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -40,7 +38,7 @@ public class MainGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton4 = new javax.swing.JButton();
+        jBtnStartStop = new javax.swing.JButton();
         jTabbedPanel = new javax.swing.JTabbedPane();
         systemConfiguration1 = new ch.hsr.univote.unigen.gui.SystemConfiguration();
         failureConfiguration1 = new ch.hsr.univote.unigen.gui.FailureConfiguration();
@@ -61,11 +59,12 @@ public class MainGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("VoteGenerator");
+        setPreferredSize(null);
 
-        jButton4.setText("generiere Wahl");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        jBtnStartStop.setText("generiere Wahl");
+        jBtnStartStop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                jBtnStartStopActionPerformed(evt);
             }
         });
 
@@ -146,7 +145,7 @@ public class MainGUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jBtnStartStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTabbedPanel))
                 .addContainerGap())
         );
@@ -156,7 +155,7 @@ public class MainGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jTabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
-                .addComponent(jButton4)
+                .addComponent(jBtnStartStop)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -167,59 +166,38 @@ public class MainGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     boolean votestarted = false;
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        Thread threadGenerator = new Thread() {
-            @Override
-            public void run() {
-                //        try {
-                //              VoteGenerator.main(null);
-                //            } catch (FileNotFoundException ex) {
-                //                  Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-//                } catch (SAXException ex) {
-//                    Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                //    } catch (DatatypeConfigurationException ex) {
-                //          Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                //        } catch (CertificateException ex) {
-                //              Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                //            } catch (Exception ex) {
-                //                  Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-                while (!isInterrupted()) {
-                    try {
-                        VoteGenerator.main(null);
-                    } catch (InterruptedException e) {
-                        interrupt();
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (SAXException ex) {
-                        Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (DatatypeConfigurationException ex) {
-                        Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (CertificateException ex) {
-                        Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (Exception ex) {
-                        Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        };
-
+    private void jBtnStartStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnStartStopActionPerformed
         if (!votestarted) {
             jTabbedPanel.addTab("Wahl Generierung", voteGeneration1);
             jTabbedPanel.remove(systemConfiguration1);
             jTabbedPanel.remove(failureConfiguration1);
-            jButton4.setLabel("Stoppe Service");
-            threadGenerator.start();
+            jBtnStartStop.setLabel("Stoppe Service");
+            new Thread() {
+                public void run() {
+                    try {
+                        VoteGenerator.electionSequence();
+                    } catch (Exception ex) {
+                        Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try {
+                        Publisher.startWebSrv();
+                    } catch (IOException ex) {
+                        Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }.start();
             votestarted = true;
         } else {
-            threadGenerator.interrupt();
+            Publisher.stopWebSrv();
             jTabbedPanel.addTab("Konfiguration", systemConfiguration1);
             jTabbedPanel.addTab("Fehlereinbau", failureConfiguration1);
             jTabbedPanel.remove(voteGeneration1);
-            jButton4.setLabel("generiere Wahl");
+            VoteGeneration.resetProgress();
+            VoteGeneration.resetText();
+            jBtnStartStop.setLabel("generiere Wahl");
             votestarted = false;
         }
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_jBtnStartStopActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         new MainGUI().setVisible(false);
@@ -272,7 +250,7 @@ public class MainGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ch.hsr.univote.unigen.gui.FailureConfiguration failureConfiguration1;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jBtnStartStop;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;

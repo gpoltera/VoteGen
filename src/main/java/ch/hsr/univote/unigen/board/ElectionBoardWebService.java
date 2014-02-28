@@ -30,7 +30,6 @@ import ch.bfh.univote.common.SignatureParameters;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
 import ch.bfh.univote.election.ElectionBoardServiceFault;
-import static ch.hsr.univote.unigen.board.ElectionBoard.knownElectionIds;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,12 +49,10 @@ import javax.jws.WebService;
 public class ElectionBoardWebService implements ch.bfh.univote.election.ElectionBoard {
 
     public SignatureParameters getSignatureParameters() throws ElectionBoardServiceFault {
-
         return ElectionBoard.signatureParameters;
     }
 
     public Certificate getRootCertificate() throws ElectionBoardServiceFault {
-
         return ElectionBoard.cert;
     }
 

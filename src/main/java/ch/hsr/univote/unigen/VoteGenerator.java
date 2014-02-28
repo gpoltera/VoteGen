@@ -3,7 +3,8 @@ package ch.hsr.univote.unigen;
 import ch.hsr.univote.unigen.tasks.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.tasks.ElectionOptionsTask;
 import ch.hsr.univote.unigen.board.ElectionBoard;
-import ch.hsr.univote.unigen.board.Publisher;
+import static ch.hsr.univote.unigen.gui.VoteGeneration.appendText;
+import static ch.hsr.univote.unigen.gui.VoteGeneration.updateProgress;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.tasks.BallotsTask;
 import ch.hsr.univote.unigen.tasks.BlindedGeneratorTask;
@@ -29,51 +30,60 @@ import ch.hsr.univote.unigen.tasks.LatelyMixedVerificationKeysByTask;
 import ch.hsr.univote.unigen.tasks.LatelyMixedVerificationKeysTask;
 import ch.hsr.univote.unigen.tasks.LatelyRegistredVoterCertsTask;
 import ch.hsr.univote.unigen.tasks.MixedEncryptedVotesByTask;
-import java.io.FileNotFoundException;
-import java.security.cert.CertificateException;
-import javax.xml.bind.JAXBException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import org.xml.sax.SAXException;
+
+
 
 /**
  * VoteGenerator
  *
  */
 public class VoteGenerator {
-
-    public static void main(String[] args) throws JAXBException, FileNotFoundException, SAXException, DatatypeConfigurationException, CertificateException, Exception {
-
-        electionSequence();
-        Publisher.main(args);
-        System.out.println("WebService gestartet");
-
-        //Runtime.getRuntime().exec(new String[]{"java","-jar","C:/NetBeans/VoteVerifier/target/VoteVerifier-1.1-SNAPSHOT-demo-jar-with-dependencies.jar"});
-    }
-
-    
-    private static void electionSequence() throws Exception {    
+    public static void electionSequence() throws Exception {
         phase1();
+        updateProgress();
+        appendText("Phase 1 abgeschlossen");
+
         phase2();
+        updateProgress();
+        appendText("Phase 2 abgeschlossen");
+
         phase3();
+        updateProgress();
+        appendText("Phase 3 abgeschlossen");
+        
         phase4();
+        updateProgress();
+        appendText("Phase 4 abgeschlossen");
+        
         phase5();
+        updateProgress();
+        appendText("Phase 5 abgeschlossen");
+        
         phase6();
+        updateProgress();
+        appendText("Phase 6 abgeschlossen");
+        
         phase7();
+        updateProgress();
+        appendText("Phase 7 abgeschlossen");
+        
         phase8();
+        updateProgress();
+        appendText("Phase 8 abgeschlossen");
     }
-    
+
     /* 1.3.1 Public Parameters */
     private static void phase1() throws Exception {
         //Set the Signature Parameters
         SignatureParametersTask.run(); //Set the Schnorr Parameters -> OK
     }
-    
+
     /* 1.3.2 Public Indentifiers and Keys */
     private static void phase2() throws Exception {
         //Generate the certificates and keys
         ElectionSystemInfoTask.run(); // -> OK
     }
-    
+
     /* 1.3.3 Registration */
     private static void phase3() throws Exception {
         VoterCertsTask.run(); //Generate the voters certificates -> OK
@@ -83,7 +93,7 @@ public class VoteGenerator {
     private static void phase4() throws Exception {
         //a) Initialization
         ElectionBoard.knownElectionIds.getElectionId().add(ConfigHelper.getElectionId()); //Add the election id
-        
+
         //b) Election Definition 
         ElectionDefinitionTask.run(); // -> OK
 
@@ -98,10 +108,10 @@ public class VoteGenerator {
         ElectionGeneratorTask.run(); // -> OK
         BlindedGeneratorTask.run(); // -> OK
     }
-    
+
     /* 1.3.5 Election Preparation */
     private static void phase5() throws Exception {
-        
+
         //a) Definition of Election Options
         ElectionOptionsTask.run(); //Set the ElectionOptions -> OK
 
@@ -115,10 +125,10 @@ public class VoteGenerator {
         MixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
         MixedVerificationKeysTask.run(); //NOT YET IMPLEMENTED
     }
-    
+
     /* 1.3.6 Election Period */
     private static void phase6() throws Exception {
-        
+
         //a) Late Registration
         LatelyRegistredVoterCertsTask.run(); //NOT YET IMPLEMENTED
         LatelyMixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
@@ -129,10 +139,10 @@ public class VoteGenerator {
         SingleBallotTask.run();
         EncryptedVotesTask.run();
     }
-    
+
     /* 1.3.7 Mixing and Tallying */
     private static void phase7() throws Exception {
-        
+
         //a) Mixing the Encryptions
         MixedEncryptedVotesByTask.run();
 
@@ -143,7 +153,7 @@ public class VoteGenerator {
 
         ElectionResultsTask.run(); //Performing the election results  
     }
-    
+
     /* Fault Implementation */
     private static void phase8() throws Exception {
         //Implements the Faults

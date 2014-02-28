@@ -7,6 +7,7 @@ package ch.hsr.univote.unigen.tasks;
 
 import static ch.hsr.univote.unigen.board.ElectionBoard.signatureParameters;
 import ch.hsr.univote.unigen.db.DB4O;
+import static ch.hsr.univote.unigen.gui.VoteGeneration.appendText;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 

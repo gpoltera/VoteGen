@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ch.hsr.univote.unigen.gui;
 
 import ch.hsr.univote.unigen.VoteGenerator;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,13 +32,28 @@ public class VoteGeneration extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        jProgressBar = new javax.swing.JProgressBar();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jLogOutput = new javax.swing.JTextArea();
+        jStartVoteVerifier = new javax.swing.JButton();
 
-        jTextPane1.setEditable(false);
-        jTextPane1.setText("Wahl wird generiert...");
-        jScrollPane1.setViewportView(jTextPane1);
+        setPreferredSize(new java.awt.Dimension(400, 300));
+
+        jProgressBar.setMaximum(9);
+
+        jLogOutput.setEditable(false);
+        jLogOutput.setColumns(20);
+        jLogOutput.setRows(5);
+        jLogOutput.setText("Wahl wird generiert:");
+        jScrollPane2.setViewportView(jLogOutput);
+
+        jStartVoteVerifier.setText("VoteVerifier starten");
+        jStartVoteVerifier.setEnabled(false);
+        jStartVoteVerifier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jStartVoteVerifierActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -45,24 +62,65 @@ public class VoteGeneration extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
+                    .addComponent(jProgressBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .addComponent(jStartVoteVerifier, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addComponent(jProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jStartVoteVerifier)
+                .addContainerGap(56, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jStartVoteVerifierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jStartVoteVerifierActionPerformed
+        java.net.URL vvURL = VoteGenerator.class.getResource("/VoteVerifier.jar");
+        try {
+            // Edit to Mac/Linux compatibility
+            //Process pc = Runtime.getRuntime().exec(new String[]{"java","-jar",vvURL.toString()});
+            //Process pc = Runtime.getRuntime().exec("java -jar " + vvURL);
+            Process pc = Runtime.getRuntime().exec("cmd.exe /c start " + vvURL);
+        } catch (IOException ex) {
+            Logger.getLogger(VoteGeneration.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jStartVoteVerifierActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextPane jTextPane1;
+    private static javax.swing.JTextArea jLogOutput;
+    private static javax.swing.JProgressBar jProgressBar;
+    private javax.swing.JScrollPane jScrollPane2;
+    private static javax.swing.JButton jStartVoteVerifier;
     // End of variables declaration//GEN-END:variables
+
+    public static void appendText(String text) {
+        jLogOutput.append("\n" + text);
+    }
+
+    static int i = 0;
+
+    public static void updateProgress() {
+        i++;
+        jProgressBar.setValue(i);
+
+        if (i == 9) {
+            jStartVoteVerifier.setEnabled(true);
+        }
+    }
+
+    public static void resetProgress() {
+        i = 0;
+        jProgressBar.setValue(i);
+    }
+
+    public static void resetText() {
+        jLogOutput.setText("Wahl wird generiert:");
+    }
 }
