@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ch.hsr.univote.unigen.gui;
 
 /**
@@ -28,56 +27,56 @@ public class FailureConfiguration extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jCBFailureSelection = new javax.swing.JComboBox();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         jCheckBox6 = new javax.swing.JCheckBox();
         jCheckBox8 = new javax.swing.JCheckBox();
         jCheckBox7 = new javax.swing.JCheckBox();
         jCheckBox9 = new javax.swing.JCheckBox();
-        jSeparator2 = new javax.swing.JSeparator();
-        jSeparator3 = new javax.swing.JSeparator();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        jButton1 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jSeparator4 = new javax.swing.JSeparator();
         jCheckBox5 = new javax.swing.JCheckBox();
         jCheckBox10 = new javax.swing.JCheckBox();
         jCheckBox11 = new javax.swing.JCheckBox();
         jCheckBox12 = new javax.swing.JCheckBox();
         jCheckBox13 = new javax.swing.JCheckBox();
-        jSeparator5 = new javax.swing.JSeparator();
-        jSeparator6 = new javax.swing.JSeparator();
+        jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jSeparator7 = new javax.swing.JSeparator();
         jCheckBox14 = new javax.swing.JCheckBox();
         jCheckBox15 = new javax.swing.JCheckBox();
         jCheckBox16 = new javax.swing.JCheckBox();
         jCheckBox17 = new javax.swing.JCheckBox();
         jCheckBox18 = new javax.swing.JCheckBox();
         jCheckBox19 = new javax.swing.JCheckBox();
-        jSeparator9 = new javax.swing.JSeparator();
-        jSeparator8 = new javax.swing.JSeparator();
+        jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jSeparator10 = new javax.swing.JSeparator();
-        jCheckBox23 = new javax.swing.JCheckBox();
-        jCheckBox22 = new javax.swing.JCheckBox();
-        jCheckBox20 = new javax.swing.JCheckBox();
-        jCheckBox25 = new javax.swing.JCheckBox();
-        jCheckBox24 = new javax.swing.JCheckBox();
         jCheckBox21 = new javax.swing.JCheckBox();
+        jCheckBox24 = new javax.swing.JCheckBox();
+        jCheckBox25 = new javax.swing.JCheckBox();
+        jCheckBox20 = new javax.swing.JCheckBox();
+        jCheckBox22 = new javax.swing.JCheckBox();
+        jCheckBox23 = new javax.swing.JCheckBox();
 
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        jCBFailureSelection.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Schnorr Parameters", "ElGamal Parameters", "Certificates", "Signatures" }));
+        jCBFailureSelection.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                jCBFailureSelectionActionPerformed(evt);
             }
         });
-        add(jComboBox1);
+        jTabbedPane1.addTab("tab2", jCBFailureSelection);
+
+        jTabbedPane2.setMaximumSize(new java.awt.Dimension(0, 0));
+        jTabbedPane2.setMinimumSize(new java.awt.Dimension(0, 0));
+
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.PAGE_AXIS));
 
         jLabel3.setText("Schnorr Parameters");
-        add(jLabel3);
-        add(jSeparator1);
+        jPanel1.add(jLabel3);
 
         jCheckBox6.setSelected(true);
         jCheckBox6.setText("Schnorr's P is prime");
@@ -86,117 +85,144 @@ public class FailureConfiguration extends javax.swing.JPanel {
                 jCheckBox6ActionPerformed(evt);
             }
         });
-        add(jCheckBox6);
+        jPanel1.add(jCheckBox6);
 
         jCheckBox8.setSelected(true);
         jCheckBox8.setText("Schnorr's G is generator");
-        add(jCheckBox8);
+        jPanel1.add(jCheckBox8);
 
         jCheckBox7.setSelected(true);
         jCheckBox7.setText("Schnorr's Q is prime");
-        add(jCheckBox7);
+        jPanel1.add(jCheckBox7);
 
         jCheckBox9.setSelected(true);
         jCheckBox9.setText("Schnorr's P is SafePrime");
-        add(jCheckBox9);
-        add(jSeparator2);
-        add(jSeparator3);
+        jPanel1.add(jCheckBox9);
+
+        jToggleButton1.setText("jToggleButton1");
+        jPanel1.add(jToggleButton1);
+
+        jButton1.setText("jButton1");
+        jPanel1.add(jButton1);
+
+        jTabbedPane2.addTab("tab1", jPanel1);
+
+        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.PAGE_AXIS));
 
         jLabel2.setText("ElGamal Parameters");
-        add(jLabel2);
-        add(jSeparator4);
+        jPanel3.add(jLabel2);
 
         jCheckBox5.setSelected(true);
         jCheckBox5.setText("ElGamal P is prime");
-        add(jCheckBox5);
+        jPanel3.add(jCheckBox5);
 
         jCheckBox10.setSelected(true);
         jCheckBox10.setText("ElGamal Q is prime");
-        add(jCheckBox10);
+        jPanel3.add(jCheckBox10);
 
         jCheckBox11.setSelected(true);
         jCheckBox11.setText("ElGamal G is prime");
-        add(jCheckBox11);
+        jPanel3.add(jCheckBox11);
 
         jCheckBox12.setSelected(true);
         jCheckBox12.setText("ElGamal P is SafePrime");
-        add(jCheckBox12);
+        jPanel3.add(jCheckBox12);
 
         jCheckBox13.setSelected(true);
         jCheckBox13.setText("ElGamal Parameter Length");
-        add(jCheckBox13);
-        add(jSeparator5);
-        add(jSeparator6);
+        jPanel3.add(jCheckBox13);
+
+        jTabbedPane2.addTab("tab2", jPanel3);
+
+        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.PAGE_AXIS));
 
         jLabel1.setText("Certificates");
-        add(jLabel1);
-        add(jSeparator7);
+        jPanel4.add(jLabel1);
 
         jCheckBox14.setSelected(true);
         jCheckBox14.setText("CA Certificate");
-        add(jCheckBox14);
+        jPanel4.add(jCheckBox14);
 
         jCheckBox15.setSelected(true);
         jCheckBox15.setText("EM Certificate");
-        add(jCheckBox15);
+        jPanel4.add(jCheckBox15);
 
         jCheckBox16.setSelected(true);
         jCheckBox16.setText("EA Certificate");
-        add(jCheckBox16);
+        jPanel4.add(jCheckBox16);
 
         jCheckBox17.setSelected(true);
         jCheckBox17.setText("Tallier Certificate -> WELCHER?");
-        add(jCheckBox17);
+        jPanel4.add(jCheckBox17);
 
         jCheckBox18.setSelected(true);
         jCheckBox18.setText("Mixer Certificate -> WELCHER?");
-        add(jCheckBox18);
+        jPanel4.add(jCheckBox18);
 
         jCheckBox19.setSelected(true);
         jCheckBox19.setText("Voters Certificates -> WIEVIELE?");
-        add(jCheckBox19);
-        add(jSeparator9);
-        add(jSeparator8);
+        jPanel4.add(jCheckBox19);
+
+        jTabbedPane2.addTab("tab2", jPanel4);
+
+        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.PAGE_AXIS));
 
         jLabel4.setText("Signatures");
-        add(jLabel4);
-        add(jSeparator10);
-
-        jCheckBox23.setSelected(true);
-        jCheckBox23.setText("ElGamal Parameter Signature");
-        add(jCheckBox23);
-
-        jCheckBox22.setSelected(true);
-        jCheckBox22.setText("Tallier Mixer Certificate Signature");
-        add(jCheckBox22);
-
-        jCheckBox20.setSelected(true);
-        jCheckBox20.setText("EA Certificate Signature");
-        add(jCheckBox20);
-
-        jCheckBox25.setSelected(true);
-        jCheckBox25.setText("Encryption Keys Signature");
-        add(jCheckBox25);
-
-        jCheckBox24.setSelected(true);
-        jCheckBox24.setText("Tallier NIZKP Signature");
-        add(jCheckBox24);
+        jPanel2.add(jLabel4);
 
         jCheckBox21.setSelected(true);
         jCheckBox21.setText("Election Basic Parameters Signature");
-        add(jCheckBox21);
+        jPanel2.add(jCheckBox21);
+
+        jCheckBox24.setSelected(true);
+        jCheckBox24.setText("Tallier NIZKP Signature");
+        jPanel2.add(jCheckBox24);
+
+        jCheckBox25.setSelected(true);
+        jCheckBox25.setText("Encryption Keys Signature");
+        jPanel2.add(jCheckBox25);
+
+        jCheckBox20.setSelected(true);
+        jCheckBox20.setText("EA Certificate Signature");
+        jPanel2.add(jCheckBox20);
+
+        jCheckBox22.setSelected(true);
+        jCheckBox22.setText("Tallier Mixer Certificate Signature");
+        jPanel2.add(jCheckBox22);
+
+        jCheckBox23.setSelected(true);
+        jCheckBox23.setText("ElGamal Parameter Signature");
+        jPanel2.add(jCheckBox23);
+
+        jTabbedPane2.addTab("tab2", jPanel2);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jCheckBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox6ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox6ActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    private void jCBFailureSelectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBFailureSelectionActionPerformed
+        String selected = (String) jCBFailureSelection.getSelectedItem();
+        if(selected.equals("")) {
+            
+        }
+    }//GEN-LAST:event_jCBFailureSelectionActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox jCBFailureSelection;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox11;
     private javax.swing.JCheckBox jCheckBox12;
@@ -218,20 +244,16 @@ public class FailureConfiguration extends javax.swing.JPanel {
     private javax.swing.JCheckBox jCheckBox7;
     private javax.swing.JCheckBox jCheckBox8;
     private javax.swing.JCheckBox jCheckBox9;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator10;
-    private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JSeparator jSeparator4;
-    private javax.swing.JSeparator jSeparator5;
-    private javax.swing.JSeparator jSeparator6;
-    private javax.swing.JSeparator jSeparator7;
-    private javax.swing.JSeparator jSeparator8;
-    private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JToggleButton jToggleButton1;
     // End of variables declaration//GEN-END:variables
 }

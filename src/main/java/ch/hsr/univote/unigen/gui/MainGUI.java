@@ -59,7 +59,8 @@ public class MainGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("VoteGenerator");
-        setPreferredSize(null);
+        setMinimumSize(new java.awt.Dimension(425, 425));
+        setResizable(false);
 
         jBtnStartStop.setText("generiere Wahl");
         jBtnStartStop.addActionListener(new java.awt.event.ActionListener() {
@@ -67,11 +68,19 @@ public class MainGUI extends javax.swing.JFrame {
                 jBtnStartStopActionPerformed(evt);
             }
         });
+        getContentPane().add(jBtnStartStop, java.awt.BorderLayout.CENTER);
 
         jTabbedPanel.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        systemConfiguration1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jTabbedPanel.addTab("Konfiguration", systemConfiguration1);
         jTabbedPanel.addTab("Fehlereinbau", failureConfiguration1);
         jTabbedPanel.addTab("Wahl Generierung", voteGeneration1);
+
+        getContentPane().add(jTabbedPanel, java.awt.BorderLayout.PAGE_START);
+        jTabbedPanel.getAccessibleContext().setAccessibleName("tabs");
+        jTabbedPanel.getAccessibleContext().setAccessibleDescription("");
 
         jMenu1.setText("File");
 
@@ -137,30 +146,6 @@ public class MainGUI extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jBtnStartStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPanel))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jBtnStartStop)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jTabbedPanel.getAccessibleContext().setAccessibleName("tabs");
-        jTabbedPanel.getAccessibleContext().setAccessibleDescription("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
