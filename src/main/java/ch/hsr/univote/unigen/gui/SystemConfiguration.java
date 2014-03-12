@@ -57,7 +57,8 @@ public class SystemConfiguration extends javax.swing.JPanel {
         layout.rowWeights = new double[] {0.0};
         setLayout(layout);
 
-        jLblElectionId.setText("Wahl ID");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("Bundle"); // NOI18N
+        jLblElectionId.setText(bundle.getString("electionid")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -65,7 +66,9 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
         add(jLblElectionId, gridBagConstraints);
 
-        jTxtElectionId.setText("Wahl2014");
+        jTxtElectionId.setText("Election2014");
+        jTxtElectionId.setMinimumSize(new java.awt.Dimension(250, 25));
+        jTxtElectionId.setPreferredSize(new java.awt.Dimension(250, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -82,7 +85,9 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         add(jLblElectionDescription, gridBagConstraints);
 
-        jTxtElectionDescription.setText("HSR Praesident 2014 df df dfdfdfd fdfdf");
+        jTxtElectionDescription.setMinimumSize(new java.awt.Dimension(250, 25));
+        jTxtElectionDescription.setName(""); // NOI18N
+        jTxtElectionDescription.setPreferredSize(new java.awt.Dimension(250, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -178,7 +183,7 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         add(jLblEncryptionKeyLength, gridBagConstraints);
 
-        jCBEncryptionKeyLength.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "64 Bit", "128 Bit", "256 Bit" }));
+        jCBEncryptionKeyLength.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "64 Bit", "128 Bit", "256 Bit", "512 Bit" }));
         jCBEncryptionKeyLength.setSelectedIndex(2);
         jCBEncryptionKeyLength.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -200,8 +205,8 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         add(jLblSignatureKeyLength, gridBagConstraints);
 
-        jCBSignatureKeyLength.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512 Bit", "1024 Bit", "2048 Bit" }));
-        jCBSignatureKeyLength.setSelectedIndex(1);
+        jCBSignatureKeyLength.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "512 Bit", "1024 Bit", "2048 Bit", "4096 Bit" }));
+        jCBSignatureKeyLength.setSelectedIndex(2);
         jCBSignatureKeyLength.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCBSignatureKeyLengthActionPerformed(evt);

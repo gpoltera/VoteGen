@@ -7,10 +7,15 @@ package ch.hsr.univote.unigen.gui;
 
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.Publisher;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -18,15 +23,18 @@ import javax.swing.ImageIcon;
  */
 public class MainGUI extends javax.swing.JFrame {
 
+    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("Bundle"); // NOI18N
+
     /**
      * Creates new form MainGUI
      */
     public MainGUI() {
-        java.net.URL imgURL = VoteGenerator.class.getResource("/iconVoteGenerator.jpg");
+        URL imgURL = getClass().getClassLoader().getResource("iconVoteGenerator.jpg");
         ImageIcon img = new ImageIcon(imgURL);
         this.setIconImage(img.getImage());
         initComponents();
-        jTabbedPanel.remove(voteGeneration1);
+        jTabbedPanel.remove(voteGeneration);
+
     }
 
     /**
@@ -40,29 +48,30 @@ public class MainGUI extends javax.swing.JFrame {
 
         jBtnStartStop = new javax.swing.JButton();
         jTabbedPanel = new javax.swing.JTabbedPane();
-        systemConfiguration1 = new ch.hsr.univote.unigen.gui.SystemConfiguration();
-        failureConfiguration1 = new ch.hsr.univote.unigen.gui.FailureConfiguration();
-        voteGeneration1 = new ch.hsr.univote.unigen.gui.VoteGeneration();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jMenuItem6 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        jMenuItem7 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenuItem9 = new javax.swing.JMenuItem();
-        jMenuItem8 = new javax.swing.JMenuItem();
+        systemConfiguration = new ch.hsr.univote.unigen.gui.SystemConfiguration();
+        failureConfiguration = new ch.hsr.univote.unigen.gui.FailureConfiguration();
+        candidates = new ch.hsr.univote.unigen.gui.Candidates();
+        voteGeneration = new ch.hsr.univote.unigen.gui.VoteGeneration();
+        jMenuBar = new javax.swing.JMenuBar();
+        jMenuFile = new javax.swing.JMenu();
+        jMenuItemOpen = new javax.swing.JMenuItem();
+        jMenuItemSave = new javax.swing.JMenuItem();
+        jMenuItemQuit = new javax.swing.JMenuItem();
+        jMenuLanguage = new javax.swing.JMenu();
+        jMenuItemGerman = new javax.swing.JMenuItem();
+        jMenuItemEnglish = new javax.swing.JMenuItem();
+        jMenuHelp = new javax.swing.JMenu();
+        jMenuItemDocumentation = new javax.swing.JMenuItem();
+        jMenuItemAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("VoteGenerator");
-        setMinimumSize(new java.awt.Dimension(425, 425));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("Bundle"); // NOI18N
+        setTitle(bundle.getString("title")); // NOI18N
+        setMinimumSize(new java.awt.Dimension(500, 500));
+        setPreferredSize(new java.awt.Dimension(500, 500));
         setResizable(false);
 
-        jBtnStartStop.setText("generiere Wahl");
+        jBtnStartStop.setText(bundle.getString("generatevote")); // NOI18N
         jBtnStartStop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBtnStartStopActionPerformed(evt);
@@ -72,80 +81,89 @@ public class MainGUI extends javax.swing.JFrame {
 
         jTabbedPanel.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         jTabbedPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTabbedPanel.setMinimumSize(new java.awt.Dimension(450, 400));
+        jTabbedPanel.setPreferredSize(new java.awt.Dimension(450, 400));
+        jTabbedPanel.addTab(bundle.getString("systemconfiguration"), systemConfiguration); // NOI18N
+        jTabbedPanel.addTab(bundle.getString("failureconfiguration"), failureConfiguration); // NOI18N
+        jTabbedPanel.addTab(bundle.getString("candidates"), candidates); // NOI18N
 
-        systemConfiguration1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jTabbedPanel.addTab("Konfiguration", systemConfiguration1);
-        jTabbedPanel.addTab("Fehlereinbau", failureConfiguration1);
-        jTabbedPanel.addTab("Wahl Generierung", voteGeneration1);
+        voteGeneration.setToolTipText("");
+        jTabbedPanel.addTab(bundle.getString("votegeneration"), voteGeneration); // NOI18N
 
         getContentPane().add(jTabbedPanel, java.awt.BorderLayout.PAGE_START);
-        jTabbedPanel.getAccessibleContext().setAccessibleName("tabs");
-        jTabbedPanel.getAccessibleContext().setAccessibleDescription("");
+        jTabbedPanel.getAccessibleContext().setAccessibleName("null");
 
-        jMenu1.setText("File");
+        jMenuFile.setText(bundle.getString("file")); // NOI18N
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem3.setText("Open");
-        jMenu1.add(jMenuItem3);
-
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setText("Save");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemOpen.setText(bundle.getString("open")); // NOI18N
+        jMenuItemOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                jMenuItemOpenActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        jMenuFile.add(jMenuItemOpen);
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem1.setLabel("Exit");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemSave.setText(bundle.getString("save")); // NOI18N
+        jMenuItemSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                jMenuItemSaveActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMenuFile.add(jMenuItemSave);
 
-        jMenuBar1.add(jMenu1);
-
-        jMenu3.setText("Language");
-
-        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem4.setText("Deutsch");
-        jMenu3.add(jMenuItem4);
-
-        jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem6.setText("Français");
-        jMenu3.add(jMenuItem6);
-
-        jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem5.setText("Italiano");
-        jMenu3.add(jMenuItem5);
-
-        jMenuItem7.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem7.setText("Romontsch");
-        jMenu3.add(jMenuItem7);
-
-        jMenuBar1.add(jMenu3);
-
-        jMenu2.setText("Help");
-
-        jMenuItem9.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem9.setText("Documentation");
-        jMenu2.add(jMenuItem9);
-
-        jMenuItem8.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem8.setText("About");
-        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemQuit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItemQuit.setText(bundle.getString("quit")); // NOI18N
+        jMenuItemQuit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem8ActionPerformed(evt);
+                jMenuItemQuitActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItem8);
+        jMenuFile.add(jMenuItemQuit);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar.add(jMenuFile);
 
-        setJMenuBar(jMenuBar1);
+        jMenuLanguage.setText(bundle.getString("language")); // NOI18N
+
+        jMenuItemGerman.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemGerman.setText(bundle.getString("german")); // NOI18N
+        jMenuItemGerman.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemGermanActionPerformed(evt);
+            }
+        });
+        jMenuLanguage.add(jMenuItemGerman);
+
+        jMenuItemEnglish.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemEnglish.setText(bundle.getString("english")); // NOI18N
+        jMenuItemEnglish.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemEnglishActionPerformed(evt);
+            }
+        });
+        jMenuLanguage.add(jMenuItemEnglish);
+
+        jMenuBar.add(jMenuLanguage);
+
+        jMenuHelp.setText(bundle.getString("help")); // NOI18N
+
+        jMenuItemDocumentation.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemDocumentation.setText(bundle.getString("documentation")); // NOI18N
+        jMenuHelp.add(jMenuItemDocumentation);
+
+        jMenuItemAbout.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemAbout.setText(bundle.getString("about")); // NOI18N
+        jMenuItemAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemAboutActionPerformed(evt);
+            }
+        });
+        jMenuHelp.add(jMenuItemAbout);
+
+        jMenuBar.add(jMenuHelp);
+
+        setJMenuBar(jMenuBar);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -153,10 +171,11 @@ public class MainGUI extends javax.swing.JFrame {
     boolean votestarted = false;
     private void jBtnStartStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnStartStopActionPerformed
         if (!votestarted) {
-            jTabbedPanel.addTab("Wahl Generierung", voteGeneration1);
-            jTabbedPanel.remove(systemConfiguration1);
-            jTabbedPanel.remove(failureConfiguration1);
-            jBtnStartStop.setLabel("Stoppe Service");
+            jTabbedPanel.addTab(bundle.getString("votegeneration"), voteGeneration);
+            jTabbedPanel.remove(systemConfiguration);
+            jTabbedPanel.remove(failureConfiguration);
+            jTabbedPanel.remove(candidates);
+            jBtnStartStop.setLabel(bundle.getString("stopservice"));
             new Thread() {
                 public void run() {
                     try {
@@ -174,29 +193,62 @@ public class MainGUI extends javax.swing.JFrame {
             votestarted = true;
         } else {
             Publisher.stopWebSrv();
-            jTabbedPanel.addTab("Konfiguration", systemConfiguration1);
-            jTabbedPanel.addTab("Fehlereinbau", failureConfiguration1);
-            jTabbedPanel.remove(voteGeneration1);
+            jTabbedPanel.addTab(bundle.getString("systemconfiguration"), systemConfiguration);
+            jTabbedPanel.addTab(bundle.getString("failureconfiguration"), failureConfiguration);
+            jTabbedPanel.addTab(bundle.getString("generatevote"), candidates);
+            jTabbedPanel.remove(voteGeneration);
             VoteGeneration.resetProgress();
             VoteGeneration.resetText();
-            jBtnStartStop.setLabel("generiere Wahl");
+            jBtnStartStop.setLabel(bundle.getString("generatevote"));
             votestarted = false;
         }
     }//GEN-LAST:event_jBtnStartStopActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        new MainGUI().setVisible(false);
-        new MainGUI().dispose();
+    private void jMenuItemQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemQuitActionPerformed
+        //new MainGUI().setVisible(false);
+        //new MainGUI().dispose();
         System.exit(0);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_jMenuItemQuitActionPerformed
 
-    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+    private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem8ActionPerformed
+    }//GEN-LAST:event_jMenuItemAboutActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void jMenuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new FileNameExtensionFilter("VoteGenerator Config", "*.vgc"));
 
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+        int state = fc.showSaveDialog(null);
+    }//GEN-LAST:event_jMenuItemSaveActionPerformed
+
+    private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new FileNameExtensionFilter("VoteGenerator Config", "*.vgc"));
+
+        int state = fc.showOpenDialog(null);
+
+        if (state == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            System.out.println(file.getName());
+        }
+
+    }//GEN-LAST:event_jMenuItemOpenActionPerformed
+
+    private void jMenuItemGermanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGermanActionPerformed
+        Locale locale = new Locale("de", "DE");
+        Locale.setDefault(locale);
+        this.setLocale(locale);
+        this.dispose();
+        new MainGUI().setVisible(true);
+    }//GEN-LAST:event_jMenuItemGermanActionPerformed
+
+    private void jMenuItemEnglishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemEnglishActionPerformed
+        Locale locale = new Locale("en", "EN");
+        Locale.setDefault(locale);
+        this.setLocale(locale);
+        this.dispose();
+        new MainGUI().setVisible(true);
+    }//GEN-LAST:event_jMenuItemEnglishActionPerformed
 
     /**
      * @param args the command line arguments
@@ -234,23 +286,22 @@ public class MainGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private ch.hsr.univote.unigen.gui.FailureConfiguration failureConfiguration1;
+    private ch.hsr.univote.unigen.gui.Candidates candidates;
+    private ch.hsr.univote.unigen.gui.FailureConfiguration failureConfiguration;
     private javax.swing.JButton jBtnStartStop;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
-    private javax.swing.JMenuItem jMenuItem7;
-    private javax.swing.JMenuItem jMenuItem8;
-    private javax.swing.JMenuItem jMenuItem9;
+    private javax.swing.JMenuBar jMenuBar;
+    private javax.swing.JMenu jMenuFile;
+    private javax.swing.JMenu jMenuHelp;
+    private javax.swing.JMenuItem jMenuItemAbout;
+    private javax.swing.JMenuItem jMenuItemDocumentation;
+    private javax.swing.JMenuItem jMenuItemEnglish;
+    private javax.swing.JMenuItem jMenuItemGerman;
+    private javax.swing.JMenuItem jMenuItemOpen;
+    private javax.swing.JMenuItem jMenuItemQuit;
+    private javax.swing.JMenuItem jMenuItemSave;
+    private javax.swing.JMenu jMenuLanguage;
     private javax.swing.JTabbedPane jTabbedPanel;
-    private ch.hsr.univote.unigen.gui.SystemConfiguration systemConfiguration1;
-    private ch.hsr.univote.unigen.gui.VoteGeneration voteGeneration1;
+    private ch.hsr.univote.unigen.gui.SystemConfiguration systemConfiguration;
+    private ch.hsr.univote.unigen.gui.VoteGeneration voteGeneration;
     // End of variables declaration//GEN-END:variables
 }

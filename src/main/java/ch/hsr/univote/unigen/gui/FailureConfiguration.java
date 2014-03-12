@@ -36,8 +36,6 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCheckBox8 = new javax.swing.JCheckBox();
         jCheckBox7 = new javax.swing.JCheckBox();
         jCheckBox9 = new javax.swing.JCheckBox();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jCheckBox5 = new javax.swing.JCheckBox();
@@ -51,7 +49,6 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCheckBox15 = new javax.swing.JCheckBox();
         jCheckBox16 = new javax.swing.JCheckBox();
         jCheckBox17 = new javax.swing.JCheckBox();
-        jCheckBox18 = new javax.swing.JCheckBox();
         jCheckBox19 = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -61,6 +58,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCheckBox20 = new javax.swing.JCheckBox();
         jCheckBox22 = new javax.swing.JCheckBox();
         jCheckBox23 = new javax.swing.JCheckBox();
+        jBtnApply = new javax.swing.JButton();
 
         jCBFailureSelection.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Schnorr Parameters", "ElGamal Parameters", "Certificates", "Signatures" }));
         jCBFailureSelection.addActionListener(new java.awt.event.ActionListener() {
@@ -70,8 +68,12 @@ public class FailureConfiguration extends javax.swing.JPanel {
         });
         jTabbedPane1.addTab("tab2", jCBFailureSelection);
 
+        setMinimumSize(new java.awt.Dimension(450, 300));
+        setPreferredSize(new java.awt.Dimension(450, 300));
+
         jTabbedPane2.setMaximumSize(new java.awt.Dimension(0, 0));
-        jTabbedPane2.setMinimumSize(new java.awt.Dimension(0, 0));
+        jTabbedPane2.setMinimumSize(new java.awt.Dimension(450, 250));
+        jTabbedPane2.setPreferredSize(new java.awt.Dimension(450, 250));
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.PAGE_AXIS));
 
@@ -99,13 +101,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCheckBox9.setText("Schnorr's P is SafePrime");
         jPanel1.add(jCheckBox9);
 
-        jToggleButton1.setText("jToggleButton1");
-        jPanel1.add(jToggleButton1);
-
-        jButton1.setText("jButton1");
-        jPanel1.add(jButton1);
-
-        jTabbedPane2.addTab("tab1", jPanel1);
+        jTabbedPane2.addTab("Schnorr", jPanel1);
 
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.PAGE_AXIS));
 
@@ -132,7 +128,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCheckBox13.setText("ElGamal Parameter Length");
         jPanel3.add(jCheckBox13);
 
-        jTabbedPane2.addTab("tab2", jPanel3);
+        jTabbedPane2.addTab("ElGamal", jPanel3);
 
         jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.PAGE_AXIS));
 
@@ -155,15 +151,11 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCheckBox17.setText("Tallier Certificate -> WELCHER?");
         jPanel4.add(jCheckBox17);
 
-        jCheckBox18.setSelected(true);
-        jCheckBox18.setText("Mixer Certificate -> WELCHER?");
-        jPanel4.add(jCheckBox18);
-
         jCheckBox19.setSelected(true);
         jCheckBox19.setText("Voters Certificates -> WIEVIELE?");
         jPanel4.add(jCheckBox19);
 
-        jTabbedPane2.addTab("tab2", jPanel4);
+        jTabbedPane2.addTab("Certificate", jPanel4);
 
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.PAGE_AXIS));
 
@@ -194,17 +186,27 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCheckBox23.setText("ElGamal Parameter Signature");
         jPanel2.add(jCheckBox23);
 
-        jTabbedPane2.addTab("tab2", jPanel2);
+        jTabbedPane2.addTab("Signatures", jPanel2);
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("Bundle"); // NOI18N
+        jBtnApply.setText(bundle.getString("apply")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(186, 186, 186)
+                .addComponent(jBtnApply)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jBtnApply))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -221,7 +223,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jBtnApply;
     private javax.swing.JComboBox jCBFailureSelection;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox11;
@@ -231,7 +233,6 @@ public class FailureConfiguration extends javax.swing.JPanel {
     private javax.swing.JCheckBox jCheckBox15;
     private javax.swing.JCheckBox jCheckBox16;
     private javax.swing.JCheckBox jCheckBox17;
-    private javax.swing.JCheckBox jCheckBox18;
     private javax.swing.JCheckBox jCheckBox19;
     private javax.swing.JCheckBox jCheckBox20;
     private javax.swing.JCheckBox jCheckBox21;
@@ -254,6 +255,5 @@ public class FailureConfiguration extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JToggleButton jToggleButton1;
     // End of variables declaration//GEN-END:variables
 }

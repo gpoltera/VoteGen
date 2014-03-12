@@ -5,12 +5,11 @@
  */
 package ch.hsr.univote.unigen.board;
 
+import static ch.hsr.univote.unigen.gui.VoteGeneration.appendFailure;
 import static ch.hsr.univote.unigen.gui.VoteGeneration.appendText;
 import static ch.hsr.univote.unigen.gui.VoteGeneration.updateProgress;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import javax.xml.ws.Endpoint;
 
@@ -27,7 +26,7 @@ public class Publisher {
     public static void startWebSrv() throws IOException {
 
         if (checkPort()) {
-            appendText("FEHLER: Port " + port + " wird bereits verwendet");
+            appendFailure("Port " + port + " wird bereits verwendet");
         } else {
             ep.publish("http://" + ip + ":" + port + "/ElectionBoardService/ElectionBoardServiceImpl");
             updateProgress();
