@@ -6,11 +6,11 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.Ballot;
+import ch.bfh.univote.common.Ballots;
 import ch.bfh.univote.common.EncryptedVote;
 import ch.bfh.univote.common.Proof;
 import ch.bfh.univote.common.VoterSignature;
-import ch.hsr.univote.unigen.board.ElectionBoard;
-import static ch.hsr.univote.unigen.board.ElectionBoard.bts;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
@@ -21,52 +21,72 @@ import java.math.BigInteger;
  *
  * @author Gian Poltéra
  */
-public class BallotsTask extends ElectionBoard{
-   public static void run() throws Exception {
+public class BallotsTask extends VoteGenerator {
 
-        bts.setElectionId(ConfigHelper.getElectionId());
+    public void run() throws Exception {
+        /*create Ballots*/
+        Ballots ballots = createBallots();
 
-        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
-            // New Ballot
-            Ballot bt = new Ballot();
-            bt.setElectionId(ConfigHelper.getElectionId());
+        /*sign by ElectionManager*/
+        ballots.setSignature(SignatureGenerator.createSignature(ballots, keyStore.electionManagerPrivateKey));
 
-            // Verification Key
-            bt.setVerificationKey(votersVerificationKey[i]);
-            
-            // Encryption
-            BigInteger[] ecVote = ElGamal.getEncryption(
-                    BigInteger.TEN, //Encryption of ??
-                    ek.getKey(), //EncryptionKey
-                    encryptionParameters.getPrime(), //ELGamal p
-                    encryptionParameters.getGroupOrder(), //ElGamal q
-                    encryptionParameters.getGenerator()); //ElGamal g       
-            
-            // EncryptedVote
-            EncryptedVote ev = new EncryptedVote();
-            
-            ev.setFirstValue(ecVote[0]);
-            ev.setSecondValue(ecVote[1]);
-            bt.setEncryptedVote(ev);
+        /*submit to ElectionBoard*/
+        electionBoard.ballots = ballots;
 
-            //Proof
-            Proof pf = new Proof();
-            pf.getCommitment().add(BigInteger.TEN);
-            pf.getResponse().add(BigInteger.TEN);
-            bt.setProof(pf);
-            
-            //Signature
-            VoterSignature vs = new VoterSignature();
-            vs.setFirstValue(BigInteger.TEN);
-            vs.setSecondValue(BigInteger.TEN);
-            bt.setSignature(vs);
-
-            // Add to the Ballots
-            bts.getBallot().add(bt);
-        }
-        bts.setSignature(SignatureGenerator.createSignature(bts, electionManagerPrivateKey));
-        
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), bts);
+        DB4O.storeDB(ConfigHelper.getElectionId(), ballots);
+    }
+
+    private Ballots createBallots() {
+        Ballots ballots = new Ballots();
+        ballots.setElectionId(ConfigHelper.getElectionId());
+
+        /*for each Voter*/
+        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
+            /*create Ballot*/
+            Ballot ballot = createBallot(i);
+
+            /*set proof*/
+            Proof proof = new Proof();
+            proof.getCommitment().add(BigInteger.TEN);
+            proof.getResponse().add(BigInteger.TEN);
+            ballot.setProof(proof);
+
+            /*sign by voter*/
+            VoterSignature voterSignature = new VoterSignature();
+            voterSignature.setFirstValue(BigInteger.TEN);
+            voterSignature.setSecondValue(BigInteger.TEN);
+            ballot.setSignature(voterSignature);
+
+            /*add to ballots*/
+            ballots.getBallot().add(ballot);
+        }
+
+        return ballots;
+    }
+
+    private Ballot createBallot(int i) {
+        Ballot ballot = new Ballot();
+        ballot.setElectionId(ConfigHelper.getElectionId());
+
+        /*Verification Key*/
+        ballot.setVerificationKey(keyStore.votersVerificationKey[i]);
+
+        /*Encryption*/
+        BigInteger[] ecVote = ElGamal.getEncryption(
+                BigInteger.TEN, //Encryption of ??
+                electionBoard.encryptionKey.getKey(), //EncryptionKey
+                electionBoard.encryptionParameters.getPrime(), //ELGamal p
+                electionBoard.encryptionParameters.getGroupOrder(), //ElGamal q
+                electionBoard.encryptionParameters.getGenerator()); //ElGamal g       
+
+        /*EncryptedVote*/
+        EncryptedVote encryptedVote = new EncryptedVote();
+
+        encryptedVote.setFirstValue(ecVote[0]);
+        encryptedVote.setSecondValue(ecVote[1]);
+        ballot.setEncryptedVote(encryptedVote);
+
+        return ballot;
     }
 }

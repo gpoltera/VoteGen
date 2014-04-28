@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ch.hsr.univote.unigen.tasks;
 
-import ch.hsr.univote.unigen.board.ElectionBoard;
-import static ch.hsr.univote.unigen.board.ElectionBoard.eg;
+import ch.bfh.univote.common.ElectionGenerator;
+import ch.hsr.univote.unigen.VoteGenerator;
 import static ch.hsr.univote.unigen.board.ElectionBoard.mixers;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
@@ -19,29 +18,43 @@ import java.math.BigInteger;
  *
  * @author Gian Poltéra
  */
-public class ElectionGeneratorTask extends ElectionBoard {
-     public static void run() throws Exception {
-        eg.setElectionId(ConfigHelper.getElectionId());
-        BigInteger g = signatureParameters.getGenerator();
+public class ElectionGeneratorTask extends VoteGenerator {
+
+    public void run() throws Exception {
+        /*create ElectionGenerator*/
+        ElectionGenerator electionGenerator = createElectionGenerator();
         
+        /*sign by ElectionManager*/
+        electionGenerator.setSignature(SignatureGenerator.createSignature(electionGenerator, keyStore.electionManagerPrivateKey));
+
+        /*submit to ElectionBoard*/
+        electionBoard.electionGenerator = electionGenerator;
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), electionGenerator);
+    }
+
+    private ElectionGenerator createElectionGenerator() {
+        ElectionGenerator electionGenerator = new ElectionGenerator();
+        electionGenerator.setElectionId(ConfigHelper.getElectionId());
+        BigInteger g = electionBoard.signatureParameters.getGenerator();
+
         //Mixers
         for (int i = 0; i < mixers.length; i++) {
             BigInteger keyPair[] = SchnorrSignature.getKeyPair(
-                    signatureParameters.getPrime(), 
-                    signatureParameters.getGroupOrder(), 
+                    electionBoard.signatureParameters.getPrime(),
+                    electionBoard.signatureParameters.getGroupOrder(),
                     g);
-            mixersSignatureKey[i] = keyPair[0];
-            mixersVerificationKey[i] = keyPair[1];
+            keyStore.mixersSignatureKey[i] = keyPair[0];
+            keyStore.mixersVerificationKey[i] = keyPair[1];
 
-            g = g.modPow(mixersSignatureKey[i], signatureParameters.getPrime());
-            
-            mixersGenerator[i] = g;
+            g = g.modPow(keyStore.mixersSignatureKey[i], electionBoard.signatureParameters.getPrime());
+
+            keyStore.mixersGenerator[i] = g;
         }
-        
-        eg.setGenerator(g);
-        eg.setSignature(SignatureGenerator.createSignature(eg, electionManagerPrivateKey));
-        
-        /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), eg);
+
+        electionGenerator.setGenerator(g);
+
+        return electionGenerator;
     }
 }

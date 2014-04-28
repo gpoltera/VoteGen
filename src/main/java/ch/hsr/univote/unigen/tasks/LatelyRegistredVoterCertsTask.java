@@ -6,14 +6,15 @@
 
 package ch.hsr.univote.unigen.tasks;
 
-import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.VoteGenerator;
+
 
 /**
  *
  * @author Gian Poltéra
  */
-public class LatelyRegistredVoterCertsTask extends ElectionBoard {
-    public static void run() throws Exception {
+public class LatelyRegistredVoterCertsTask extends VoteGenerator {
+    public void run() throws Exception {
         
     }
 }

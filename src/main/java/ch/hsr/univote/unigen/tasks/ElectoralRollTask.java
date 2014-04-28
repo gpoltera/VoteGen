@@ -11,8 +11,8 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.bfh.univote.common.ElectoralRoll;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FormatException;
@@ -29,32 +29,41 @@ import java.util.List;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectoralRollTask extends ElectionBoard {
+public class ElectoralRollTask extends VoteGenerator {
 
-    public static void run() throws FileNotFoundException, FormatException, NoSuchAlgorithmException, Exception {
+    public void run() throws FileNotFoundException, FormatException, NoSuchAlgorithmException, Exception {
         List<String> voterIds = new ArrayList<String>();
 
         for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
             voterIds.add("voter" + i + 1);
         }
 
-        ElectoralRoll roll = createRoll(voterIds);
-        roll.setSignature(SignatureGenerator.createSignature(roll, electionAdministratorPrivateKey));
-        er = roll;
+        /*create ElectoralRoll*/
+        ElectoralRoll electoralRoll = createRoll(voterIds);
+        
+        /*sign by ElectionAdministrator*/
+        electoralRoll.setSignature(SignatureGenerator.createSignature(electoralRoll, keyStore.electionAdministratorPrivateKey));
+        
+        /*submit to ElectionBoard*/
+        electionBoard.electoralRoll = electoralRoll;
 
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), er);
+        DB4O.storeDB(ConfigHelper.getElectionId(), electoralRoll);
     }
 
-    private static ElectoralRoll createRoll(List<String> voterIds) throws NoSuchAlgorithmException {
-        ElectoralRoll roll = new ElectoralRoll();
-        roll.setElectionId(ConfigHelper.getElectionId());
-        MessageDigest messageDigest = MessageDigest.getInstance(ConfigHelper.getHashAlgorithm());
-        for (String voterId : voterIds) {
-            messageDigest.update(voterId.getBytes());
-            byte[] digest = messageDigest.digest();
-            roll.getVoterHash().add(new BigInteger(digest));
+    private ElectoralRoll createRoll(List<String> voterIds) {
+        try {
+            ElectoralRoll electoralRoll = new ElectoralRoll();
+            electoralRoll.setElectionId(ConfigHelper.getElectionId());
+            MessageDigest messageDigest = MessageDigest.getInstance(ConfigHelper.getHashAlgorithm());
+            for (String voterId : voterIds) {
+                messageDigest.update(voterId.getBytes());
+                byte[] digest = messageDigest.digest();
+                electoralRoll.getVoterHash().add(new BigInteger(digest));
+            }
+            return electoralRoll;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
-        return roll;
     }
 }

@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ch.hsr.univote.unigen.tasks;
 
-import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.bfh.univote.common.ElectionData;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -15,23 +15,34 @@ import ch.hsr.univote.unigen.krypto.SignatureGenerator;
  *
  * @author Gian
  */
-public class ElectionDataTask extends ElectionBoard {
-    
-    public static void run() throws Exception {
-        edat.setElectionGenerator(eg.getGenerator());
-        edat.setElectionId(ConfigHelper.getElectionId());
-        edat.setEncryptionKey(ek.getKey());
-        edat.setGenerator(encryptionParameters.getGenerator());
-        edat.setGroupOrder(encryptionParameters.getGroupOrder());
-        edat.setPrime(encryptionParameters.getPrime());
-        edat.setTitle(ConfigHelper.getElectionId());
-        edat.getChoice().addAll(eo.getChoice());
-        edat.getRule().addAll(eo.getRule());
+public class ElectionDataTask extends VoteGenerator {
 
-        //sign by electionamanger
-        edat.setSignature(SignatureGenerator.createSignature(edat, electionManagerPrivateKey));
+    public void run() throws Exception {
+        /*create ElectionData*/
+        ElectionData electionData = createElectionData();
+
+        /*sign by ElectionaManager*/
+        electionData.setSignature(SignatureGenerator.createSignature(electionData, keyStore.electionManagerPrivateKey));
+
+        /*submit to ElectionBoard*/
+        electionBoard.electionData = electionData;
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), edat);
+        DB4O.storeDB(ConfigHelper.getElectionId(), electionData);
+    }
+
+    private ElectionData createElectionData() {
+        ElectionData electionData = new ElectionData();
+        electionData.setElectionGenerator(electionBoard.electionGenerator.getGenerator());
+        electionData.setElectionId(ConfigHelper.getElectionId());
+        electionData.setEncryptionKey(electionBoard.encryptionKey.getKey());
+        electionData.setGenerator(electionBoard.encryptionParameters.getGenerator());
+        electionData.setGroupOrder(electionBoard.encryptionParameters.getGroupOrder());
+        electionData.setPrime(electionBoard.encryptionParameters.getPrime());
+        electionData.setTitle(ConfigHelper.getElectionId());
+        electionData.getChoice().addAll(electionBoard.electionOptions.getChoice());
+        electionData.getRule().addAll(electionBoard.electionOptions.getRule());
+
+        return electionData;
     }
 }

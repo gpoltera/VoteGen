@@ -11,7 +11,6 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.bfh.univote.common.Candidate;
 import ch.bfh.univote.common.CandidateStatus;
 import ch.bfh.univote.common.ElectionOptions;
@@ -21,7 +20,7 @@ import ch.bfh.univote.common.LocalizedText;
 import ch.bfh.univote.common.PoliticalList;
 import ch.bfh.univote.common.Sex;
 import ch.bfh.univote.common.SummationRule;
-import static ch.hsr.univote.unigen.board.ElectionBoard.electionAdministratorPrivateKey;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
@@ -43,25 +42,27 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectionOptionsTask extends ElectionBoard {
+public class ElectionOptionsTask extends VoteGenerator {
 
-    public static void run() throws FileNotFoundException, FormatException, Exception {
+    public void run() throws FileNotFoundException, FormatException, Exception {
+        /*read CandidateLists*/
         List<CandidateList> lists = getCandidateLists();
-        for (CandidateList list : lists) {
-            if (!verifyList(list)) {
-                return;
-            }
-        }
         boolean partyListSystem = ConfigHelper.getPartyListSystemIndicator();
-        ElectionOptions options = createOptions(lists, partyListSystem);
-        options.setSignature(SignatureGenerator.createSignature(options, electionAdministratorPrivateKey));
-        eo = options;
+                
+        /*create ElectionOptions*/
+        ElectionOptions electionOptions = createOptions(lists, partyListSystem);
+        
+        /*sign by ElectionAdministrator*/
+        electionOptions.setSignature(SignatureGenerator.createSignature(electionOptions, keyStore.electionAdministratorPrivateKey));
+        
+        /*submit to ElectionBoard*/
+        electionBoard.electionOptions = electionOptions;
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), eo);
+        DB4O.storeDB(ConfigHelper.getElectionId(), electionOptions);
     }
 
-    private static List<CandidateList> getCandidateLists() throws FileNotFoundException, FormatException {
+    private List<CandidateList> getCandidateLists() throws FileNotFoundException, FormatException {
         File file = new File(ConfigHelper.getPoliticalListsFile());
         if (!file.exists() || !file.isFile()) {
             throw new FileNotFoundException("Die Datei " + file + " wurde nicht gefunden");
@@ -92,7 +93,7 @@ public class ElectionOptionsTask extends ElectionBoard {
         return lists;
     }
 
-    private static CandidateList getCandidateList(Sheet sheet) {
+    private CandidateList getCandidateList(Sheet sheet) {
         CandidateList list = new CandidateList();
 
         // parse header
@@ -134,7 +135,7 @@ public class ElectionOptionsTask extends ElectionBoard {
         return list;
     }
 
-    private static Candidate getCandidate(Row row) {
+    private Candidate getCandidate(Row row) {
         if (row.getCell(1) == null || row.getCell(1).getStringCellValue().trim().isEmpty()) {
             return null;
         }
@@ -166,11 +167,11 @@ public class ElectionOptionsTask extends ElectionBoard {
         return candidate;
     }
 
-    private static LocalizedText getLocalizedText(Sheet sheet, int row, int col) {
+    private LocalizedText getLocalizedText(Sheet sheet, int row, int col) {
         return getLocalizedText(sheet.getRow(row), col);
     }
 
-    private static LocalizedText getLocalizedText(Row row, int col) {
+    private LocalizedText getLocalizedText(Row row, int col) {
         String text = row.getCell(col).getStringCellValue().trim();
         LocalizedText localizedText = new LocalizedText();
         localizedText.setLanguage(LanguageCode.DE);
@@ -178,48 +179,7 @@ public class ElectionOptionsTask extends ElectionBoard {
         return localizedText;
     }
 
-    private static boolean verifyList(CandidateList list) {
-        System.out.println("--------------------------------------------------");
-        System.out.println("Listennummer:  " + list.getNumber());
-        System.out.println("Bezeichnung:   " + list.getTitle().get(0).getText());
-        System.out.println("Partei:        " + list.getPartyName().get(0).getText());
-        System.out.println("Parteikuerzel: " + list.getPartyShortName().get(0).getText());
-        System.out.println("----------------------------------------------------------------------------------------------------");
-        System.out.println("(Kumulierung) Name, Vorname, Status, Geschlecht, Jahrgang, Studienrichtung, Abschluss, Semesterzahl");
-        System.out.println("----------------------------------------------------------------------------------------------------");
-        for (Candidate candidate : list.getCandidates()) {
-            System.out.println(
-                    "(" + candidate.getCumulation() + ") "
-                    + candidate.getLastName() + ", "
-                    + candidate.getFirstName() + ", "
-                    + (candidate.getStatus() == CandidateStatus.NEW ? "neu"
-                    : (candidate.getStatus() == CandidateStatus.PREVIOUS ? "bisher" : "")) + ", "
-                    + (candidate.getSex() == Sex.M ? "m"
-                    : (candidate.getSex() == Sex.F ? "w" : "")) + ", "
-                    + candidate.getYearOfBirth() + ", "
-                    + candidate.getStudyBranch().get(0).getText() + ", "
-                    + candidate.getStudyDegree().get(0).getText() + ", "
-                    + candidate.getSemesterCount());
-        }
-        System.out.println("----------------------------------------------------------------------------------------------------");
-        System.out.println("Total: " + list.getCandidates().size());
-        Scanner scanner = new Scanner(System.in);
-        Boolean result = null;
-        result = true;
-        while (result == null) {
-            System.out.print("Ist diese Kandidierendenliste korrekt (ja/nein)? ");
-            String answer = scanner.nextLine();
-            if (answer.equals("ja")) {
-                result = true;
-            } else if (answer.equals("nein")) {
-                result = false;
-            }
-        }
-        System.out.println();
-        return result;
-    }
-
-    private static ElectionOptions createOptions(List<CandidateList> lists, boolean partyListSystem) {
+    private ElectionOptions createOptions(List<CandidateList> lists, boolean partyListSystem) {
         ElectionOptions options = new ElectionOptions();
         options.setElectionId(ConfigHelper.getElectionId());
         SummationRule listSummationRule = new SummationRule();

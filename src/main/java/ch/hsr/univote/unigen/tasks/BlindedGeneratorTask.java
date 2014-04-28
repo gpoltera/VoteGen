@@ -6,38 +6,63 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.BlindedGenerator;
-import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *
  * @author Gian Poltéra
  */
-public class BlindedGeneratorTask extends ElectionBoard {
+public class BlindedGeneratorTask extends VoteGenerator {
 
-    public static void run() throws Exception {
-        BigInteger previousGenerator;
-        for (int i = 0; i < mixers.length; i++) {
+    BlindedGenerator[] blindedGeneratorsList = new BlindedGenerator[electionBoard.mixers.length];
+    BigInteger previousGenerator;
+
+    public void run() throws Exception {
+        /*for each mixer*/
+        for (int i = 0; i < electionBoard.mixers.length; i++) {
+            /*create BlindedGenerator*/
+            BlindedGenerator blindedGenerator = createBlindedGenerator(i);
+
+            /*sign by Mixer*/
+            blindedGenerator.setSignature(SignatureGenerator.createSignature(electionBoard.mixers[i], blindedGenerator, keyStore.mixersPrivateKey[i]));
+
+            /*add to list*/
+            blindedGeneratorsList[i] = blindedGenerator;
+        }
+        /*submit to ElectionBoard*/
+        electionBoard.blindedGeneratorsList = blindedGeneratorsList;
+
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), electionBoard.blindedGeneratorsList);
+    }
+
+    private BlindedGenerator createBlindedGenerator(int i) {
+        try {
             BlindedGenerator blindedGenerator = new BlindedGenerator();
             blindedGenerator.setElectionId(ConfigHelper.getElectionId());
-            blindedGenerator.setGenerator(mixersGenerator[i]);
+            blindedGenerator.setGenerator(keyStore.mixersGenerator[i]);
             if (i == 0) {
-                previousGenerator = ElectionBoard.signatureParameters.getGenerator();
+                previousGenerator = electionBoard.signatureParameters.getGenerator();
             } else {
-                previousGenerator = mixersGenerator[i - 1];
+                previousGenerator = keyStore.mixersGenerator[i - 1];
             }
             blindedGenerator.setProof(NIZKP.getProof(
-                    mixers[i],
-                    mixersSignatureKey[i],
-                    mixersVerificationKey[i],
-                    ElectionBoard.signatureParameters.getPrime(),
-                    ElectionBoard.signatureParameters.getGroupOrder(),
+                    electionBoard.mixers[i],
+                    keyStore.mixersSignatureKey[i],
+                    keyStore.mixersVerificationKey[i],
+                    electionBoard.signatureParameters.getPrime(),
+                    electionBoard.signatureParameters.getGroupOrder(),
                     previousGenerator));
-            blindedGenerator.setSignature(SignatureGenerator.createSignature(mixers[i], blindedGenerator, mixersPrivateKey[i]));
-            blindedGeneratorsList[i] = blindedGenerator;
+
+            return blindedGenerator;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 }

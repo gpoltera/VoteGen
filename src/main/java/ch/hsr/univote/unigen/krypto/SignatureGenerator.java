@@ -36,6 +36,7 @@ import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SummationRule;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import ch.hsr.univote.unigen.helper.TimestampGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
@@ -320,7 +321,7 @@ public class SignatureGenerator {
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //change this when it will be available - ToDo
-        String eaIdentifier = ElectionBoard.eo.getSignature().getSignerId();
+        String eaIdentifier = ElectionBoard.electionOptions.getSignature().getSignerId();
 
         //concatenate to (id|EA|descr|P|Q|G|y|g^|(c1|...|cn)|(r1|...|rn))|timestamp
         StringConcatenator sc = new StringConcatenator();

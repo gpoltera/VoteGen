@@ -6,43 +6,67 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
-import ch.hsr.univote.unigen.board.ElectionBoard;
-import static ch.hsr.univote.unigen.board.ElectionBoard.partiallyDecryptedVotesList;
-import static ch.hsr.univote.unigen.board.ElectionBoard.talliers;
+import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *
  * @author Gian Poltéra
  */
-public class PartiallyDecryptedVotesTask extends ElectionBoard {
+public class PartiallyDecryptedVotesTask extends VoteGenerator {
 
-    public static void run() throws Exception {
-        for (int i = 0; i < talliers.length; i++) {
-            PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
+    public void run() throws Exception {
+        PartiallyDecryptedVotes[] partiallyDecryptedVotesList = new PartiallyDecryptedVotes[electionBoard.talliers.length];
+        
+        /*for each Tallier*/
+        for (int i = 0; i < electionBoard.talliers.length; i++) {
+            /*create PartiallyDecryptedVotes*/
+            PartiallyDecryptedVotes partiallyDecryptedVotes = createPartiallyDecryptedVotes(i);
+        
+            /*sign by Tallier*/
+            partiallyDecryptedVotes.setSignature(SignatureGenerator.createSignature(electionBoard.talliers[i], partiallyDecryptedVotes, keyStore.talliersPrivateKey[i]));
+            
+            /*add to List*/
+            partiallyDecryptedVotesList[i] = partiallyDecryptedVotes;
+        }
+         /*submit to ElectionBoard*/
+        electionBoard.partiallyDecryptedVotesList = partiallyDecryptedVotesList;
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(),partiallyDecryptedVotesList); 
+    }
+    
+    private PartiallyDecryptedVotes createPartiallyDecryptedVotes(int i) {
+        try {
+        PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
             partiallyDecryptedVotes.setElectionId(ConfigHelper.getElectionId());
 
-            for (int j = 0; j < mev.getVote().size(); j++) {
+            /*for each Vote*/
+            for (int j = 0; j < electionBoard.mixedEncryptedVotes.getVote().size(); j++) {
                 partiallyDecryptedVotes.getVote().add(ElGamal.getDecryption(
-                        mev.getVote().get(j).getFirstValue(),
-                        mev.getVote().get(j).getSecondValue(),
-                        talliersDecryptionKey[i],
-                        encryptionParameters.getPrime()));
+                        electionBoard.mixedEncryptedVotes.getVote().get(j).getFirstValue(),
+                        electionBoard.mixedEncryptedVotes.getVote().get(j).getSecondValue(),
+                        keyStore.talliersDecryptionKey[i],
+                        electionBoard.encryptionParameters.getPrime()));
             }
 
             partiallyDecryptedVotes.setProof(NIZKP.getProof(
-                    talliers[i], 
-                    talliersDecryptionKey[i], 
-                    encryptionKeyShareList[i], 
+                    electionBoard.talliers[i], 
+                    keyStore.talliersDecryptionKey[i], 
+                    electionBoard.encryptionKeyShareList[i], 
                     partiallyDecryptedVotes, 
-                    encryptionParameters.getPrime(), 
-                    encryptionParameters.getGroupOrder(),  
-                    encryptionParameters.getGenerator()));
-            partiallyDecryptedVotes.setSignature(SignatureGenerator.createSignature(talliers[i], partiallyDecryptedVotes, talliersPrivateKey[i]));
-            partiallyDecryptedVotesList[i] = partiallyDecryptedVotes;
+                    electionBoard.encryptionParameters.getPrime(), 
+                    electionBoard.encryptionParameters.getGroupOrder(),  
+                    electionBoard.encryptionParameters.getGenerator()));
+        
+        return partiallyDecryptedVotes;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 }

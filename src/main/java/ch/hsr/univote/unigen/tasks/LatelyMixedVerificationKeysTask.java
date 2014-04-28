@@ -5,24 +5,16 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.bfh.univote.common.MixedVerificationKey;
-import ch.bfh.univote.common.Proof;
-import ch.bfh.univote.common.Signature;
-import ch.hsr.univote.unigen.helper.TimestampGenerator;
-import ch.hsr.univote.unigen.board.ElectionBoard;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.RSA;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.math.BigInteger;
+import ch.hsr.univote.unigen.VoteGenerator;
 
 
 /**
  *
  * @author Gian Poltéra
  */
-public class LatelyMixedVerificationKeysTask extends ElectionBoard {
+public class LatelyMixedVerificationKeysTask extends VoteGenerator {
 
-    public static void run() throws Exception {
+    public void run() throws Exception {
 
 
     }

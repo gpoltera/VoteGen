@@ -7,11 +7,13 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.Candidate;
 import ch.bfh.univote.common.Choice;
+import ch.bfh.univote.common.DecryptedVotes;
 import ch.bfh.univote.common.PoliticalList;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
-import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -19,50 +21,63 @@ import java.util.Random;
  *
  * @author Gian Poltéra
  */
-public class DecryptedVotesTask extends ElectionBoard {
+public class DecryptedVotesTask extends VoteGenerator {
 
-    public static void run() throws Exception {
-        dyv.setElectionId(ConfigHelper.getElectionId());
+    public void run() throws Exception {
+        /*create DecryptedVotes*/
+        DecryptedVotes decryptedVotes = createDecryptedVotes();
+        
+        /*sign by ElectionManager TBA*/
+        //decryptedVotes.setSignature(SignatureGenerator.createSignature(decryptedVotes, keyStore.electionManagerPrivateKey));
+        
+        /*submit to ElectionBoard*/
+        electionBoard.decryptedVotes = decryptedVotes;        
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), decryptedVotes);
+    }
 
-        //loop each voter
+    private DecryptedVotes createDecryptedVotes() {
+        DecryptedVotes decryptedVotes = new DecryptedVotes();
+        decryptedVotes.setElectionId(ConfigHelper.getElectionId());
+
+        /*for each Voter*/
         for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
             Random generator = new Random();
-            //concatenate to cnln..c2c1li BitString
+            /*concatenate to cnln..c2c1li BitString*/
             StringConcatenator sc = new StringConcatenator();
 
-            //loop each choice and generate a vote
-            for (int j = 0; j < eo.getChoice().size(); j++) {
-                Choice choice = eo.getChoice().get(eo.getChoice().size() - j - 1);
+            /*loop each choice and generate a vote*/
+            for (int j = 0; j < electionBoard.electionOptions.getChoice().size(); j++) {
+                Choice choice = electionBoard.electionOptions.getChoice().get(electionBoard.electionOptions.getChoice().size() - j - 1);
                 if (choice instanceof PoliticalList) {
                     PoliticalList politicalList = (PoliticalList) choice;
-                    politicalLists.add(politicalList);
+                    electionBoard.politicalLists.add(politicalList);
                     sc.pushObject(1);
                 } else if (choice instanceof Candidate) {
                     Candidate candidate = (Candidate) choice;
-                    candidateList.add(candidate);
+                    electionBoard.candidateList.add(candidate);
                     int ramdonCount = generator.nextInt(ConfigHelper.getMaxCumulation());
                     String maxBinCan = Integer.toBinaryString(ConfigHelper.getMaxCumulation());
                     String binChoice = Integer.toBinaryString(ramdonCount);
-                    //fill with 0 for correct BitString
+                    /*fill with 0 for correct BitString*/
                     while (binChoice.length() < maxBinCan.length()) {
                         binChoice = "0" + binChoice;
                     }
                     sc.pushObject(binChoice);
                 }
             }
-            //convert from BitString to decimal 
+            /*convert from BitString to decimal*/
             BigInteger vote = new BigInteger(sc.pullAll(), 2);
-            
-            dyv.getVote().add(vote);
-            
+
+            decryptedVotes.getVote().add(vote);
 
             //     00  0  00 00 00 0
             //     --  -  -- -- -- -
             //     C4  L2 C3 C2 C1 L1
             //
-            // cId 6  5  4  3  2  1  
+            // cId 6  5  4  3  2  1                      
         }
-        /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), dyv);
+        return decryptedVotes; 
     }
 }

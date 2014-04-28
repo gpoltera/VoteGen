@@ -5,7 +5,8 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.bfh.univote.common.EncryptionParameters;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
@@ -16,25 +17,31 @@ import java.math.BigInteger;
  *
  * @author Gian Poltéra
  */
-public class EncryptionParametersTask extends ElectionBoard {
+public class EncryptionParametersTask extends VoteGenerator {
 
     //elgamal parameters
-    public static void run() throws Exception {
+    public void run() throws Exception {
+        /*create EncryptionParameters*/
+        EncryptionParameters encryptionParameters = createEncryptionParameters();
         
-        encryptionParameters.setElectionId(ConfigHelper.getElectionId());
-
-        BigInteger[] keys = ElGamal.getPublicParameters();
-        //ElGamal's p
-        encryptionParameters.setPrime(keys[0]);
-        //ElGamal's q
-        encryptionParameters.setGroupOrder(keys[1]);
-        //ElGamal's g
-        encryptionParameters.setGenerator(keys[2]);
-
-        //sign by electionamanger
-        ElectionBoard.encryptionParameters.setSignature(SignatureGenerator.createSignature(encryptionParameters, electionManagerPrivateKey));
+        /*sign by electionamanger*/
+        encryptionParameters.setSignature(SignatureGenerator.createSignature(encryptionParameters, keyStore.electionManagerPrivateKey));
+        
+        /*submit to ElectionBoard*/
+        electionBoard.encryptionParameters = encryptionParameters;
         
         /*save in db*/
         DB4O.storeDB(ConfigHelper.getElectionId(), encryptionParameters);
+    }
+    
+    private EncryptionParameters createEncryptionParameters() {
+        EncryptionParameters encryptionParameters = new EncryptionParameters();
+        encryptionParameters.setElectionId(ConfigHelper.getElectionId());
+        BigInteger[] keys = ElGamal.getPublicParameters();
+        encryptionParameters.setPrime(keys[0]); //ElGamal's p
+        encryptionParameters.setGroupOrder(keys[1]); //ElGamal's q
+        encryptionParameters.setGenerator(keys[2]); //ElGamal's g
+        
+        return encryptionParameters;       
     }
 }

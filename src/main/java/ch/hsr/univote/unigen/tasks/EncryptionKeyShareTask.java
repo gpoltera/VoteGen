@@ -6,7 +6,8 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptionKeyShare;
-import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -15,25 +16,43 @@ import ch.hsr.univote.unigen.krypto.SignatureGenerator;
  *
  * @author Gian Poltéra
  */
-public class EncryptionKeyShareTask extends ElectionBoard {
+public class EncryptionKeyShareTask extends VoteGenerator {
 
-    public static void run() throws Exception {
-        for (int i = 0; i < talliers.length; i++) {
-            EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
-            encryptionKeyShare.setElectionId(ConfigHelper.getElectionId());
-            encryptionKeyShare.setKey(talliersEncryptionKey[i]);
-            
-            //set the proof
+    public void run() throws Exception {
+        EncryptionKeyShare[] encryptionKeyShareList = new EncryptionKeyShare[electionBoard.talliers.length];
+
+        /*for each tallier*/
+        for (int i = 0; i < electionBoard.talliers.length; i++) {
+            /*create EncryptionKeyShare*/
+            EncryptionKeyShare encryptionKeyShare = createEncryptionKeyShare(i);
+
+            /*set the proof*/
             encryptionKeyShare.setProof(NIZKP.getProof(
-                    talliers[i], 
-                    talliersDecryptionKey[i], 
-                    talliersEncryptionKey[i], 
-                    ElectionBoard.encryptionParameters.getPrime(), 
-                    ElectionBoard.encryptionParameters.getGroupOrder(), 
-                    ElectionBoard.encryptionParameters.getGenerator()));
-            //set the signature
-            encryptionKeyShare.setSignature(SignatureGenerator.createSignature(talliers[i], encryptionKeyShare, talliersPrivateKey[i]));
+                    electionBoard.talliers[i],
+                    keyStore.talliersDecryptionKey[i],
+                    keyStore.talliersEncryptionKey[i],
+                    electionBoard.encryptionParameters.getPrime(),
+                    electionBoard.encryptionParameters.getGroupOrder(),
+                    electionBoard.encryptionParameters.getGenerator()));
+
+            /*sign by tallier*/
+            encryptionKeyShare.setSignature(SignatureGenerator.createSignature(electionBoard.talliers[i], encryptionKeyShare, keyStore.talliersPrivateKey[i]));
+
+            /*add to list*/
             encryptionKeyShareList[i] = encryptionKeyShare;
         }
+        /*submit to ElectionBoard*/
+        electionBoard.encryptionKeyShareList = encryptionKeyShareList;
+
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(), encryptionKeyShareList);
+    }
+
+    private EncryptionKeyShare createEncryptionKeyShare(int i) {
+        EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
+        encryptionKeyShare.setElectionId(ConfigHelper.getElectionId());
+        encryptionKeyShare.setKey(keyStore.talliersEncryptionKey[i]);
+
+        return encryptionKeyShare;
     }
 }

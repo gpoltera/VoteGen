@@ -18,7 +18,7 @@ import ch.bfh.univote.common.DecodedVoteEntry;
 import ch.bfh.univote.common.DecodedVotes;
 import ch.bfh.univote.common.ElectionData;
 import ch.bfh.univote.common.PoliticalList;
-import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,9 +33,9 @@ import java.util.Map;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectionResultsTask extends ElectionBoard {
+public class ElectionResultsTask extends VoteGenerator {
 
-    public static void run() {
+    public void run() {
         List<Choice> choices = getChoices();
         if (choices == null) {
             return;
@@ -48,8 +48,8 @@ public class ElectionResultsTask extends ElectionBoard {
         writeResults(choices, choiceCounts, totalCounts);
     }
 
-    private static List<Choice> getChoices() {
-        ElectionData data = edat;
+    private List<Choice> getChoices() {
+        ElectionData data = electionBoard.electionData;
         List<Choice> choices = new ArrayList<Choice>();
         for (Choice choice : data.getChoice()) {
             if (choice instanceof PoliticalList) {
@@ -64,8 +64,8 @@ public class ElectionResultsTask extends ElectionBoard {
         return choices;
     }
 
-    private static List<Map<Choice, Integer>> getChoiceCounts(List<Choice> choices) {
-        DecodedVotes votes = dov;
+    private List<Map<Choice, Integer>> getChoiceCounts(List<Choice> choices) {
+        DecodedVotes votes = electionBoard.decodedVotes;
         List<Map<Choice, Integer>> choiceCounts = new ArrayList<Map<Choice, Integer>>();
         for (DecodedVote vote : votes.getDecodedVote()) {
             Map<Choice, Integer> counts = new HashMap<Choice, Integer>();
@@ -82,7 +82,7 @@ public class ElectionResultsTask extends ElectionBoard {
 
     }
 
-    private static Map<Choice, Integer> getTotalCounts(List<Map<Choice, Integer>> choiceCounts) {
+    private Map<Choice, Integer> getTotalCounts(List<Map<Choice, Integer>> choiceCounts) {
         Map<Choice, Integer> totalCounts = new HashMap<Choice, Integer>();
         for (Map<Choice, Integer> counts : choiceCounts) {
             for (Choice choice : counts.keySet()) {
@@ -97,7 +97,7 @@ public class ElectionResultsTask extends ElectionBoard {
         return totalCounts;
     }
 
-    private static void writeResults(List<Choice> choices, List<Map<Choice, Integer>> choiceCounts, Map<Choice, Integer> totalCounts) {
+    private void writeResults(List<Choice> choices, List<Map<Choice, Integer>> choiceCounts, Map<Choice, Integer> totalCounts) {
         try {
             // print choice numbers
             PrintWriter writer = new PrintWriter(new FileWriter(ConfigHelper.getElectionResultsPath()));

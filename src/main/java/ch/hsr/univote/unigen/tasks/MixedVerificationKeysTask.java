@@ -5,7 +5,8 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.bfh.univote.common.VerificationKeys;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -14,20 +15,30 @@ import ch.hsr.univote.unigen.krypto.SignatureGenerator;
  *
  * @author Gian Poltéra
  */
-public class MixedVerificationKeysTask extends ElectionBoard {
+public class MixedVerificationKeysTask extends VoteGenerator {
 
-    public static void run() throws Exception {
+    public void run() throws Exception {
+        /*create VerificationKeys*/
+        VerificationKeys verificationKeys = createVerificationKeys();
+        
+        /*sign by ElectionManager*/
+        verificationKeys.setSignature(SignatureGenerator.createSignature(verificationKeys, keyStore.electionManagerPrivateKey));
 
-        vk.setElectionId(ConfigHelper.getElectionId());
-        
-        
-        for (int i = 0; i < mixedVerificationKeysList[mixers.length - 1].getKey().size(); i++) {
-            vk.getKey().add(mixedVerificationKeysList[mixers.length - 1].getKey().get(i));
-        }
-        
-        vk.setSignature(SignatureGenerator.createSignature(vk, electionManagerPrivateKey));
+        /*submit to ElectionBoard*/
+        electionBoard.verificationKeys = verificationKeys;
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), vk);
+        DB4O.storeDB(ConfigHelper.getElectionId(), verificationKeys);
+    }
+
+    private VerificationKeys createVerificationKeys() {
+        VerificationKeys verificationKeys = new VerificationKeys();
+        verificationKeys.setElectionId(ConfigHelper.getElectionId());
+
+        for (int i = 0; i < electionBoard.mixedVerificationKeysList[electionBoard.mixers.length - 1].getKey().size(); i++) {
+            verificationKeys.getKey().add(electionBoard.mixedVerificationKeysList[electionBoard.mixers.length - 1].getKey().get(i));
+        }
+
+        return verificationKeys;
     }
 }

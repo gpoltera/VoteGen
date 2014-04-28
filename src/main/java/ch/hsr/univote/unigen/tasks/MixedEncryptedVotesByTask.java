@@ -6,9 +6,8 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.MixedEncryptedVotes;
-import ch.hsr.univote.unigen.board.ElectionBoard;
-import static ch.hsr.univote.unigen.board.ElectionBoard.mixedEncryptedVotesList;
-import static ch.hsr.univote.unigen.board.ElectionBoard.mixers;
+import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
@@ -16,18 +15,37 @@ import ch.hsr.univote.unigen.krypto.SignatureGenerator;
  *
  * @author Gian Poltéra
  */
-public class MixedEncryptedVotesByTask extends ElectionBoard {
+public class MixedEncryptedVotesByTask extends VoteGenerator {
 
-    public static void run() throws Exception {
-        for (int i = 0; i < mixers.length; i++) {
-            MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
-            mixedEncryptedVotes.setElectionId(ConfigHelper.getElectionId());
-            for (int j = 0; j < ev.getVote().size(); j++) {
-                mixedEncryptedVotes.getVote().add(ev.getVote().get(j));
-            }
+    public void run() throws Exception {
+        MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[electionBoard.mixers.length];
+
+        /*for each Mixer*/
+        for (int i = 0; i < electionBoard.mixers.length; i++) {
+            /*create MixedEncryptedVotes*/
+            MixedEncryptedVotes mixedEncryptedVotes = createMixedEncryptedVotes();
             
-            mixedEncryptedVotes.setSignature(SignatureGenerator.createSignature(mixers[i], mixedEncryptedVotes, mixersPrivateKey[i]));
+            /*sign by Mixer*/
+            mixedEncryptedVotes.setSignature(SignatureGenerator.createSignature(electionBoard.mixers[i], mixedEncryptedVotes, keyStore.mixersPrivateKey[i]));
+            
+            /*add to List*/
             mixedEncryptedVotesList[i] = mixedEncryptedVotes;
         }
+        /*submit to ElectionBoard*/
+        electionBoard.mixedEncryptedVotesList = mixedEncryptedVotesList;
+        
+        /*save in db*/
+        DB4O.storeDB(ConfigHelper.getElectionId(),mixedEncryptedVotesList);
+    }
+
+    private MixedEncryptedVotes createMixedEncryptedVotes() {
+        MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
+        mixedEncryptedVotes.setElectionId(ConfigHelper.getElectionId());
+        /*for each Vote*/
+        for (int j = 0; j < electionBoard.encryptedVotes.getVote().size(); j++) {
+            mixedEncryptedVotes.getVote().add(electionBoard.encryptedVotes.getVote().get(j));
+        }
+
+        return mixedEncryptedVotes;
     }
 }
