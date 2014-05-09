@@ -131,9 +131,10 @@ public class ElectionBoardWebService extends VoteGenerator implements ch.bfh.uni
 
     public MixedVerificationKeys getVerificationKeysMixedBy(String electionId, String mixerId) throws ElectionBoardServiceFault {
         MixedVerificationKeys mixedVerificationKeys = new MixedVerificationKeys();
+        
         for (int i = 0; i < electionBoard.mixers.length; i++) {
             if (electionBoard.mixers[i].equals(mixerId)) {
-                mixedVerificationKeys = electionBoard.mixedVerificationKeysList[i];
+                mixedVerificationKeys = electionBoard.listMixedVerificationKeys.get(i);
                 break;
             }
         }

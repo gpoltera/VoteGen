@@ -41,7 +41,8 @@ import java.util.List;
  *
  * @author Gian Poltéra
  */
-public class ElectionBoard {    
+public class ElectionBoard {
+
     public static SignatureParameters signatureParameters = new SignatureParameters();
     public static Certificate certificate = new Certificate();
     public static ElectionSystemInfo electionSystemInfo = new ElectionSystemInfo();
@@ -59,10 +60,9 @@ public class ElectionBoard {
     public static BlindedGenerator blindedGenerator = new BlindedGenerator();
     public static ElectionData electionData = new ElectionData();
     public static ElectoralRoll electoralRoll = new ElectoralRoll();
-    public static MixedVerificationKeys mixedVerificationKeys = new MixedVerificationKeys();
-    public static VerificationKeys verificationKeys = new VerificationKeys();
+    
     public static List<Certificate> listCertificate = new ArrayList<>();
-    public static List<MixedVerificationKey> listMixedVerificationKey = new ArrayList<>();
+
     public static MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
     public static EncryptedVotes encryptedVotes = new EncryptedVotes();
     public static PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
@@ -71,13 +71,17 @@ public class ElectionBoard {
     public static EncryptedVote encryptedVote = new EncryptedVote();
     public static final String[] mixers = ConfigHelper.getMixerIds();
     public static final String[] talliers = ConfigHelper.getTallierIds();
-    public static BlindedGenerator[] blindedGeneratorsList = new BlindedGenerator[mixers.length];
-    public static EncryptionKeyShare[] encryptionKeyShareList = new EncryptionKeyShare[talliers.length];
-    public static MixedVerificationKeys[] mixedVerificationKeysList = new MixedVerificationKeys[mixers.length];
-    public static MixedVerificationKey[] latelyMixedVerificationKeysList = new MixedVerificationKey[mixers.length];
-    public static PartiallyDecryptedVotes[] partiallyDecryptedVotesList = new PartiallyDecryptedVotes[talliers.length];
-    public static MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[mixers.length];
 
     public static List<PoliticalList> politicalLists = new ArrayList<>();
     public static List<Candidate> candidateList = new ArrayList<>();
+
+    public static BlindedGenerator[] blindedGeneratorsList = new BlindedGenerator[mixers.length];
+    public static EncryptionKeyShare[] encryptionKeyShareList = new EncryptionKeyShare[talliers.length];
+
+    public static PartiallyDecryptedVotes[] partiallyDecryptedVotesList = new PartiallyDecryptedVotes[talliers.length];
+    public static MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[mixers.length];
+
+    public static VerificationKeys verificationKeys = new VerificationKeys();
+    public static List<MixedVerificationKey> listMixedVerificationKey = new ArrayList<>();
+    public static List<MixedVerificationKeys> listMixedVerificationKeys = new ArrayList<>();
 }

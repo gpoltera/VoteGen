@@ -5,6 +5,7 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
+import ch.bfh.univote.common.MixedVerificationKey;
 import ch.hsr.univote.unigen.VoteGenerator;
 
 
@@ -15,7 +16,17 @@ import ch.hsr.univote.unigen.VoteGenerator;
 public class LatelyMixedVerificationKeysTask extends VoteGenerator {
 
     public void run() throws Exception {
+        
+        /*submit to ElectionBoard*/
+        //List<MixedVerificationKey> test = electionBoard.mixedVerificationKeysList;
 
-
+    }
+    
+    private MixedVerificationKey createMixedVerificationKey() {
+        MixedVerificationKey mixedVerificationKey = new MixedVerificationKey();
+        
+        
+        
+        return mixedVerificationKey;
     }
 }

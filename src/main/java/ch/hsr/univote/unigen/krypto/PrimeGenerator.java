@@ -22,16 +22,22 @@ public class PrimeGenerator {
      * @param bitlength the length of the prime-number
      * @return prime-number
      */
+    public static BigInteger getRandom(int bitlength) {
+        BigInteger random = new BigInteger(bitlength, new SecureRandom());
+        
+        return random;
+    }
+    
     public static BigInteger getPrime(int bitlength) {
-        boolean isprime = false;
-        while (isprime = true) {
-            SecureRandom random = new SecureRandom();
-            BigInteger birandom = new BigInteger(bitlength, random);
-            if (MillerRabin.millerRabinTest(birandom, 3)) {
-                    return birandom;
-            }
+        BigInteger random = getRandom(bitlength); 
+        
+        while (!isPrime(random, 3)) {
+            random = random.nextProbablePrime();
         }
-        return null;
+        
+        BigInteger prime = random;
+
+        return prime;
     }
     
     /**
@@ -40,16 +46,14 @@ public class PrimeGenerator {
      * @param bitlength the length of the prime-number
      * @return safe-prime-number
      */
-    public static BigInteger getSafePrime(int bitlength) {
-        boolean issafeprime = false;        
-        BigInteger prime = BigInteger.ZERO;
+    public static BigInteger getSafePrime(int bitlength) {   
+        BigInteger prime = getPrime(bitlength);
    
-        while(issafeprime == false) {
-            prime = getPrime(bitlength);
-            issafeprime = isSafePrime(prime);
+        while(!isSafePrime(prime, 3)) {
+            prime = prime.nextProbablePrime();
         }
         BigInteger safeprime = prime;
-        
+
         return safeprime;
     }
     
@@ -61,7 +65,7 @@ public class PrimeGenerator {
      */
     static boolean isPrime(BigInteger value, int secure) {       
         
-        return value.isProbablePrime(secure);
+        return MillerRabin.millerRabinTest(value, secure);
     }
     
     /**
@@ -70,9 +74,9 @@ public class PrimeGenerator {
      * @param prime the prime-number to check
      * @return boolean value true if is safe-prime and false if is not a safe-prime
      */
-    static boolean isSafePrime(BigInteger prime) {
+    static boolean isSafePrime(BigInteger prime, int secure) {
         BigInteger value = prime.multiply(new BigInteger("2")).add(BigInteger.ONE);
         
-        return MillerRabin.millerRabinTest(value, 3);
+        return MillerRabin.millerRabinTest(value, secure);
     }
 }

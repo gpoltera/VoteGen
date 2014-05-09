@@ -37,7 +37,7 @@ public class EncryptionParametersTask extends VoteGenerator {
     private EncryptionParameters createEncryptionParameters() {
         EncryptionParameters encryptionParameters = new EncryptionParameters();
         encryptionParameters.setElectionId(ConfigHelper.getElectionId());
-        BigInteger[] keys = ElGamal.getPublicParameters();
+        BigInteger[] keys = ElGamal.getPublicParameters(ConfigHelper.getEncryptionKeyLength());
         encryptionParameters.setPrime(keys[0]); //ElGamal's p
         encryptionParameters.setGroupOrder(keys[1]); //ElGamal's q
         encryptionParameters.setGenerator(keys[2]); //ElGamal's g

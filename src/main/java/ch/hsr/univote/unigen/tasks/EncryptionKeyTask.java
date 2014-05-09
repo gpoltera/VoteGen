@@ -21,7 +21,6 @@ public class EncryptionKeyTask extends VoteGenerator {
 
     public void run() throws Exception {
         /*create EncryptionKey*/
-        
         EncryptionKey encryptionKey = createEncryptionKey();        
         
         /*sign by ElectionManager*/

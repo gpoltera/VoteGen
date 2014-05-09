@@ -31,7 +31,7 @@ public class ElGamalTest extends TestCase {
     public void testElGamal() {
         BigInteger m = new BigInteger("819216351");
         System.out.println("ElGamal encryption of: " + m);
-        BigInteger[] parameters = ElGamal.getPublicParameters();
+        BigInteger[] parameters = ElGamal.getPublicParameters(256);
         BigInteger[] keyPair = ElGamal.getKeyPair(parameters[0], parameters[1], parameters[2]);
         BigInteger[] encryption = ElGamal.getEncryption(m, keyPair[1], parameters[0], parameters[1], parameters[2]);
         BigInteger decryption = ElGamal.getDecryption(encryption[0], encryption[1], keyPair[0], parameters[0]);

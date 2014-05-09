@@ -5,9 +5,7 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 
 /**
  *
@@ -17,19 +15,21 @@ public class ElGamal {
 
     /**
      * 
+     * @param keylength
      * @return ElGamal public parameters (p,q,g), (prime, group order, generator)
      */
-    public static BigInteger[] getPublicParameters() {
-        BigInteger q = PrimeGenerator.getSafePrime(ConfigHelper.getEncryptionKeyLength());
+    public static BigInteger[] getPublicParameters(int keylength) {
+        
+        BigInteger q = PrimeGenerator.getSafePrime(keylength - 1);
         BigInteger p = q.multiply(new BigInteger("2")).add(BigInteger.ONE);
-
-        int i = 0;
         BigInteger g = new BigInteger("2");
 
-        //group order (g^2 mod p <> 1 & g^q mod p <> 1)
-        while (!g.modPow(new BigInteger("2"), p).equals(BigInteger.ONE) && !g.modPow(q, p).equals(BigInteger.ONE)) {
-            i++;
-            g = g.add(BigInteger.valueOf(i));
+        System.out.println("ElGamal p, Länge: " + p.bitLength());
+        System.out.println("ElGamal q, Länge: " + q.bitLength());
+        System.out.println("ElGamal g, Länge: " + g.bitLength());
+        //group order g^q mod p <> 1 evtl. noch (g^2 mod p <> 1
+        while (!g.modPow(q, p).equals(BigInteger.ONE)) {
+            g = g.add(BigInteger.ONE);
         }
 
         BigInteger[] parameters = new BigInteger[3];

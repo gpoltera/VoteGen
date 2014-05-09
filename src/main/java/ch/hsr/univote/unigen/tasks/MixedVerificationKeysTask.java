@@ -5,11 +5,14 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
+import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import java.math.BigInteger;
+import java.util.List;
 
 /**
  *
@@ -18,8 +21,11 @@ import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 public class MixedVerificationKeysTask extends VoteGenerator {
 
     public void run() throws Exception {
+        /*load the VerificationKey from the last mixer from the ElectionBoard*/
+        MixedVerificationKeys mixedVerificationKeys = electionBoard.listMixedVerificationKeys.get(electionBoard.mixers.length - 1);
+        
         /*create VerificationKeys*/
-        VerificationKeys verificationKeys = createVerificationKeys();
+        VerificationKeys verificationKeys = createVerificationKeys(mixedVerificationKeys);
         
         /*sign by ElectionManager*/
         verificationKeys.setSignature(SignatureGenerator.createSignature(verificationKeys, keyStore.electionManagerPrivateKey));
@@ -31,12 +37,12 @@ public class MixedVerificationKeysTask extends VoteGenerator {
         DB4O.storeDB(ConfigHelper.getElectionId(), verificationKeys);
     }
 
-    private VerificationKeys createVerificationKeys() {
+    private VerificationKeys createVerificationKeys(MixedVerificationKeys mixedVerificationKeys) {
         VerificationKeys verificationKeys = new VerificationKeys();
         verificationKeys.setElectionId(ConfigHelper.getElectionId());
 
-        for (int i = 0; i < electionBoard.mixedVerificationKeysList[electionBoard.mixers.length - 1].getKey().size(); i++) {
-            verificationKeys.getKey().add(electionBoard.mixedVerificationKeysList[electionBoard.mixers.length - 1].getKey().get(i));
+        for (BigInteger verificationKey : mixedVerificationKeys.getKey()) {
+            verificationKeys.getKey().add(verificationKey);
         }
 
         return verificationKeys;

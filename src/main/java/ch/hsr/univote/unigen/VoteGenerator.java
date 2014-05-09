@@ -47,78 +47,90 @@ public class VoteGenerator {
         
         voteGenerator.phase1();
         updateProgress();
-        appendText("Phase 1 abgeschlossen");
+        appendText("----------------------------------");
 
         voteGenerator.phase2();
         updateProgress();
-        appendText("Phase 2 abgeschlossen");
+        appendText("----------------------------------");
 
         voteGenerator.phase3();
         updateProgress();
-        appendText("Phase 3 abgeschlossen");
+        appendText("----------------------------------");
                 
         voteGenerator.phase4();
         updateProgress();
-        appendText("Phase 4 abgeschlossen");
+        appendText("----------------------------------");
         
         voteGenerator.phase5();
         updateProgress();
-        appendText("Phase 5 abgeschlossen");
+        appendText("----------------------------------");
         
         voteGenerator.phase6();
         updateProgress();
-        appendText("Phase 6 abgeschlossen");
+        appendText("----------------------------------");
         
         voteGenerator.phase7();
         updateProgress();
-        appendText("Phase 7 abgeschlossen");
+        appendText("----------------------------------");
         
         voteGenerator.phase8();
         updateProgress();
-        appendText("Phase 8 abgeschlossen");
+        appendText("----------------------------------");
     }
 
     /* 1.3.1 Public Parameters */
     private void phase1() throws Exception {
+        appendText("1. Public Parameters");
         //Set the Signature Parameters
+        appendText(" a) Set the Signature Parameters");
         SignatureParametersTask signatureParametersTask = new SignatureParametersTask();
         signatureParametersTask.run(); //Set the Schnorr Parameters -> OK
     }
 
     /* 1.3.2 Public Indentifiers and Keys */
     private void phase2() throws Exception {
+        appendText("2. Public Indentifiers and Keys");
         //Generate the certificates and keys
+        appendText(" a) Generate the certificates and keys");
         ElectionSystemInfoTask electionSystemInfoTask = new ElectionSystemInfoTask();
         electionSystemInfoTask.run(); // -> OK
     }
 
     /* 1.3.3 Registration */
     private void phase3() throws Exception {
+        appendText("3. Registration");
         //Generate the voters certificates
+        appendText(" a) Generate the voters certificates");
         VoterCertsTask voterCertsTask = new VoterCertsTask();
         voterCertsTask.run();  // -> OK
     }
 
     /* 1.3.4 Election Setup */
     private void phase4() throws Exception {
+        appendText("4. Election Setup");
         //a) Initialization
+        appendText(" a) Initialization");
         electionBoard.knownElectionIds.getElectionId().add(ConfigHelper.getElectionId()); //Add the election id
-
+        
         //b) Election Definition
+        appendText(" b) Election Definition");
         ElectionDefinitionTask electionDefinitionTask = new ElectionDefinitionTask();
         electionDefinitionTask.run(); // -> OK
-
+        
         //c) Parameter Generation
+        appendText(" c) Parameter Generation");
         EncryptionParametersTask encryptionParametersTask = new EncryptionParametersTask();
         encryptionParametersTask.run(); //Set the ElGamal Parameters -> OK
-
+        
         //d) Distributed Key Generation
+        appendText(" d) Distributed Key Generation");
         EncryptionKeyTask encryptionKeyTask = new EncryptionKeyTask();
         encryptionKeyTask.run(); // -> OK
         EncryptionKeyShareTask encryptionKeyShareTask = new EncryptionKeyShareTask();
         encryptionKeyShareTask.run(); // -> OK
-
+        
         //e) Constructing the Election Generator
+        appendText(" e) Constructing the Election Generator");
         ElectionGeneratorTask electionGeneratorTask = new ElectionGeneratorTask();
         electionGeneratorTask.run(); // -> OK
         BlindedGeneratorTask blindedGeneratorTask = new BlindedGeneratorTask();
@@ -127,20 +139,24 @@ public class VoteGenerator {
 
     /* 1.3.5 Election Preparation */
     private void phase5() throws Exception {
-
+        appendText("5. Election Preparation");
         //a) Definition of Election Options
+        appendText(" a) Definition of Election Options");
         ElectionOptionsTask electionOptionsTask = new ElectionOptionsTask();
         electionOptionsTask.run(); //Set the ElectionOptions -> OK
 
         //b) Publication of Election Data
+        appendText(" b) Publication of Election Data");
         ElectionDataTask electionDataTask = new ElectionDataTask();
         electionDataTask.run(); //Add the results to the electionData -> OK
 
-        //c) Electoral Roll Preparation     
+        //c) Electoral Roll Preparation 
+        appendText(" c) Electoral Roll Preparation ");
         ElectoralRollTask electoralRollTask = new ElectoralRollTask();
         electoralRollTask.run(); //Lists the votersid -> OK
 
         //d) Mixing the Public Verification Keys
+        appendText(" d) Mixing the Public Verification Keys");
         MixedVerificationKeysByTask mixedVerificationKeysByTask = new MixedVerificationKeysByTask();
         mixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
         MixedVerificationKeysTask mixedVerificationKeysTask = new MixedVerificationKeysTask();
@@ -149,16 +165,19 @@ public class VoteGenerator {
 
     /* 1.3.6 Election Period */
     private void phase6() throws Exception {
-
+        appendText("6. Election Period");
+        
         //a) Late Registration
+        appendText(" a) Late Registration");
         LatelyRegistredVoterCertsTask latelyRegistredVoterCertsTask = new LatelyRegistredVoterCertsTask();
-        latelyRegistredVoterCertsTask.run(); //NOT YET IMPLEMENTED
+        latelyRegistredVoterCertsTask.run(); //Add the Certificates of the voters to the list -> OK
         LatelyMixedVerificationKeysByTask latelyMixedVerificationKeysByTask = new LatelyMixedVerificationKeysByTask();
         latelyMixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
         LatelyMixedVerificationKeysTask latelyMixedVerificationKeysTask = new LatelyMixedVerificationKeysTask();
         latelyMixedVerificationKeysTask.run(); //NOT YET IMPLEMENTED
 
         //c) Vote Creation and Casting
+        appendText(" b) Vote Creation and Casting");
         BallotsTask ballotsTask = new BallotsTask();
         ballotsTask.run(); //Create the ballots
         SingleBallotTask singleBallotTask = new SingleBallotTask();
@@ -169,12 +188,15 @@ public class VoteGenerator {
 
     /* 1.3.7 Mixing and Tallying */
     private void phase7() throws Exception {
-
+        appendText("7. Mixing and Tallying");
+        
         //a) Mixing the Encryptions
+        appendText(" a) Mixing the Encryptions");
         MixedEncryptedVotesByTask mixedEncryptedVotesByTask = new MixedEncryptedVotesByTask();
         mixedEncryptedVotesByTask.run();
 
         //b) Decrypting the Votes
+        appendText(" b) Decrypting the Votes");
         PartiallyDecryptedVotesTask partiallyDecryptedVotesTask = new PartiallyDecryptedVotesTask();
         partiallyDecryptedVotesTask.run();
         DecryptedVotesTask decryptedVotesTask = new DecryptedVotesTask();
@@ -188,7 +210,10 @@ public class VoteGenerator {
 
     /* Fault Implementation */
     private void phase8() throws Exception {
+        appendText("8. Fault Implementation");
+        
         //Implements the Faults
+        appendText(" a) Implements the Faults");
         FaultGeneratorTask faultGeneratorTask = new FaultGeneratorTask();
         faultGeneratorTask.run();
     }

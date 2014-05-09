@@ -40,10 +40,10 @@ public class ElectionSystemInfoTask extends VoteGenerator {
     private ElectionSystemInfo createElectionSystemInfo() {
         try {
             ElectionSystemInfo electionSystemInfo = new ElectionSystemInfo();
-            //set election id
+            /*set election id*/
             electionSystemInfo.setElectionId(ConfigHelper.getElectionId());
 
-            //CertificateAuthority
+            /*CertificateAuthority*/
             KeyPair caKeyPair = RSA.getRSAKeyPair();
             keyStore.caKeyPair = caKeyPair;
             keyStore.certificateAuthorityPrivateKey = (RSAPrivateKey) caKeyPair.getPrivate();
@@ -52,7 +52,7 @@ public class ElectionSystemInfoTask extends VoteGenerator {
             caCertificate.setValue(CertificateGenerator.main(ConfigHelper.getCertificateAuthorityId(), keyStore.certificateAuthorityPrivateKey, keyStore.certificateAuthorityPublicKey).getBytes());
             electionSystemInfo.setCertificateAuthority(caCertificate);
 
-            //ElectionManager
+            /*ElectionManager*/
             KeyPair emKeyPair = RSA.getRSAKeyPair();
             keyStore.electionManagerPrivateKey = (RSAPrivateKey) emKeyPair.getPrivate();
             keyStore.electionManagerPublicKey = (RSAPublicKey) emKeyPair.getPublic();
@@ -60,7 +60,7 @@ public class ElectionSystemInfoTask extends VoteGenerator {
             emCertificate.setValue(CertificateGenerator.main(ConfigHelper.getElectionManagerId(), keyStore.electionManagerPrivateKey, keyStore.electionManagerPublicKey).getBytes());
             electionSystemInfo.setElectionManager(emCertificate);
 
-            //ElectionAdministrator
+            /*ElectionAdministrator*/
             KeyPair eaKeyPair = RSA.getRSAKeyPair();
             keyStore.electionAdministratorPrivateKey = (RSAPrivateKey) eaKeyPair.getPrivate();
             keyStore.electionAdministratorPublicKey = (RSAPublicKey) eaKeyPair.getPublic();
@@ -68,7 +68,7 @@ public class ElectionSystemInfoTask extends VoteGenerator {
             eaCertificate.setValue(CertificateGenerator.main(ConfigHelper.getElectionAdministratorId(), keyStore.electionAdministratorPrivateKey, keyStore.electionAdministratorPublicKey).getBytes());
             electionSystemInfo.setElectionAdministration(eaCertificate);
 
-            //Mixers
+            /*Mixers*/
             for (int i = 0; i < electionBoard.mixers.length; i++) {
                 KeyPair keyPair = RSA.getRSAKeyPair();
                 keyStore.mixersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
@@ -78,7 +78,7 @@ public class ElectionSystemInfoTask extends VoteGenerator {
                 electionSystemInfo.getMixer().add(certificate);
             }
 
-            //Talliers
+            /*Talliers*/
             for (int i = 0; i < electionBoard.talliers.length; i++) {
                 KeyPair keyPair = RSA.getRSAKeyPair();
                 keyStore.talliersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
