@@ -11,7 +11,11 @@
  */
 package ch.hsr.univote.unigen.helper;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -19,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Configuration helper class.
@@ -27,11 +33,25 @@ import java.util.Scanner;
  */
 public class ConfigHelper {
 
-    private static final String SYSTEM_CONFIG_FILE = "system.properties";
-    private static final String FAULT_CONFIG_FILE = "fault.properties";
+    private static final String SYSTEM_CONFIG_FILE = "SystemConfigFile";
+    private static final String CRYPTO_CONFIG_FILE = "CryptoConfigFile";
+    private static final String FAULT_CONFIG_FILE = "FaultConfigFile";
     private static Properties properties;
     private static Scanner scanner = new Scanner(System.in);
     private static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+    public static void saveProperties(String configname, Properties properties) {
+        try {
+            BufferedOutputStream streamout = new BufferedOutputStream(new FileOutputStream("properties/" + configname + ".properties"));
+            properties.store(streamout, configname);
+            streamout.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
 
     public static String getCertificateAuthorityId() {
         return getProperty("certificateAuthorityId", "Identifikator der ZertifikatAuthority");
@@ -302,14 +322,19 @@ public class ConfigHelper {
         if (properties == null) {
             properties = new Properties();
             try {
-                properties.load(new FileInputStream(SYSTEM_CONFIG_FILE));
-            } catch (Exception e) {
-                throw new ConfigException("Die Konfigurationsdatei " + SYSTEM_CONFIG_FILE + " konnte nicht gelesen werden", e);
+                properties.load(new FileInputStream("properties/" + SYSTEM_CONFIG_FILE + ".properties"));
+            } catch (IOException e) {
+                throw new ConfigException("Die Konfigurationsdatei " + SYSTEM_CONFIG_FILE + ".properties konnte nicht gelesen werden", e);
             }
             try {
-                properties.load(new FileInputStream(FAULT_CONFIG_FILE));
+                properties.load(new FileInputStream("properties/" + CRYPTO_CONFIG_FILE + ".properties"));
             } catch (IOException e) {
-                throw new ConfigException("Die Konfigurationsdatei " + FAULT_CONFIG_FILE + " konnte nicht gelesen werden", e);
+                throw new ConfigException("Die Konfigurationsdatei " + CRYPTO_CONFIG_FILE + ".properties konnte nicht gelesen werden", e);
+            }
+            try {
+                properties.load(new FileInputStream("properties/" + FAULT_CONFIG_FILE + ".properties"));
+            } catch (IOException e) {
+                throw new ConfigException("Die Konfigurationsdatei " + FAULT_CONFIG_FILE + ".properties konnte nicht gelesen werden", e);
             }
         }
         return properties;

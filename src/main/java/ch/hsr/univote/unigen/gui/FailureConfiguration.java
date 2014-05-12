@@ -5,6 +5,9 @@
  */
 package ch.hsr.univote.unigen.gui;
 
+import ch.hsr.univote.unigen.helper.ConfigHelper;
+import java.util.Properties;
+
 /**
  *
  * @author Gian
@@ -26,234 +29,367 @@ public class FailureConfiguration extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jCBFailureSelection = new javax.swing.JComboBox();
-        jTabbedPane2 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jCheckBox6 = new javax.swing.JCheckBox();
-        jCheckBox8 = new javax.swing.JCheckBox();
-        jCheckBox7 = new javax.swing.JCheckBox();
-        jCheckBox9 = new javax.swing.JCheckBox();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jCheckBox10 = new javax.swing.JCheckBox();
-        jCheckBox11 = new javax.swing.JCheckBox();
-        jCheckBox12 = new javax.swing.JCheckBox();
-        jCheckBox13 = new javax.swing.JCheckBox();
-        jPanel4 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jCheckBox14 = new javax.swing.JCheckBox();
-        jCheckBox15 = new javax.swing.JCheckBox();
-        jCheckBox16 = new javax.swing.JCheckBox();
-        jCheckBox17 = new javax.swing.JCheckBox();
-        jCheckBox19 = new javax.swing.JCheckBox();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        jCheckBox21 = new javax.swing.JCheckBox();
-        jCheckBox24 = new javax.swing.JCheckBox();
-        jCheckBox25 = new javax.swing.JCheckBox();
-        jCheckBox20 = new javax.swing.JCheckBox();
-        jCheckBox22 = new javax.swing.JCheckBox();
-        jCheckBox23 = new javax.swing.JCheckBox();
-        jBtnApply = new javax.swing.JButton();
-
-        jCBFailureSelection.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Schnorr Parameters", "ElGamal Parameters", "Certificates", "Signatures" }));
-        jCBFailureSelection.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCBFailureSelectionActionPerformed(evt);
-            }
-        });
-        jTabbedPane1.addTab("tab2", jCBFailureSelection);
+        lblSchnorr = new javax.swing.JLabel();
+        jCBschnorrP_isprime = new javax.swing.JCheckBox();
+        jCBschnorrP_issafeprime = new javax.swing.JCheckBox();
+        jCBschnorrQ_isprime = new javax.swing.JCheckBox();
+        jCBschnorrG_isgenerator = new javax.swing.JCheckBox();
+        jCBschnorrParameterLength = new javax.swing.JCheckBox();
+        lblElGamal = new javax.swing.JLabel();
+        jCBelGamalP_isprime = new javax.swing.JCheckBox();
+        jCBelGamalP_issafeprime = new javax.swing.JCheckBox();
+        jCBelGamalQ_isprime = new javax.swing.JCheckBox();
+        jCBelGamalG_isprime = new javax.swing.JCheckBox();
+        jCBelGamalParameterLength = new javax.swing.JCheckBox();
+        jSeparator1 = new javax.swing.JSeparator();
+        lblCertificates = new javax.swing.JLabel();
+        jCBcaCertificate = new javax.swing.JCheckBox();
+        jCBemCertificate = new javax.swing.JCheckBox();
+        jCBeaCertificate = new javax.swing.JCheckBox();
+        jCBmixerCertificate = new javax.swing.JCheckBox();
+        jCBtallierCertificate = new javax.swing.JCheckBox();
+        jCBvotersCertificate = new javax.swing.JCheckBox();
+        lblSignatures = new javax.swing.JLabel();
+        jCBeaCertificateSignature = new javax.swing.JCheckBox();
+        jCBelGamalParameterSignature = new javax.swing.JCheckBox();
+        jCBtallierNIZKPSignature = new javax.swing.JCheckBox();
+        jCBencryptionKeysSignature = new javax.swing.JCheckBox();
+        jCBtallierMixerCertificateSignature = new javax.swing.JCheckBox();
+        jCBelectionBasicParametersSignature = new javax.swing.JCheckBox();
+        jCBelectionGeneratorSignature = new javax.swing.JCheckBox();
+        jCBelectionOptionsSignature = new javax.swing.JCheckBox();
+        jCBelectionDataSignature = new javax.swing.JCheckBox();
+        jCBmixersNIZKPBlindedGeneratorSignature = new javax.swing.JCheckBox();
+        jBtnSave = new javax.swing.JButton();
 
         setMinimumSize(new java.awt.Dimension(450, 300));
         setPreferredSize(new java.awt.Dimension(450, 300));
+        setLayout(new java.awt.GridBagLayout());
 
-        jTabbedPane2.setMaximumSize(new java.awt.Dimension(0, 0));
-        jTabbedPane2.setMinimumSize(new java.awt.Dimension(450, 250));
-        jTabbedPane2.setPreferredSize(new java.awt.Dimension(450, 250));
+        lblSchnorr.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblSchnorr.setText("Schnorr Parameters");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 100;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(lblSchnorr, gridBagConstraints);
 
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.PAGE_AXIS));
-
-        jLabel3.setText("Schnorr Parameters");
-        jPanel1.add(jLabel3);
-
-        jCheckBox6.setSelected(true);
-        jCheckBox6.setText("Schnorr's P is prime");
-        jCheckBox6.addActionListener(new java.awt.event.ActionListener() {
+        jCBschnorrP_isprime.setSelected(true);
+        jCBschnorrP_isprime.setText("Schnorr's P is prime");
+        jCBschnorrP_isprime.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox6ActionPerformed(evt);
+                jCBschnorrP_isprimeActionPerformed(evt);
             }
         });
-        jPanel1.add(jCheckBox6);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBschnorrP_isprime, gridBagConstraints);
 
-        jCheckBox8.setSelected(true);
-        jCheckBox8.setText("Schnorr's G is generator");
-        jPanel1.add(jCheckBox8);
+        jCBschnorrP_issafeprime.setSelected(true);
+        jCBschnorrP_issafeprime.setText("Schnorr's P is SafePrime");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBschnorrP_issafeprime, gridBagConstraints);
 
-        jCheckBox7.setSelected(true);
-        jCheckBox7.setText("Schnorr's Q is prime");
-        jPanel1.add(jCheckBox7);
+        jCBschnorrQ_isprime.setSelected(true);
+        jCBschnorrQ_isprime.setText("Schnorr's Q is prime");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBschnorrQ_isprime, gridBagConstraints);
 
-        jCheckBox9.setSelected(true);
-        jCheckBox9.setText("Schnorr's P is SafePrime");
-        jPanel1.add(jCheckBox9);
+        jCBschnorrG_isgenerator.setSelected(true);
+        jCBschnorrG_isgenerator.setText("Schnorr's G is generator");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBschnorrG_isgenerator, gridBagConstraints);
 
-        jTabbedPane2.addTab("Schnorr", jPanel1);
+        jCBschnorrParameterLength.setSelected(true);
+        jCBschnorrParameterLength.setText("Schnorr's Parameter Length");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBschnorrParameterLength, gridBagConstraints);
 
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.PAGE_AXIS));
+        lblElGamal.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblElGamal.setText("ElGamal Parameters");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 100;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(lblElGamal, gridBagConstraints);
 
-        jLabel2.setText("ElGamal Parameters");
-        jPanel3.add(jLabel2);
+        jCBelGamalP_isprime.setSelected(true);
+        jCBelGamalP_isprime.setText("ElGamal P is prime");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelGamalP_isprime, gridBagConstraints);
 
-        jCheckBox5.setSelected(true);
-        jCheckBox5.setText("ElGamal P is prime");
-        jPanel3.add(jCheckBox5);
+        jCBelGamalP_issafeprime.setSelected(true);
+        jCBelGamalP_issafeprime.setText("ElGamal P is SafePrime");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelGamalP_issafeprime, gridBagConstraints);
 
-        jCheckBox10.setSelected(true);
-        jCheckBox10.setText("ElGamal Q is prime");
-        jPanel3.add(jCheckBox10);
+        jCBelGamalQ_isprime.setSelected(true);
+        jCBelGamalQ_isprime.setText("ElGamal Q is prime");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelGamalQ_isprime, gridBagConstraints);
 
-        jCheckBox11.setSelected(true);
-        jCheckBox11.setText("ElGamal G is prime");
-        jPanel3.add(jCheckBox11);
+        jCBelGamalG_isprime.setSelected(true);
+        jCBelGamalG_isprime.setText("ElGamal G is prime");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelGamalG_isprime, gridBagConstraints);
 
-        jCheckBox12.setSelected(true);
-        jCheckBox12.setText("ElGamal P is SafePrime");
-        jPanel3.add(jCheckBox12);
+        jCBelGamalParameterLength.setSelected(true);
+        jCBelGamalParameterLength.setText("ElGamal Parameter Length");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelGamalParameterLength, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 150;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jSeparator1, gridBagConstraints);
 
-        jCheckBox13.setSelected(true);
-        jCheckBox13.setText("ElGamal Parameter Length");
-        jPanel3.add(jCheckBox13);
+        lblCertificates.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblCertificates.setText("Certificates");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 200;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(lblCertificates, gridBagConstraints);
 
-        jTabbedPane2.addTab("ElGamal", jPanel3);
+        jCBcaCertificate.setSelected(true);
+        jCBcaCertificate.setText("CA Certificate");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBcaCertificate, gridBagConstraints);
 
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.PAGE_AXIS));
+        jCBemCertificate.setSelected(true);
+        jCBemCertificate.setText("EM Certificate");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBemCertificate, gridBagConstraints);
 
-        jLabel1.setText("Certificates");
-        jPanel4.add(jLabel1);
+        jCBeaCertificate.setSelected(true);
+        jCBeaCertificate.setText("EA Certificate");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBeaCertificate, gridBagConstraints);
 
-        jCheckBox14.setSelected(true);
-        jCheckBox14.setText("CA Certificate");
-        jPanel4.add(jCheckBox14);
+        jCBmixerCertificate.setSelected(true);
+        jCBmixerCertificate.setText("Mixer Certificate -> WELCHER?");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBmixerCertificate, gridBagConstraints);
 
-        jCheckBox15.setSelected(true);
-        jCheckBox15.setText("EM Certificate");
-        jPanel4.add(jCheckBox15);
+        jCBtallierCertificate.setSelected(true);
+        jCBtallierCertificate.setText("Tallier Certificate -> WELCHER?");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBtallierCertificate, gridBagConstraints);
 
-        jCheckBox16.setSelected(true);
-        jCheckBox16.setText("EA Certificate");
-        jPanel4.add(jCheckBox16);
+        jCBvotersCertificate.setSelected(true);
+        jCBvotersCertificate.setText("Voters Certificates -> WIEVIELE?");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBvotersCertificate, gridBagConstraints);
 
-        jCheckBox17.setSelected(true);
-        jCheckBox17.setText("Tallier Certificate -> WELCHER?");
-        jPanel4.add(jCheckBox17);
+        lblSignatures.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblSignatures.setText("Signatures");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 200;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(lblSignatures, gridBagConstraints);
 
-        jCheckBox19.setSelected(true);
-        jCheckBox19.setText("Voters Certificates -> WIEVIELE?");
-        jPanel4.add(jCheckBox19);
+        jCBeaCertificateSignature.setSelected(true);
+        jCBeaCertificateSignature.setText("EA Certificate Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBeaCertificateSignature, gridBagConstraints);
 
-        jTabbedPane2.addTab("Certificate", jPanel4);
+        jCBelGamalParameterSignature.setSelected(true);
+        jCBelGamalParameterSignature.setText("ElGamal Parameter Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelGamalParameterSignature, gridBagConstraints);
 
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.PAGE_AXIS));
+        jCBtallierNIZKPSignature.setSelected(true);
+        jCBtallierNIZKPSignature.setText("Tallier NIZKP Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBtallierNIZKPSignature, gridBagConstraints);
 
-        jLabel4.setText("Signatures");
-        jPanel2.add(jLabel4);
+        jCBencryptionKeysSignature.setSelected(true);
+        jCBencryptionKeysSignature.setText("Encryption Keys Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBencryptionKeysSignature, gridBagConstraints);
 
-        jCheckBox21.setSelected(true);
-        jCheckBox21.setText("Election Basic Parameters Signature");
-        jPanel2.add(jCheckBox21);
+        jCBtallierMixerCertificateSignature.setSelected(true);
+        jCBtallierMixerCertificateSignature.setText("Tallier Mixer Certificate Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBtallierMixerCertificateSignature, gridBagConstraints);
 
-        jCheckBox24.setSelected(true);
-        jCheckBox24.setText("Tallier NIZKP Signature");
-        jPanel2.add(jCheckBox24);
+        jCBelectionBasicParametersSignature.setSelected(true);
+        jCBelectionBasicParametersSignature.setText("Election Basic Parameters Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelectionBasicParametersSignature, gridBagConstraints);
 
-        jCheckBox25.setSelected(true);
-        jCheckBox25.setText("Encryption Keys Signature");
-        jPanel2.add(jCheckBox25);
+        jCBelectionGeneratorSignature.setSelected(true);
+        jCBelectionGeneratorSignature.setText("Election Generator Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelectionGeneratorSignature, gridBagConstraints);
 
-        jCheckBox20.setSelected(true);
-        jCheckBox20.setText("EA Certificate Signature");
-        jPanel2.add(jCheckBox20);
+        jCBelectionOptionsSignature.setSelected(true);
+        jCBelectionOptionsSignature.setText("Election Options Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelectionOptionsSignature, gridBagConstraints);
 
-        jCheckBox22.setSelected(true);
-        jCheckBox22.setText("Tallier Mixer Certificate Signature");
-        jPanel2.add(jCheckBox22);
+        jCBelectionDataSignature.setSelected(true);
+        jCBelectionDataSignature.setText("Election Data Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jCBelectionDataSignature, gridBagConstraints);
 
-        jCheckBox23.setSelected(true);
-        jCheckBox23.setText("ElGamal Parameter Signature");
-        jPanel2.add(jCheckBox23);
-
-        jTabbedPane2.addTab("Signatures", jPanel2);
+        jCBmixersNIZKPBlindedGeneratorSignature.setSelected(true);
+        jCBmixersNIZKPBlindedGeneratorSignature.setText("Mixers NIZKP Blinded Generator Signature");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        add(jCBmixersNIZKPBlindedGeneratorSignature, gridBagConstraints);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("Bundle"); // NOI18N
-        jBtnApply.setText(bundle.getString("apply")); // NOI18N
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(186, 186, 186)
-                .addComponent(jBtnApply)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jBtnApply))
-        );
+        jBtnSave.setText(bundle.getString("save")); // NOI18N
+        jBtnSave.setActionCommand("");
+        jBtnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnSaveActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 300;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        add(jBtnSave, gridBagConstraints);
+        jBtnSave.getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jCheckBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox6ActionPerformed
+    private void jCBschnorrP_isprimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBschnorrP_isprimeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox6ActionPerformed
+    }//GEN-LAST:event_jCBschnorrP_isprimeActionPerformed
 
-    private void jCBFailureSelectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBFailureSelectionActionPerformed
-        String selected = (String) jCBFailureSelection.getSelectedItem();
-        if(selected.equals("")) {
-            
-        }
-    }//GEN-LAST:event_jCBFailureSelectionActionPerformed
+    private void jBtnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnSaveActionPerformed
+        Properties properties = new Properties();
+
+        properties.setProperty("schnorrP_isprime", String.valueOf(jCBschnorrP_isprime.isSelected()));
+        properties.setProperty("schnorrQ_isprime", String.valueOf(jCBschnorrQ_isprime.isSelected()));
+        properties.setProperty("schnorrG_isgenerator", String.valueOf(jCBschnorrG_isgenerator.isSelected()));
+        properties.setProperty("schnorrP_issafeprime", String.valueOf(jCBschnorrP_issafeprime.isSelected()));
+        properties.setProperty("schnorrParameterLength", String.valueOf(jCBschnorrParameterLength.isSelected()));
+        
+        properties.setProperty("elGamalP_isprime", String.valueOf(jCBelGamalP_isprime.isSelected()));
+        properties.setProperty("elGamalQ_isprime", String.valueOf(jCBelGamalQ_isprime.isSelected()));
+        properties.setProperty("elGamalG_isprime", String.valueOf(jCBelGamalG_isprime.isSelected()));
+        properties.setProperty("elGamalP_issafeprime", String.valueOf(jCBelGamalP_issafeprime.isSelected()));
+        properties.setProperty("elGamalParameterLength", String.valueOf(jCBelGamalParameterLength.isSelected()));
+        
+        properties.setProperty("encryptionKey", "true");
+        properties.setProperty("electionGenerator", "true");
+        properties.setProperty("verificationKeys", "true");
+        
+        properties.setProperty("caCertificate", String.valueOf(jCBcaCertificate.isSelected()));
+        properties.setProperty("emCertificate", String.valueOf(jCBemCertificate.isSelected()));
+        properties.setProperty("eaCertificate", String.valueOf(jCBeaCertificate.isSelected()));
+        properties.setProperty("tallierCertificate", String.valueOf(jCBtallierCertificate.isSelected()));
+        properties.setProperty("mixerCertificate", String.valueOf(jCBmixerCertificate.isSelected()));
+        properties.setProperty("votersCertificate", String.valueOf(jCBvotersCertificate.isSelected()));
+        
+        properties.setProperty("eaCertificateSignature", String.valueOf(jCBeaCertificateSignature.isSelected()));
+        properties.setProperty("electionBasicParametersSignature", String.valueOf(jCBelectionBasicParametersSignature.isSelected()));
+        properties.setProperty("tallierMixerCertificateSignature", String.valueOf(jCBtallierMixerCertificateSignature.isSelected()));
+        properties.setProperty("elGamalParameterSignature", String.valueOf(jCBelGamalParameterSignature.isSelected()));
+        properties.setProperty("tallierNIZKPSignature", String.valueOf(jCBtallierNIZKPSignature.isSelected()));
+        properties.setProperty("encryptionKeysSignature", String.valueOf(jCBencryptionKeysSignature.isSelected()));
+        properties.setProperty("mixersNIZKPBlindedGeneratorSignature", String.valueOf(jCBmixersNIZKPBlindedGeneratorSignature.isSelected()));
+        properties.setProperty("electionGeneratorSignature", String.valueOf(jCBelectionGeneratorSignature.isSelected()));
+        properties.setProperty("electionOptionsSignature", String.valueOf(jCBelectionOptionsSignature.isSelected()));
+        properties.setProperty("electionDataSignature", String.valueOf(jCBelectionDataSignature.isSelected()));
+        
+        properties.setProperty("tallierNIZKPEncryptionKeyShare", "true");
+        properties.setProperty("mixerNIZKPBlindedGenerator", "true");     
+        
+        ConfigHelper.saveProperties("FaultConfigFile", properties);
+    }//GEN-LAST:event_jBtnSaveActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jBtnApply;
-    private javax.swing.JComboBox jCBFailureSelection;
-    private javax.swing.JCheckBox jCheckBox10;
-    private javax.swing.JCheckBox jCheckBox11;
-    private javax.swing.JCheckBox jCheckBox12;
-    private javax.swing.JCheckBox jCheckBox13;
-    private javax.swing.JCheckBox jCheckBox14;
-    private javax.swing.JCheckBox jCheckBox15;
-    private javax.swing.JCheckBox jCheckBox16;
-    private javax.swing.JCheckBox jCheckBox17;
-    private javax.swing.JCheckBox jCheckBox19;
-    private javax.swing.JCheckBox jCheckBox20;
-    private javax.swing.JCheckBox jCheckBox21;
-    private javax.swing.JCheckBox jCheckBox22;
-    private javax.swing.JCheckBox jCheckBox23;
-    private javax.swing.JCheckBox jCheckBox24;
-    private javax.swing.JCheckBox jCheckBox25;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JCheckBox jCheckBox7;
-    private javax.swing.JCheckBox jCheckBox8;
-    private javax.swing.JCheckBox jCheckBox9;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JButton jBtnSave;
+    private javax.swing.JCheckBox jCBcaCertificate;
+    private javax.swing.JCheckBox jCBeaCertificate;
+    private javax.swing.JCheckBox jCBeaCertificateSignature;
+    private javax.swing.JCheckBox jCBelGamalG_isprime;
+    private javax.swing.JCheckBox jCBelGamalP_isprime;
+    private javax.swing.JCheckBox jCBelGamalP_issafeprime;
+    private javax.swing.JCheckBox jCBelGamalParameterLength;
+    private javax.swing.JCheckBox jCBelGamalParameterSignature;
+    private javax.swing.JCheckBox jCBelGamalQ_isprime;
+    private javax.swing.JCheckBox jCBelectionBasicParametersSignature;
+    private javax.swing.JCheckBox jCBelectionDataSignature;
+    private javax.swing.JCheckBox jCBelectionGeneratorSignature;
+    private javax.swing.JCheckBox jCBelectionOptionsSignature;
+    private javax.swing.JCheckBox jCBemCertificate;
+    private javax.swing.JCheckBox jCBencryptionKeysSignature;
+    private javax.swing.JCheckBox jCBmixerCertificate;
+    private javax.swing.JCheckBox jCBmixersNIZKPBlindedGeneratorSignature;
+    private javax.swing.JCheckBox jCBschnorrG_isgenerator;
+    private javax.swing.JCheckBox jCBschnorrP_isprime;
+    private javax.swing.JCheckBox jCBschnorrP_issafeprime;
+    private javax.swing.JCheckBox jCBschnorrParameterLength;
+    private javax.swing.JCheckBox jCBschnorrQ_isprime;
+    private javax.swing.JCheckBox jCBtallierCertificate;
+    private javax.swing.JCheckBox jCBtallierMixerCertificateSignature;
+    private javax.swing.JCheckBox jCBtallierNIZKPSignature;
+    private javax.swing.JCheckBox jCBvotersCertificate;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblCertificates;
+    private javax.swing.JLabel lblElGamal;
+    private javax.swing.JLabel lblSchnorr;
+    private javax.swing.JLabel lblSignatures;
     // End of variables declaration//GEN-END:variables
 }

@@ -6,6 +6,9 @@
 
 package ch.hsr.univote.unigen.gui;
 
+import ch.hsr.univote.unigen.helper.ConfigHelper;
+import java.util.Properties;
+
 /**
  *
  * @author Gian
@@ -32,17 +35,18 @@ public class SystemConfiguration extends javax.swing.JPanel {
         jLblElectionId = new javax.swing.JLabel();
         jLblElectionDescription = new javax.swing.JLabel();
         jLblVoterNumbers = new javax.swing.JLabel();
-        jSPVoteNumbers = new javax.swing.JSpinner();
+        jSPVoters = new javax.swing.JSpinner();
         jLblMixerNumbers = new javax.swing.JLabel();
-        jSpinner3 = new javax.swing.JSpinner();
+        jSPMixers = new javax.swing.JSpinner();
         jLblTallierNumbers = new javax.swing.JLabel();
-        jSpinner2 = new javax.swing.JSpinner();
+        jSPTalliers = new javax.swing.JSpinner();
         jLblMaxCandidates = new javax.swing.JLabel();
-        jSpinner5 = new javax.swing.JSpinner();
+        jSPMaxCandidates = new javax.swing.JSpinner();
         jLblMaxCumulation = new javax.swing.JLabel();
-        jSpinner4 = new javax.swing.JSpinner();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        jSPMaxCumulation = new javax.swing.JSpinner();
+        jTxtElectionID = new javax.swing.JTextField();
+        jtxtElectionText = new javax.swing.JTextField();
+        jButtonSave = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -70,12 +74,12 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         add(jLblVoterNumbers, gridBagConstraints);
 
-        jSPVoteNumbers.setModel(new javax.swing.SpinnerNumberModel(25, 1, 10000000, 1));
+        jSPVoters.setModel(new javax.swing.SpinnerNumberModel(25, 1, 10000000, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jSPVoteNumbers, gridBagConstraints);
+        add(jSPVoters, gridBagConstraints);
 
         jLblMixerNumbers.setText(bundle.getString("numbermixers")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -84,12 +88,12 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         add(jLblMixerNumbers, gridBagConstraints);
 
-        jSpinner3.setModel(new javax.swing.SpinnerNumberModel(5, 1, 100, 1));
+        jSPMixers.setModel(new javax.swing.SpinnerNumberModel(5, 1, 100, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jSpinner3, gridBagConstraints);
+        add(jSPMixers, gridBagConstraints);
 
         jLblTallierNumbers.setText(bundle.getString("numbertalliers")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -98,12 +102,12 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         add(jLblTallierNumbers, gridBagConstraints);
 
-        jSpinner2.setModel(new javax.swing.SpinnerNumberModel(5, 1, 100, 1));
+        jSPTalliers.setModel(new javax.swing.SpinnerNumberModel(5, 1, 100, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jSpinner2, gridBagConstraints);
+        add(jSPTalliers, gridBagConstraints);
 
         jLblMaxCandidates.setText(bundle.getString("maxcandidates")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -112,12 +116,12 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         add(jLblMaxCandidates, gridBagConstraints);
 
-        jSpinner5.setModel(new javax.swing.SpinnerNumberModel(5, 1, 100, 1));
+        jSPMaxCandidates.setModel(new javax.swing.SpinnerNumberModel(5, 1, 100, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 10;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jSpinner5, gridBagConstraints);
+        add(jSPMaxCandidates, gridBagConstraints);
 
         jLblMaxCumulation.setText(bundle.getString("maxcumulation")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -126,32 +130,61 @@ public class SystemConfiguration extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         add(jLblMaxCumulation, gridBagConstraints);
 
-        jSpinner4.setModel(new javax.swing.SpinnerNumberModel(5, 1, 100, 1));
+        jSPMaxCumulation.setModel(new javax.swing.SpinnerNumberModel(5, 1, 100, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 12;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
-        add(jSpinner4, gridBagConstraints);
+        add(jSPMaxCumulation, gridBagConstraints);
 
-        jTextField1.setText("Vote2014");
-        jTextField1.setToolTipText("");
+        jTxtElectionID.setText("Vote2014");
+        jTxtElectionID.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jTextField1, gridBagConstraints);
+        add(jTxtElectionID, gridBagConstraints);
 
-        jTextField2.setToolTipText("");
+        jtxtElectionText.setText("Vote for president");
+        jtxtElectionText.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jTextField2, gridBagConstraints);
+        add(jtxtElectionText, gridBagConstraints);
+
+        jButtonSave.setText(bundle.getString("save")); // NOI18N
+        jButtonSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSaveActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        add(jButtonSave, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
+        Properties properties = new Properties();
+        
+        properties.setProperty("electionId", jTxtElectionID.getText());
+        properties.setProperty("electionTitle", jtxtElectionText.getText());
+        properties.setProperty("voters", jSPVoters.getValue().toString());
+        properties.setProperty("mixers", jSPMixers.getValue().toString());
+        properties.setProperty("talliers", jSPTalliers.getValue().toString());
+        properties.setProperty("maxCandidates", jSPMaxCandidates.getValue().toString());
+        properties.setProperty("maxCumulation", jSPMaxCumulation.getValue().toString());
+        
+        ConfigHelper.saveProperties("SystemConfigFile", properties);
+    }//GEN-LAST:event_jButtonSaveActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonSave;
     private javax.swing.JLabel jLblElectionDescription;
     private javax.swing.JLabel jLblElectionId;
     private javax.swing.JLabel jLblMaxCandidates;
@@ -159,12 +192,12 @@ public class SystemConfiguration extends javax.swing.JPanel {
     private javax.swing.JLabel jLblMixerNumbers;
     private javax.swing.JLabel jLblTallierNumbers;
     private javax.swing.JLabel jLblVoterNumbers;
-    private javax.swing.JSpinner jSPVoteNumbers;
-    private javax.swing.JSpinner jSpinner2;
-    private javax.swing.JSpinner jSpinner3;
-    private javax.swing.JSpinner jSpinner4;
-    private javax.swing.JSpinner jSpinner5;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JSpinner jSPMaxCandidates;
+    private javax.swing.JSpinner jSPMaxCumulation;
+    private javax.swing.JSpinner jSPMixers;
+    private javax.swing.JSpinner jSPTalliers;
+    private javax.swing.JSpinner jSPVoters;
+    private javax.swing.JTextField jTxtElectionID;
+    private javax.swing.JTextField jtxtElectionText;
     // End of variables declaration//GEN-END:variables
 }

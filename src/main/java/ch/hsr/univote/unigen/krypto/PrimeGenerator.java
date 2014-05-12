@@ -24,7 +24,15 @@ public class PrimeGenerator {
      */
     public static BigInteger getRandom(int bitlength) {
         BigInteger random = new BigInteger(bitlength, new SecureRandom());
+        //Set the first two bits to 1
+        random = new BigInteger("11".concat(random.toString(2).subSequence(2, random.bitLength()).toString()), 2);
         
+        while (random.bitLength() != bitlength) {
+            random = new BigInteger(bitlength, new SecureRandom());
+            //Set the first two bits to 1
+            random = new BigInteger("11".concat(random.toString(2).subSequence(2, random.bitLength()).toString()), 2);
+        }
+
         return random;
     }
     

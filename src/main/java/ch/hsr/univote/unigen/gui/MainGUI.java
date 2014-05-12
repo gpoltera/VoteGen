@@ -7,12 +7,21 @@ package ch.hsr.univote.unigen.gui;
 
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.Publisher;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -50,8 +59,9 @@ public class MainGUI extends javax.swing.JFrame {
         jBtnStartStop = new javax.swing.JButton();
         jTabbedPanel = new javax.swing.JTabbedPane();
         systemConfiguration = new ch.hsr.univote.unigen.gui.SystemConfiguration();
-        failureConfiguration = new ch.hsr.univote.unigen.gui.FailureConfiguration();
+        cryptoConfiguration = new ch.hsr.univote.unigen.gui.CryptoConfiguration();
         candidates = new ch.hsr.univote.unigen.gui.Candidates();
+        failureConfiguration = new ch.hsr.univote.unigen.gui.FailureConfiguration();
         voteGeneration = new ch.hsr.univote.unigen.gui.VoteGeneration();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
@@ -81,18 +91,23 @@ public class MainGUI extends javax.swing.JFrame {
         getContentPane().add(jBtnStartStop, java.awt.BorderLayout.CENTER);
 
         jTabbedPanel.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPanel.setToolTipText(bundle.getString("cryptoconfiguration")); // NOI18N
         jTabbedPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTabbedPanel.setMinimumSize(new java.awt.Dimension(450, 400));
         jTabbedPanel.setPreferredSize(new java.awt.Dimension(450, 400));
         jTabbedPanel.addTab(bundle.getString("systemconfiguration"), systemConfiguration); // NOI18N
-        jTabbedPanel.addTab(bundle.getString("failureconfiguration"), failureConfiguration); // NOI18N
+
+        cryptoConfiguration.setName(""); // NOI18N
+        jTabbedPanel.addTab(bundle.getString("cryptoconfiguration"), cryptoConfiguration); // NOI18N
         jTabbedPanel.addTab(bundle.getString("candidates"), candidates); // NOI18N
+        jTabbedPanel.addTab(bundle.getString("failureconfiguration"), failureConfiguration); // NOI18N
 
         voteGeneration.setToolTipText("");
         jTabbedPanel.addTab(bundle.getString("votegeneration"), voteGeneration); // NOI18N
 
         getContentPane().add(jTabbedPanel, java.awt.BorderLayout.PAGE_START);
-        jTabbedPanel.getAccessibleContext().setAccessibleName("null");
+        jTabbedPanel.getAccessibleContext().setAccessibleName("");
+        jTabbedPanel.getAccessibleContext().setAccessibleDescription(bundle.getString("cryptoconfiguration")); // NOI18N
 
         jMenuFile.setText(bundle.getString("file")); // NOI18N
 
@@ -174,8 +189,9 @@ public class MainGUI extends javax.swing.JFrame {
         if (!votestarted) {
             jTabbedPanel.addTab(bundle.getString("votegeneration"), voteGeneration);
             jTabbedPanel.remove(systemConfiguration);
-            jTabbedPanel.remove(failureConfiguration);
+            jTabbedPanel.remove(cryptoConfiguration);
             jTabbedPanel.remove(candidates);
+            jTabbedPanel.remove(failureConfiguration);
             jBtnStartStop.setLabel(bundle.getString("stopservice"));
             new Thread() {
                 public void run() {
@@ -195,8 +211,9 @@ public class MainGUI extends javax.swing.JFrame {
         } else {
             Publisher.stopWebSrv();
             jTabbedPanel.addTab(bundle.getString("systemconfiguration"), systemConfiguration);
+            jTabbedPanel.addTab(bundle.getString("cryptoconfiguration"), cryptoConfiguration);
+            jTabbedPanel.addTab(bundle.getString("candidates"), candidates);
             jTabbedPanel.addTab(bundle.getString("failureconfiguration"), failureConfiguration);
-            jTabbedPanel.addTab(bundle.getString("generatevote"), candidates);
             jTabbedPanel.remove(voteGeneration);
             VoteGeneration.resetProgress();
             VoteGeneration.resetText();
@@ -213,29 +230,92 @@ public class MainGUI extends javax.swing.JFrame {
 
     private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
         JOptionPane.showMessageDialog(null,
-                                              "Copyright:\nGian Poltéra 2013-2014\n\nVersion 0.2",
-                                              "About",					      
-					      JOptionPane.INFORMATION_MESSAGE);
+                "Copyright:\nGian Poltéra 2013-2014\n\nVersion 0.2",
+                "About",
+                JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
 
     private void jMenuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveActionPerformed
         JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new FileNameExtensionFilter("VoteGenerator Config", "*.vgc"));
+        fc.setFileFilter(new FileNameExtensionFilter("VoteGenerator Config", "vgc"));
 
         int state = fc.showSaveDialog(null);
+
+        if (state == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            String filename = file.getName();
+            String filetype = "";
+            if (!file.getName().endsWith(".vgc")) {
+                filetype = ".vgc";
+            }
+            
+            try {
+                ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(file + filetype));
+                byte[] buffer = new byte[4096];
+                int len;
+                FileInputStream in1 = new FileInputStream("properties/SystemConfigFile.properties");
+                FileInputStream in2 = new FileInputStream("properties/CryptoConfigFile.properties");
+                FileInputStream in3 = new FileInputStream("properties/FaultConfigFile.properties");
+                zipout.putNextEntry(new ZipEntry("SystemConfigFile.properties"));
+                while ((len = in1.read(buffer)) > 0) {
+                    zipout.write(buffer, 0, len);
+                }
+                zipout.putNextEntry(new ZipEntry("CryptoConfigFile.properties"));
+                while ((len = in2.read(buffer)) > 0) {
+                    zipout.write(buffer, 0, len);
+                }
+                zipout.putNextEntry(new ZipEntry("FaultConfigFile.properties"));
+                while ((len = in3.read(buffer)) > 0) {
+                    zipout.write(buffer, 0, len);
+                }
+                zipout.close();
+                in1.close();
+                in2.close();
+                in3.close();
+
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_jMenuItemSaveActionPerformed
 
     private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenActionPerformed
         JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new FileNameExtensionFilter("VoteGenerator Config", "*.vgc"));
+        fc.setFileFilter(new FileNameExtensionFilter("VoteGenerator Config", "vgc"));
 
         int state = fc.showOpenDialog(null);
 
         if (state == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-            System.out.println(file.getName());
-        }
 
+            try {
+                ZipFile zipFile = new ZipFile(file);
+                Enumeration enu = zipFile.entries();
+
+                while (enu.hasMoreElements()) {
+                    ZipEntry zipEntry = (ZipEntry) enu.nextElement();
+                    BufferedInputStream bis = null;
+                    bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
+                    byte[] buffer = new byte[4096];
+                    int avail = bis.available();
+                    if (avail > 0) {
+                        buffer = new byte[avail];
+                        bis.read(buffer, 0, avail);
+                    }
+                    
+                    String fileName = zipEntry.getName();
+                    BufferedOutputStream bos = null;
+                    bos = new BufferedOutputStream(new FileOutputStream("properties/" + fileName));
+                    bos.write(buffer, 0, buffer.length);
+                    bos.close();
+                    bis.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
 
     private void jMenuItemGermanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGermanActionPerformed
@@ -291,6 +371,7 @@ public class MainGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ch.hsr.univote.unigen.gui.Candidates candidates;
+    private ch.hsr.univote.unigen.gui.CryptoConfiguration cryptoConfiguration;
     private ch.hsr.univote.unigen.gui.FailureConfiguration failureConfiguration;
     private javax.swing.JButton jBtnStartStop;
     private javax.swing.JMenuBar jMenuBar;
