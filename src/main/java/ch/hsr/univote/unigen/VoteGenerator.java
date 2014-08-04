@@ -1,5 +1,6 @@
 package ch.hsr.univote.unigen;
 
+import ch.bfh.univote.common.KnownElectionIds;
 import ch.hsr.univote.unigen.tasks.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.tasks.ElectionOptionsTask;
 import ch.hsr.univote.unigen.board.ElectionBoard;
@@ -39,6 +40,7 @@ import ch.hsr.univote.unigen.tasks.MixedEncryptedVotesByTask;
  *
  */
 public class VoteGenerator {
+    public ConfigHelper config = new ConfigHelper();
     public ElectionBoard electionBoard = new ElectionBoard();
     public KeyStore keyStore = new KeyStore();
     
@@ -110,7 +112,9 @@ public class VoteGenerator {
         appendText("4. Election Setup");
         //a) Initialization
         appendText(" a) Initialization");
-        electionBoard.knownElectionIds.getElectionId().add(ConfigHelper.getElectionId()); //Add the election id
+        KnownElectionIds knownElectionIds = new KnownElectionIds();
+        knownElectionIds.getElectionId().add(config.getElectionId()); //Add the election id
+        electionBoard.setKnownElectionIds(knownElectionIds);
         
         //b) Election Definition
         appendText(" b) Election Definition");

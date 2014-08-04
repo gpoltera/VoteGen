@@ -11,7 +11,6 @@
  */
 package ch.hsr.univote.unigen.helper;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,14 +32,14 @@ import java.util.logging.Logger;
  */
 public class ConfigHelper {
 
-    private static final String SYSTEM_CONFIG_FILE = "SystemConfigFile";
-    private static final String CRYPTO_CONFIG_FILE = "CryptoConfigFile";
-    private static final String FAULT_CONFIG_FILE = "FaultConfigFile";
-    private static Properties properties;
-    private static Scanner scanner = new Scanner(System.in);
-    private static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    private final String SYSTEM_CONFIG_FILE = "SystemConfigFile";
+    private final String CRYPTO_CONFIG_FILE = "CryptoConfigFile";
+    private final String FAULT_CONFIG_FILE = "FaultConfigFile";
+    private Properties properties;
+    private Scanner scanner = new Scanner(System.in);
+    private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-    public static void saveProperties(String configname, Properties properties) {
+    public void saveProperties(String configname, Properties properties) {
         try {
             BufferedOutputStream streamout = new BufferedOutputStream(new FileOutputStream("properties/" + configname + ".properties"));
             properties.store(streamout, configname);
@@ -50,216 +49,183 @@ public class ConfigHelper {
         } catch (IOException ex) {
             Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
-    public static String getCertificateAuthorityId() {
+    public String getCertificateAuthorityId() {
         return getProperty("certificateAuthorityId", "Identifikator der ZertifikatAuthority");
     }
 
-    public static String getElectionManagerId() {
+    public String getElectionManagerId() {
         return getProperty("electionManagerId", "Identifikator des Wahlmanagers");
     }
 
-    public static String getElectionAdministratorId() {
+    public String getElectionAdministratorId() {
         return getProperty("electionAdministratorId", "Identifikator der Wahladministration");
     }
 
-    public static String getElectionId() {
+    public String getElectionId() {
         return getProperty("electionId", "Identifikator des Wahlereignis");
     }
 
-    public static String getElectionTitle() {
+    public String getElectionTitle() {
         return getProperty("electionTitle", "Bezeichnung des Wahlereignis");
     }
 
-    public static Date getVotingPhaseBegin() {
+    public Date getVotingPhaseBegin() {
         return getDateProperty("votingPhaseBegin", "Beginn der Wahlphase");
     }
 
-    public static Date getVotingPhaseEnd() {
+    public Date getVotingPhaseEnd() {
         return getDateProperty("votingPhaseEnd", "Ende der Wahlphase");
     }
 
-    public static String[] getMixerIds() {
+    public String[] getMixerIds() {
         return getListProperty("mixerIds", "Identifikator der Mixer");
     }
 
-    public static String[] getTallierIds() {
+    public String[] getTallierIds() {
         return getListProperty("tallierIds", "Identifikator der Tallier");
     }
 
-    public static int getEncryptionKeyLength() {
+    public int getEncryptionKeyLength() {
         return getIntProperty("encryptionKeyLength", "Laenge des Verschluesselungsschluessels");
     }
 
-    public static String getElectionDefinitionPath() {
+    public String getElectionDefinitionPath() {
         return getProperty("j", "Pfad der signierten Wahldefinition");
     }
 
-    public static String getPoliticalListsFile() {
+    public String getPoliticalListsFile() {
         return getProperty("politicalListsFile", "Pfad der Kandidierendenlisten");
     }
 
-    public static int getMaxCandidates() {
+    public int getMaxCandidates() {
         return getIntProperty("maxCandidates", "Maximale Anzahl waehlbarer Kandidaten");
     }
 
-    public static int getMaxCumulation() {
+    public int getMaxCumulation() {
         return getIntProperty("maxCumulation", "Zulaessige Anzahl Kumulationen eines Kandidaten");
     }
 
-    public static String getElectionOptionsPath() {
+    public String getElectionOptionsPath() {
         return getProperty("electionOptionsPath", "Pfad der signierten Kandidierendenlisten");
     }
 
-    public static String getElectoralRollFile() {
+    public String getElectoralRollFile() {
         return getProperty("electoralRollFile", "Pfad der Waehlendenliste");
     }
 
-    public static String getHashAlgorithm() {
+    public String getHashAlgorithm() {
         return getProperty("hashAlgorithm", "Hash-Algorithmus fuer die Waehlendenliste");
     }
 
-    public static String getElectoralRollPath() {
+    public String getElectoralRollPath() {
         return getProperty("electoralRollPath", "Pfad der signierten Waehlendenliste");
     }
 
-    public static String getElectionResultsPath() {
+    public String getElectionResultsPath() {
         return getProperty("electionResultsPath", "Pfad der Wahlresultatliste");
     }
 
-    public static String getValueDelimiter() {
+    public String getValueDelimiter() {
         return getProperty("valueDelimiter", "Trennzeichen der Wahlresultatwerte");
     }
 
-    public static String getKeystorePath() {
+    public String getKeystorePath() {
         return getProperty("keystorePath", "Pfad des Keystores mit dem Signaturschluessel");
     }
 
-    public static String getKeystorePassword() {
+    public String getKeystorePassword() {
         return getProperty("keystorePassword", "Passwort des Keystores mit dem Signaturschluessel");
     }
 
-    public static String getSignatureKeyType() {
+    public String getSignatureKeyType() {
         return getProperty("signatureKeyType", "Typ des Signaturschluessels");
     }
 
-    public static int getSignatureKeyLength() {
+    public int getSignatureKeyLength() {
         return getIntProperty("signatureKeyLength", "Laenge des Signaturschluessels");
     }
 
-    public static String getSignatureKeyAlias() {
+    public String getSignatureKeyAlias() {
         return getProperty("signatureKeyAlias", "Alias des Signaturschluessels");
     }
 
-    public static String getSignatureKeyName() {
+    public String getSignatureKeyName() {
         return getProperty("signatureKeyName", "Name des Signaturschluessels");
     }
 
-    public static int getSignatureKeyValidity() {
+    public int getSignatureKeyValidity() {
         return getIntProperty("signatureKeyValidity", "Gueltigkeitsdauer des Signaturschluessels");
     }
 
-    public static String getSignatureAlgorithm() {
+    public String getSignatureAlgorithm() {
         return getProperty("signatureAlgorithm", "Signaturalgorithmus des Zertifikats zum Signaturschluessel");
     }
 
-    public static String getSignatureCertificatePath() {
+    public String getSignatureCertificatePath() {
         return getProperty("signatureCertificatePath", "Pfad des Zertifikats zum Signaturalgorithmus");
     }
 
-    public static String getAdminServiceAddress() {
+    public String getAdminServiceAddress() {
         return getProperty("adminServiceAddress", "Webservice-Adresse der Wahladministration");
     }
 
-    public static String getBoardServiceAddress() {
+    public String getBoardServiceAddress() {
         return getProperty("boardServiceAddress", "Webservice-Adresse des Wahlanschlagbretts");
     }
 
-    public static String getTruststorePath() {
+    public String getTruststorePath() {
         return getProperty("truststorePath", "Pfad des Truststores mit dem Webservice-Zertifikat");
     }
 
-    public static String getTruststorePassword() {
+    public String getTruststorePassword() {
         return getProperty("truststorePassword", "Passwort des Truststores mit dem Webservice-Zertifikat");
     }
 
-    public static String getCharEncoding() {
+    public String getCharEncoding() {
         return getProperty("charEncoding", "Zeichencodierung");
     }
 
-    public static String getLogfilePath() {
+    public String getLogfilePath() {
         return getProperty("logfilePath", "Pfad des Logfiles");
     }
 
-    public static String getBallotsPath() {
+    public String getBallotsPath() {
         return getProperty("ballotsPath", "Pfad der Wahlzettel");
     }
 
-    public static String getDecodedVotesPath() {
+    public String getDecodedVotesPath() {
         return getProperty("decodedVotesPath", "Pfad der entschluesselten Wahlzettel");
     }
 
-    public static String getDecryptedVotesPath() {
+    public String getDecryptedVotesPath() {
         return getProperty("decryptedVotesPath", "Pfad der entschluesselten Wahlzettel");
     }
 
-    public static String getElectionGeneratorPath() {
+    public String getElectionGeneratorPath() {
         return getProperty("electionGeneratorPath", "Pfad des ElectionGenerator");
     }
 
-    public static String getBlindedGeneratorPath() {
+    public String getBlindedGeneratorPath() {
         return getProperty("blindedGeneratorPath", "Pfad des BlindedGenerator");
     }
 
-    public static String getEncryptionKeySharePath() {
+    public String getEncryptionKeySharePath() {
         return getProperty("encryptionKeySharePath", "Pfad des EncryptionKeyShare");
     }
 
-    public static int getVotersNumber() {
+    public int getVotersNumber() {
         return getIntProperty("voters", "Anzahl der Waehlenden");
     }
 
-    //Fault Config
-    public static boolean[] getFaults() {
-        boolean[] faults = new boolean[31];
-        faults[0] = getBooleanProperty("schnorrP_isprime", "schnorrP_isprime");
-        faults[1] = getBooleanProperty("schnorrQ_isprime", "schnorrQ_isprime");
-        faults[2] = getBooleanProperty("schnorrG_isgenerator", "schnorrG_isgenerator");
-        faults[3] = getBooleanProperty("schnorrP_issafeprime", "schnorrP_issafeprime");
-        faults[4] = getBooleanProperty("schnorrParameterLength", "schnorrParameterLength");
-        faults[5] = getBooleanProperty("elGamalP_isprime", "elGamalP_isprime");
-        faults[6] = getBooleanProperty("elGamalQ_isprime", "elGamalQ_isprime");
-        faults[7] = getBooleanProperty("elGamalG_isprime", "elGamalG_isprime");
-        faults[8] = getBooleanProperty("elGamalP_issafeprime", "elGamalP_issafeprime");
-        faults[9] = getBooleanProperty("elGamalParameterLength", "elGamalParameterLength");
-        faults[10] = getBooleanProperty("encryptionKey", "encryptionKey");
-        faults[11] = getBooleanProperty("electionGenerator", "electionGenerator");
-        faults[12] = getBooleanProperty("verificationKeys", "verificationKeys");
-        faults[13] = getBooleanProperty("caCertificate", "caCertificate");
-        faults[14] = getBooleanProperty("emCertificate", "emCertificate");
-        faults[15] = getBooleanProperty("eaCertificate", "eaCertificate");
-        faults[16] = getBooleanProperty("tallierCertificate", "tallierCertificate");
-        faults[17] = getBooleanProperty("mixerCertificate", "mixerCertificate");
-        faults[18] = getBooleanProperty("votersCertificate", "votersCertificate");
-        faults[19] = getBooleanProperty("eaCertificateSignature", "eaCertificateSignature");
-        faults[20] = getBooleanProperty("electionBasicParametersSignature", "electionBasicParametersSignature");
-        faults[21] = getBooleanProperty("tallierMixerCertificateSignature", "tallierMixerCertificateSignature");
-        faults[22] = getBooleanProperty("elGamalParameterSignature", "elGamalParameterSignature");
-        faults[23] = getBooleanProperty("tallierNIZKPSignature", "tallierNIZKPSignature");
-        faults[24] = getBooleanProperty("encryptionKeysSignature", "encryptionKeysSignature");
-        faults[25] = getBooleanProperty("mixersNIZKPBlindedGeneratorSignature", "mixersNIZKPBlindedGeneratorSignature");
-        faults[26] = getBooleanProperty("electionGeneratorSignature", "electionGeneratorSignature");
-        faults[27] = getBooleanProperty("electionOptionsSignature", "electionOptionsSignature");
-        faults[28] = getBooleanProperty("electionDataSignature", "electionDataSignature");
-        faults[29] = getBooleanProperty("tallierNIZKPEncryptionKeyShare", "tallierNIZKPEncryptionKeyShare");
-        faults[30] = getBooleanProperty("mixerNIZKPBlindedGenerator", "mixerNIZKPBlindedGenerator");
-
-        return faults;
+    //Faults
+    public boolean getFault(String fault) {
+        return getBooleanProperty(fault, fault);
     }
 
-    public static boolean getPartyListSystemIndicator() {
+    public boolean getPartyListSystemIndicator() {
         String response = getProperty("partyListSystem", "Listenwahl");
         boolean rval = false;
         if (response.toLowerCase().startsWith("true")
@@ -271,7 +237,7 @@ public class ConfigHelper {
         return rval;
     }
 
-    private static String getProperty(String key, String label) {
+    private String getProperty(String key, String label) {
         String value = getProperties().getProperty(key);
         while (value == null || value.isEmpty()) {
             System.out.print(label + ": ");
@@ -283,7 +249,7 @@ public class ConfigHelper {
         return value;
     }
 
-    private static int getIntProperty(String key, String label) {
+    private int getIntProperty(String key, String label) {
         String value = getProperty(key, label + " (ganze Zahl)");
         try {
             return Integer.parseInt(value);
@@ -292,7 +258,7 @@ public class ConfigHelper {
         }
     }
 
-    private static boolean getBooleanProperty(String key, String label) {
+    private boolean getBooleanProperty(String key, String label) {
         String value = getProperty(key, label + " (true/false)");
         try {
             return Boolean.parseBoolean(value);
@@ -301,7 +267,7 @@ public class ConfigHelper {
         }
     }
 
-    private static Date getDateProperty(String key, String label) {
+    private Date getDateProperty(String key, String label) {
         String value = getProperty(key, label + " (Format TT.MM.JJJJ hh:mm)");
         try {
             return dateFormat.parse(value);
@@ -310,7 +276,7 @@ public class ConfigHelper {
         }
     }
 
-    private static String[] getListProperty(String key, String label) {
+    private String[] getListProperty(String key, String label) {
         String value = getProperty(key, label + " (Komma-separiert ohne Leerstellen)");
         if (value.matches("\\S+(,\\S+)*")) {
             return value.split(",");
@@ -318,7 +284,7 @@ public class ConfigHelper {
         throw new ConfigException(label + ": " + value + " ist keine gueltige Liste");
     }
 
-    private static Properties getProperties() {
+    private Properties getProperties() {
         if (properties == null) {
             properties = new Properties();
             try {

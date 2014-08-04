@@ -28,16 +28,16 @@ public class EncryptionParametersTask extends VoteGenerator {
         encryptionParameters.setSignature(SignatureGenerator.createSignature(encryptionParameters, keyStore.electionManagerPrivateKey));
         
         /*submit to ElectionBoard*/
-        electionBoard.encryptionParameters = encryptionParameters;
+        electionBoard.setEncryptionParameters(encryptionParameters);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), encryptionParameters);
+        DB4O.storeDB(config.getElectionId(), encryptionParameters);
     }
     
     private EncryptionParameters createEncryptionParameters() {
         EncryptionParameters encryptionParameters = new EncryptionParameters();
-        encryptionParameters.setElectionId(ConfigHelper.getElectionId());
-        BigInteger[] keys = ElGamal.getPublicParameters(ConfigHelper.getEncryptionKeyLength());
+        encryptionParameters.setElectionId(config.getElectionId());
+        BigInteger[] keys = ElGamal.getPublicParameters(config.getEncryptionKeyLength());
         encryptionParameters.setPrime(keys[0]); //ElGamal's p
         encryptionParameters.setGroupOrder(keys[1]); //ElGamal's q
         encryptionParameters.setGenerator(keys[2]); //ElGamal's g

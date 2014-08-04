@@ -38,15 +38,15 @@ public class SingleBallotTask extends VoteGenerator {
         
         /*NOT IN USE???*/
         /*submit to ElectionBoard*/
-        electionBoard.ballot = ballot;
+        //electionBoard.ballot = ballot;
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(),ballot);
+        DB4O.storeDB(config.getElectionId(),ballot);
     }
 
     private Ballot createBallot() {
         Ballot ballot = new Ballot();
-        ballot.setElectionId(ConfigHelper.getElectionId());
+        ballot.setElectionId(config.getElectionId());
         ballot.setVerificationKey(BigInteger.TEN);
         EncryptedVote encryptedVote = new EncryptedVote();
         encryptedVote.setFirstValue(BigInteger.TEN);

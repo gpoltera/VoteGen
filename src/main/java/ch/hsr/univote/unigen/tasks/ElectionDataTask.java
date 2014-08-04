@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.ElectionData;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
 /**
@@ -25,23 +24,23 @@ public class ElectionDataTask extends VoteGenerator {
         electionData.setSignature(SignatureGenerator.createSignature(electionData, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
-        electionBoard.electionData = electionData;
+        electionBoard.setElectionData(electionData);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), electionData);
+        DB4O.storeDB(config.getElectionId(), electionData);
     }
 
     private ElectionData createElectionData() {
         ElectionData electionData = new ElectionData();
-        electionData.setElectionGenerator(electionBoard.electionGenerator.getGenerator());
-        electionData.setElectionId(ConfigHelper.getElectionId());
-        electionData.setEncryptionKey(electionBoard.encryptionKey.getKey());
-        electionData.setGenerator(electionBoard.encryptionParameters.getGenerator());
-        electionData.setGroupOrder(electionBoard.encryptionParameters.getGroupOrder());
-        electionData.setPrime(electionBoard.encryptionParameters.getPrime());
-        electionData.setTitle(ConfigHelper.getElectionId());
-        electionData.getChoice().addAll(electionBoard.electionOptions.getChoice());
-        electionData.getRule().addAll(electionBoard.electionOptions.getRule());
+        electionData.setElectionGenerator(electionBoard.getElectionGenerator().getGenerator());
+        electionData.setElectionId(config.getElectionId());
+        electionData.setEncryptionKey(electionBoard.getEncryptionKey().getKey());
+        electionData.setGenerator(electionBoard.getEncryptionParameters().getGenerator());
+        electionData.setGroupOrder(electionBoard.getEncryptionParameters().getGroupOrder());
+        electionData.setPrime(electionBoard.getEncryptionParameters().getPrime());
+        electionData.setTitle(config.getElectionId());
+        electionData.getChoice().addAll(electionBoard.getElectionOptions().getChoice());
+        electionData.getRule().addAll(electionBoard.getElectionOptions().getRule());
 
         return electionData;
     }

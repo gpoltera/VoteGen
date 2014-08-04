@@ -22,10 +22,10 @@ public class SignatureParametersTask extends VoteGenerator {
         SignatureParameters signatureParameters = createSignatureParameters();
         
         /*submit to ElectionBoard*/
-        electionBoard.signatureParameters = signatureParameters;
+        electionBoard.setSignatureParameters(signatureParameters);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), signatureParameters);
+        DB4O.storeDB(config.getElectionId(), signatureParameters);
     }
     
     private SignatureParameters createSignatureParameters() {

@@ -40,9 +40,15 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCBschnorrP_isprime">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
+        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="isChecked(&quot;schnorrP_isprime&quot;)" type="code"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Schnorr&apos;s P is prime"/>
       </Properties>
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+        <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value=""/>
+      </AccessibilityProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCBschnorrP_isprimeActionPerformed"/>
       </Events>
@@ -54,7 +60,9 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCBschnorrP_issafeprime">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
+        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="isChecked(&quot;schnorrP_issafeprime&quot;)" type="code"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Schnorr&apos;s P is SafePrime"/>
       </Properties>
       <Constraints>
@@ -65,7 +73,9 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCBschnorrQ_isprime">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
+        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="isChecked(&quot;schnorrQ_isprime&quot;)" type="code"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Schnorr&apos;s Q is prime"/>
       </Properties>
       <Constraints>
@@ -76,7 +86,9 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCBschnorrG_isgenerator">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
+        <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="isChecked(&quot;schnorrG_isgenerator&quot;)" type="code"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Schnorr&apos;s G is generator"/>
       </Properties>
       <Constraints>

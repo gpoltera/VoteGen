@@ -22,9 +22,6 @@ import java.math.BigInteger;
 public class FaultGeneratorTask extends VoteGenerator {
     
     public void run() throws Exception {
-        //load the fault-config
-        boolean[] faults = ConfigHelper.getFaults();
-
         //Schnorr Parameter
         if (!faults[0]) {
             electionBoard.signatureParameters.setPrime(NoPrimeGenerator.getNoPrime());

@@ -17,35 +17,37 @@ import java.security.interfaces.RSAPublicKey;
  * @author Gian
  */
 public class KeyStore {
-    public static final String[] mixers = ConfigHelper.getMixerIds();
-    public static final String[] talliers = ConfigHelper.getTallierIds();
+    ConfigHelper config = new ConfigHelper();
     
-    public static KeyPair caKeyPair;
-    public static RSAPrivateKey certificateAuthorityPrivateKey;
-    public static RSAPublicKey certificateAuthorityPublicKey;
-
-    public static RSAPrivateKey electionManagerPrivateKey;
-    public static RSAPublicKey electionManagerPublicKey;
-
-    public static RSAPrivateKey electionAdministratorPrivateKey;
-    public static RSAPublicKey electionAdministratorPublicKey;
-
-    public static RSAPrivateKey[] mixersPrivateKey = new RSAPrivateKey[mixers.length];
-    public static RSAPublicKey[] mixersPublicKey = new RSAPublicKey[mixers.length];
-
-    public static RSAPrivateKey[] talliersPrivateKey = new RSAPrivateKey[talliers.length];
-    public static RSAPublicKey[] talliersPublicKey = new RSAPublicKey[talliers.length];
-
-    public static RSAPrivateKey[] votersPrivateKey = new RSAPrivateKey[ConfigHelper.getVotersNumber()];
-    public static RSAPublicKey[] votersPublicKey = new RSAPublicKey[ConfigHelper.getVotersNumber()];
+    public final String[] mixers = config.getMixerIds();
+    public final String[] talliers = config.getTallierIds();
     
-    public static BigInteger[] talliersDecryptionKey = new BigInteger[talliers.length];
-    public static BigInteger[] talliersEncryptionKey = new BigInteger[talliers.length];
+    public KeyPair caKeyPair;
+    public RSAPrivateKey certificateAuthorityPrivateKey;
+    public RSAPublicKey certificateAuthorityPublicKey;
 
-    public static BigInteger[] mixersSignatureKey = new BigInteger[mixers.length];
-    public static BigInteger[] mixersVerificationKey = new BigInteger[mixers.length];
-    public static BigInteger[] mixersGenerator = new BigInteger[mixers.length];
+    public RSAPrivateKey electionManagerPrivateKey;
+    public RSAPublicKey electionManagerPublicKey;
+
+    public RSAPrivateKey electionAdministratorPrivateKey;
+    public RSAPublicKey electionAdministratorPublicKey;
+
+    public RSAPrivateKey[] mixersPrivateKey = new RSAPrivateKey[mixers.length];
+    public RSAPublicKey[] mixersPublicKey = new RSAPublicKey[mixers.length];
+
+    public RSAPrivateKey[] talliersPrivateKey = new RSAPrivateKey[talliers.length];
+    public RSAPublicKey[] talliersPublicKey = new RSAPublicKey[talliers.length];
+
+    public RSAPrivateKey[] votersPrivateKey = new RSAPrivateKey[config.getVotersNumber()];
+    public RSAPublicKey[] votersPublicKey = new RSAPublicKey[config.getVotersNumber()];
     
-    public static BigInteger[] votersSignatureKey = new BigInteger[ConfigHelper.getVotersNumber()];
-    public static BigInteger[] votersVerificationKey = new BigInteger[ConfigHelper.getVotersNumber()];
+    public BigInteger[] talliersDecryptionKey = new BigInteger[talliers.length];
+    public BigInteger[] talliersEncryptionKey = new BigInteger[talliers.length];
+
+    public BigInteger[] mixersSignatureKey = new BigInteger[mixers.length];
+    public BigInteger[] mixersVerificationKey = new BigInteger[mixers.length];
+    public BigInteger[] mixersGenerator = new BigInteger[mixers.length];
+    
+    public BigInteger[] votersSignatureKey = new BigInteger[config.getVotersNumber()];
+    public BigInteger[] votersVerificationKey = new BigInteger[config.getVotersNumber()];
 }

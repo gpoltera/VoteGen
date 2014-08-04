@@ -43,16 +43,16 @@ public class LatelyMixedVerificationKeysByTask extends VoteGenerator {
             listMixedVerificationKey.add(mixedVerificationKey);
         }
         /*submit to ElectionBoard*/
-        electionBoard.listMixedVerificationKey = listMixedVerificationKey;
+        electionBoard.setLatelyMixedVerificationKeys(listMixedVerificationKey);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), listMixedVerificationKey);
+        DB4O.storeDB(config.getElectionId(), listMixedVerificationKey);
     }
 
     private MixedVerificationKey createMixedVerificationKey() {
         /*create MixedVerificationKey*/
         MixedVerificationKey mixedVerificationKey = new MixedVerificationKey();
-        mixedVerificationKey.setElectionId(ConfigHelper.getElectionId());
+        mixedVerificationKey.setElectionId(config.getElectionId());
         mixedVerificationKey.setKey(BigInteger.ZERO);
 
         return mixedVerificationKey;

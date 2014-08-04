@@ -36,19 +36,19 @@ public class BlindedGeneratorTask extends VoteGenerator {
             blindedGeneratorsList[i] = blindedGenerator;
         }
         /*submit to ElectionBoard*/
-        electionBoard.blindedGeneratorsList = blindedGeneratorsList;
+        electionBoard.setBlindedGeneratorList(blindedGeneratorsList);
 
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), electionBoard.blindedGeneratorsList);
+        DB4O.storeDB(config.getElectionId(), blindedGeneratorsList);
     }
 
     private BlindedGenerator createBlindedGenerator(int i) {
         try {
             BlindedGenerator blindedGenerator = new BlindedGenerator();
-            blindedGenerator.setElectionId(ConfigHelper.getElectionId());
+            blindedGenerator.setElectionId(config.getElectionId());
             blindedGenerator.setGenerator(keyStore.mixersGenerator[i]);
             if (i == 0) {
-                previousGenerator = electionBoard.signatureParameters.getGenerator();
+                previousGenerator = electionBoard.getSignatureParameters().getGenerator();
             } else {
                 previousGenerator = keyStore.mixersGenerator[i - 1];
             }
@@ -56,8 +56,8 @@ public class BlindedGeneratorTask extends VoteGenerator {
                     electionBoard.mixers[i],
                     keyStore.mixersSignatureKey[i],
                     keyStore.mixersVerificationKey[i],
-                    electionBoard.signatureParameters.getPrime(),
-                    electionBoard.signatureParameters.getGroupOrder(),
+                    electionBoard.getSignatureParameters().getPrime(),
+                    electionBoard.getSignatureParameters().getGroupOrder(),
                     previousGenerator));
 
             return blindedGenerator;

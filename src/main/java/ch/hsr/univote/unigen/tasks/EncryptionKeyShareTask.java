@@ -31,9 +31,9 @@ public class EncryptionKeyShareTask extends VoteGenerator {
                     electionBoard.talliers[i],
                     keyStore.talliersDecryptionKey[i],
                     keyStore.talliersEncryptionKey[i],
-                    electionBoard.encryptionParameters.getPrime(),
-                    electionBoard.encryptionParameters.getGroupOrder(),
-                    electionBoard.encryptionParameters.getGenerator()));
+                    electionBoard.getEncryptionParameters().getPrime(),
+                    electionBoard.getEncryptionParameters().getGroupOrder(),
+                    electionBoard.getEncryptionParameters().getGenerator()));
 
             /*sign by tallier*/
             encryptionKeyShare.setSignature(SignatureGenerator.createSignature(electionBoard.talliers[i], encryptionKeyShare, keyStore.talliersPrivateKey[i]));
@@ -42,15 +42,15 @@ public class EncryptionKeyShareTask extends VoteGenerator {
             encryptionKeyShareList[i] = encryptionKeyShare;
         }
         /*submit to ElectionBoard*/
-        electionBoard.encryptionKeyShareList = encryptionKeyShareList;
+        electionBoard.setEncryptionKeyShareList(encryptionKeyShareList);
 
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), encryptionKeyShareList);
+        DB4O.storeDB(config.getElectionId(), encryptionKeyShareList);
     }
 
     private EncryptionKeyShare createEncryptionKeyShare(int i) {
         EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
-        encryptionKeyShare.setElectionId(ConfigHelper.getElectionId());
+        encryptionKeyShare.setElectionId(config.getElectionId());
         encryptionKeyShare.setKey(keyStore.talliersEncryptionKey[i]);
 
         return encryptionKeyShare;

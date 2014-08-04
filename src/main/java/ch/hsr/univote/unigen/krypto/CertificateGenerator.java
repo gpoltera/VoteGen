@@ -27,6 +27,8 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
  * @author Gian Poltéra
  */
 public class CertificateGenerator {
+    ConfigHelper config = new ConfigHelper();
+    
     //Adapt to config file
     public static final String STORETYPE = "JKS";
     public static final int KEYSIZE = 1024;
@@ -37,10 +39,10 @@ public class CertificateGenerator {
 keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -alias vsuzh -file data\output\vsuzh.pem
      */
 
-    public static String main(String alias, RSAPrivateKey privateKey, RSAPublicKey publicKey) throws Exception {
+    public String getCertficate(String alias, RSAPrivateKey privateKey, RSAPublicKey publicKey) throws Exception {
         // 
         CertificateGenerator ku = new CertificateGenerator();
-        X509Certificate cert = ku.createCertitificate("CN=" + ConfigHelper.getElectionId(), privateKey, publicKey);
+        X509Certificate cert = ku.createCertitificate("CN=" + config.getElectionId(), config.getSignatureAlgorithm(), privateKey, publicKey);
         KeyStore ks = ku.createAndPopulateKeyStore(cert, alias);
         String pem = ku.x509ToBase64PEMString(cert);
         
@@ -51,10 +53,13 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
      * Creates an X509 V1 certificate. Uses BouncyCastle as security provider.
      *
      * @param cname canonicla name of the form "CN=..."
+     * @param signatureAlgorithm
+     * @param privateKey
+     * @param publicKey
      * @return an X%09 V1 certificate
      * @throws Exception
      */
-    public X509Certificate createCertitificate(String cname, RSAPrivateKey privateKey, RSAPublicKey publicKey)
+    public X509Certificate createCertitificate(String cname, String signatureAlgorithm, RSAPrivateKey privateKey, RSAPublicKey publicKey)
         throws Exception
     {
         // See also:
@@ -87,7 +92,7 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
         certGenerator.setNotAfter(expiryDate);
         certGenerator.setSubjectDN(dnName);     // note: same as issuer
         certGenerator.setPublicKey(publicKey);
-        certGenerator.setSignatureAlgorithm(ConfigHelper.getSignatureAlgorithm());
+        certGenerator.setSignatureAlgorithm(signatureAlgorithm);
 
         // get certificate
         X509Certificate cert = certGenerator.generate(privateKey, "BC");

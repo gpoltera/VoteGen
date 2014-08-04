@@ -25,14 +25,14 @@ import javax.xml.namespace.QName;
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
 public class XMLHelper {
-
-	public static String serialize(Object object) {
+    ConfigHelper config = new ConfigHelper();
+	public String serialize(Object object) {
 		String name = object.getClass().getSimpleName();
 		name = name.substring(0, 1).toLowerCase() + name.substring(1);
 		try {
 			JAXBContext context = JAXBContext.newInstance(object.getClass());
 			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_ENCODING, ConfigHelper.getCharEncoding());
+			marshaller.setProperty(Marshaller.JAXB_ENCODING, config.getCharEncoding());
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			JAXBElement element = new JAXBElement(new QName(name), object.getClass(), object);
 			StringWriter message = new StringWriter();

@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.EncryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
 /**
@@ -25,18 +24,18 @@ public class EncryptedVotesTask extends VoteGenerator {
         encryptedVotes.setSignature(SignatureGenerator.createSignature(encryptedVotes, keyStore.electionAdministratorPrivateKey));
 
         /*submit to ElectionBoard*/
-        electionBoard.encryptedVotes = encryptedVotes;
+        electionBoard.setEncryptedVotes(encryptedVotes);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), encryptedVotes);
+        DB4O.storeDB(config.getElectionId(), encryptedVotes);
     }
 
     private EncryptedVotes createEncryptedVotes() {
         EncryptedVotes encryptedVotes = new EncryptedVotes();
-        encryptedVotes.setElectionId(ConfigHelper.getElectionId());
+        encryptedVotes.setElectionId(config.getElectionId());
         /*for each Ballot*/
-        for (int i = 0; i < electionBoard.ballots.getBallot().size(); i++) {
-            encryptedVotes.getVote().add(electionBoard.ballots.getBallot().get(i).getEncryptedVote());
+        for (int i = 0; i < electionBoard.getBallots().getBallot().size(); i++) {
+            encryptedVotes.getVote().add(electionBoard.getBallots().getBallot().get(i).getEncryptedVote());
         }
         
         return encryptedVotes;

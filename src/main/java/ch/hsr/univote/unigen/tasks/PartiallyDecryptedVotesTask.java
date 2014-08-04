@@ -35,16 +35,16 @@ public class PartiallyDecryptedVotesTask extends VoteGenerator {
             partiallyDecryptedVotesList[i] = partiallyDecryptedVotes;
         }
          /*submit to ElectionBoard*/
-        electionBoard.partiallyDecryptedVotesList = partiallyDecryptedVotesList;
+        electionBoard.setPartiallyDecryptedVotesList(partiallyDecryptedVotesList);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(),partiallyDecryptedVotesList); 
+        DB4O.storeDB(config.getElectionId(),partiallyDecryptedVotesList); 
     }
     
     private PartiallyDecryptedVotes createPartiallyDecryptedVotes(int i) {
         try {
         PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
-            partiallyDecryptedVotes.setElectionId(ConfigHelper.getElectionId());
+            partiallyDecryptedVotes.setElectionId(config.getElectionId());
 
             /*for each Vote*/
             for (int j = 0; j < electionBoard.mixedEncryptedVotes.getVote().size(); j++) {
@@ -60,9 +60,9 @@ public class PartiallyDecryptedVotesTask extends VoteGenerator {
                     keyStore.talliersDecryptionKey[i], 
                     electionBoard.encryptionKeyShareList[i], 
                     partiallyDecryptedVotes, 
-                    electionBoard.encryptionParameters.getPrime(), 
-                    electionBoard.encryptionParameters.getGroupOrder(),  
-                    electionBoard.encryptionParameters.getGenerator()));
+                    electionBoard.getEncryptionParameters().getPrime(), 
+                    electionBoard.getEncryptionParameters().getGroupOrder(),  
+                    electionBoard.getEncryptionParameters().getGenerator()));
         
         return partiallyDecryptedVotes;
         } catch (NoSuchAlgorithmException e) {

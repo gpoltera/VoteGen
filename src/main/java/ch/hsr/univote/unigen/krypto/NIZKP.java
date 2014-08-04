@@ -9,8 +9,6 @@ import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.bfh.univote.common.Proof;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
-import ch.hsr.univote.unigen.board.ElectionBoard;
-import static ch.hsr.univote.unigen.board.ElectionBoard.signatureParameters;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
@@ -20,15 +18,16 @@ import java.security.NoSuchAlgorithmException;
  * @author Gian Poltéra
  */
 public class NIZKP {
-
-    public static Proof getProof(String Name, BigInteger a, BigInteger b, BigInteger p, BigInteger q, BigInteger g) throws NoSuchAlgorithmException {
+    ConfigHelper config = new ConfigHelper();
+    
+    public Proof getProof(String Name, BigInteger a, BigInteger b, BigInteger p, BigInteger q, BigInteger g) throws NoSuchAlgorithmException {
         Proof proof = new Proof();
 
         // 1. Choose w E X randomly
         // 2. Compute t = o(w)
         // 3. Compute c = H(b,t) mod q, q= |image(o)|
         // 4. Compute s = w + c * a
-        BigInteger w = PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength());
+        BigInteger w = PrimeGenerator.getPrime(config.getEncryptionKeyLength());
 
         // Proof commitment
         BigInteger t = g.modPow(w, p);
@@ -41,7 +40,7 @@ public class NIZKP {
         String res = sc.pullAll();
 
         // c = H(b,t) mod q
-        BigInteger c = Hash.getHash(res).mod(q);
+        BigInteger c = Hash.getHash(res, config.getHashAlgorithm(), config.getCharEncoding()).mod(q);
 
         // Proof response
         BigInteger s = c.multiply(a).add(w);
@@ -52,10 +51,10 @@ public class NIZKP {
         return proof;
     }
     
-    public static Proof getProof(String tallierName, BigInteger a, EncryptionKeyShare encryptionKeyShare, PartiallyDecryptedVotes partiallyDecryptedVotes, BigInteger p, BigInteger q, BigInteger g) throws NoSuchAlgorithmException {
+    public Proof getProof(String tallierName, BigInteger a, EncryptionKeyShare encryptionKeyShare, PartiallyDecryptedVotes partiallyDecryptedVotes, BigInteger p, BigInteger q, BigInteger g) throws NoSuchAlgorithmException {
         Proof proof = new Proof();
         
-        BigInteger w = PrimeGenerator.getPrime(ConfigHelper.getEncryptionKeyLength());
+        BigInteger w = PrimeGenerator.getPrime(config.getEncryptionKeyLength());
         
         StringConcatenator sc = new StringConcatenator();
         sc.pushObject(encryptionKeyShare.getKey());
@@ -75,7 +74,7 @@ public class NIZKP {
         
         String res = sc.pullAll();
         
-        BigInteger c = Hash.getHash(res).mod(q);
+        BigInteger c = Hash.getHash(res, config.getHashAlgorithm(), config.getCharEncoding()).mod(q);
         BigInteger s = c.multiply(a).add(w);
         
         

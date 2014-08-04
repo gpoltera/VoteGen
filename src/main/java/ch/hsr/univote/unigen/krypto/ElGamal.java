@@ -23,12 +23,8 @@ public class ElGamal {
         BigInteger q = PrimeGenerator.getSafePrime(keylength - 1);
         BigInteger p = q.multiply(new BigInteger("2")).add(BigInteger.ONE);
         BigInteger g = new BigInteger("2");
-
-        System.out.println("ElGamal p, Länge: " + p.bitLength());
-        System.out.println("ElGamal q, Länge: " + q.bitLength());
-        System.out.println("ElGamal g, Länge: " + g.bitLength());
         
-        //group order g^q mod p <> 1 evtl. noch (g^2 mod p <> 1
+        //while group order g^q mod p = 1
         while (!g.modPow(q, p).equals(BigInteger.ONE)) {
             g = g.add(BigInteger.ONE);
         }

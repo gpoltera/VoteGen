@@ -9,10 +9,8 @@ import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
-import java.util.List;
 
 /**
  *
@@ -31,15 +29,15 @@ public class MixedVerificationKeysTask extends VoteGenerator {
         verificationKeys.setSignature(SignatureGenerator.createSignature(verificationKeys, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
-        electionBoard.verificationKeys = verificationKeys;
+        electionBoard.setMixedVerificationKeys(verificationKeys);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), verificationKeys);
+        DB4O.storeDB(config.getElectionId(), verificationKeys);
     }
 
     private VerificationKeys createVerificationKeys(MixedVerificationKeys mixedVerificationKeys) {
         VerificationKeys verificationKeys = new VerificationKeys();
-        verificationKeys.setElectionId(ConfigHelper.getElectionId());
+        verificationKeys.setElectionId(config.getElectionId());
 
         for (BigInteger verificationKey : mixedVerificationKeys.getKey()) {
             verificationKeys.getKey().add(verificationKey);

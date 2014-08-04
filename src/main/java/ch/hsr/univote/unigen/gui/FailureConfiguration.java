@@ -76,7 +76,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(lblSchnorr, gridBagConstraints);
 
-        jCBschnorrP_isprime.setSelected(true);
+        jCBschnorrP_isprime.setSelected(isChecked("schnorrP_isprime"));
         jCBschnorrP_isprime.setText("Schnorr's P is prime");
         jCBschnorrP_isprime.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -87,22 +87,24 @@ public class FailureConfiguration extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBschnorrP_isprime, gridBagConstraints);
+        jCBschnorrP_isprime.getAccessibleContext().setAccessibleName("");
+        jCBschnorrP_isprime.getAccessibleContext().setAccessibleDescription("");
 
-        jCBschnorrP_issafeprime.setSelected(true);
+        jCBschnorrP_issafeprime.setSelected(isChecked("schnorrP_issafeprime"));
         jCBschnorrP_issafeprime.setText("Schnorr's P is SafePrime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBschnorrP_issafeprime, gridBagConstraints);
 
-        jCBschnorrQ_isprime.setSelected(true);
+        jCBschnorrQ_isprime.setSelected(isChecked("schnorrQ_isprime"));
         jCBschnorrQ_isprime.setText("Schnorr's Q is prime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBschnorrQ_isprime, gridBagConstraints);
 
-        jCBschnorrG_isgenerator.setSelected(true);
+        jCBschnorrG_isgenerator.setSelected(isChecked("schnorrG_isgenerator"));
         jCBschnorrG_isgenerator.setText("Schnorr's G is generator");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -354,9 +356,12 @@ public class FailureConfiguration extends javax.swing.JPanel {
         properties.setProperty("tallierNIZKPEncryptionKeyShare", "true");
         properties.setProperty("mixerNIZKPBlindedGenerator", "true");     
         
-        ConfigHelper.saveProperties("FaultConfigFile", properties);
+        new ConfigHelper().saveProperties("FaultConfigFile", properties);
     }//GEN-LAST:event_jBtnSaveActionPerformed
 
+    private boolean isChecked(String name) {
+        return new ConfigHelper().getFault(name);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnSave;

@@ -14,7 +14,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.ElectoralRoll;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FormatException;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.FileNotFoundException;
@@ -32,9 +31,9 @@ import java.util.List;
 public class ElectoralRollTask extends VoteGenerator {
 
     public void run() throws FileNotFoundException, FormatException, NoSuchAlgorithmException, Exception {
-        List<String> voterIds = new ArrayList<String>();
+        List<String> voterIds = new ArrayList<>();
 
-        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
+        for (int i = 0; i < config.getVotersNumber(); i++) {
             voterIds.add("voter" + i + 1);
         }
 
@@ -45,17 +44,17 @@ public class ElectoralRollTask extends VoteGenerator {
         electoralRoll.setSignature(SignatureGenerator.createSignature(electoralRoll, keyStore.electionAdministratorPrivateKey));
         
         /*submit to ElectionBoard*/
-        electionBoard.electoralRoll = electoralRoll;
+        electionBoard.setElectoralRoll(electoralRoll);
 
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), electoralRoll);
+        DB4O.storeDB(config.getElectionId(), electoralRoll);
     }
 
     private ElectoralRoll createRoll(List<String> voterIds) {
         try {
             ElectoralRoll electoralRoll = new ElectoralRoll();
-            electoralRoll.setElectionId(ConfigHelper.getElectionId());
-            MessageDigest messageDigest = MessageDigest.getInstance(ConfigHelper.getHashAlgorithm());
+            electoralRoll.setElectionId(config.getElectionId());
+            MessageDigest messageDigest = MessageDigest.getInstance(config.getHashAlgorithm());
             for (String voterId : voterIds) {
                 messageDigest.update(voterId.getBytes());
                 byte[] digest = messageDigest.digest();

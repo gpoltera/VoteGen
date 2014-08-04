@@ -179,7 +179,7 @@ public class SystemConfiguration extends javax.swing.JPanel {
         properties.setProperty("maxCandidates", jSPMaxCandidates.getValue().toString());
         properties.setProperty("maxCumulation", jSPMaxCumulation.getValue().toString());
         
-        ConfigHelper.saveProperties("SystemConfigFile", properties);
+        new ConfigHelper().saveProperties("SystemConfigFile", properties);
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
 

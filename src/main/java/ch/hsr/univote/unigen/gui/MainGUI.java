@@ -41,7 +41,11 @@ public class MainGUI extends javax.swing.JFrame {
     public MainGUI() {
         URL imgURL = getClass().getClassLoader().getResource("iconVoteGenerator.jpg");
         ImageIcon img = new ImageIcon(imgURL);
-        this.setIconImage(img.getImage());
+        
+        this.setIconImage(img.getImage()); //GUI Icon
+        this.setMinimumSize(new java.awt.Dimension(500, 500));
+        this.setPreferredSize(new java.awt.Dimension(500, 500));
+        this.setLocationRelativeTo(null); //Mittig zentrieren
         initComponents();
         jTabbedPanel.remove(voteGeneration);
 
@@ -248,7 +252,7 @@ public class MainGUI extends javax.swing.JFrame {
             if (!file.getName().endsWith(".vgc")) {
                 filetype = ".vgc";
             }
-            
+
             try {
                 ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(file + filetype));
                 byte[] buffer = new byte[4096];
@@ -304,7 +308,7 @@ public class MainGUI extends javax.swing.JFrame {
                         buffer = new byte[avail];
                         bis.read(buffer, 0, avail);
                     }
-                    
+
                     String fileName = zipEntry.getName();
                     BufferedOutputStream bos = null;
                     bos = new BufferedOutputStream(new FileOutputStream("properties/" + fileName));
@@ -315,25 +319,29 @@ public class MainGUI extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
             }
+            new MainGUI().setVisible(true);
+            this.dispose();
         }
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
 
     private void jMenuItemGermanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemGermanActionPerformed
         Locale locale = new Locale("de", "DE");
         Locale.setDefault(locale);
-        this.setLocale(locale);
-        this.dispose();
+         
         new MainGUI().setVisible(true);
+        
+        this.dispose();
     }//GEN-LAST:event_jMenuItemGermanActionPerformed
 
     private void jMenuItemEnglishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemEnglishActionPerformed
         Locale locale = new Locale("en", "EN");
         Locale.setDefault(locale);
-        this.setLocale(locale);
-        this.dispose();
+         
         new MainGUI().setVisible(true);
+        
+        this.dispose();
     }//GEN-LAST:event_jMenuItemEnglishActionPerformed
-
+       
     /**
      * @param args the command line arguments
      */

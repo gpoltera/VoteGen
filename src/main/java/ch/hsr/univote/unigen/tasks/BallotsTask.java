@@ -12,7 +12,6 @@ import ch.bfh.univote.common.Proof;
 import ch.bfh.univote.common.VoterSignature;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -31,18 +30,18 @@ public class BallotsTask extends VoteGenerator {
         ballots.setSignature(SignatureGenerator.createSignature(ballots, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
-        electionBoard.ballots = ballots;
+        electionBoard.setBallots(ballots);
 
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), ballots);
+        DB4O.storeDB(config.getElectionId(), ballots);
     }
 
     private Ballots createBallots() {
         Ballots ballots = new Ballots();
-        ballots.setElectionId(ConfigHelper.getElectionId());
+        ballots.setElectionId(config.getElectionId());
 
         /*for each Voter*/
-        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
+        for (int i = 0; i < config.getVotersNumber(); i++) {
             /*create Ballot*/
             Ballot ballot = createBallot(i);
 
@@ -67,7 +66,7 @@ public class BallotsTask extends VoteGenerator {
 
     private Ballot createBallot(int i) {
         Ballot ballot = new Ballot();
-        ballot.setElectionId(ConfigHelper.getElectionId());
+        ballot.setElectionId(config.getElectionId());
 
         /*Verification Key*/
         ballot.setVerificationKey(keyStore.votersVerificationKey[i]);
@@ -75,10 +74,10 @@ public class BallotsTask extends VoteGenerator {
         /*Encryption*/
         BigInteger[] ecVote = ElGamal.getEncryption(
                 BigInteger.TEN, //Encryption of ??
-                electionBoard.encryptionKey.getKey(), //EncryptionKey
-                electionBoard.encryptionParameters.getPrime(), //ELGamal p
-                electionBoard.encryptionParameters.getGroupOrder(), //ElGamal q
-                electionBoard.encryptionParameters.getGenerator()); //ElGamal g       
+                electionBoard.getEncryptionKey().getKey(), //EncryptionKey
+                electionBoard.getEncryptionParameters().getPrime(), //ELGamal p
+                electionBoard.getEncryptionParameters().getGroupOrder(), //ElGamal q
+                electionBoard.getEncryptionParameters().getGenerator()); //ElGamal g       
 
         /*EncryptedVote*/
         EncryptedVote encryptedVote = new EncryptedVote();

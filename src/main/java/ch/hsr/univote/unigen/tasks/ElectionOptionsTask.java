@@ -23,7 +23,6 @@ import ch.bfh.univote.common.SummationRule;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FormatException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -47,7 +45,7 @@ public class ElectionOptionsTask extends VoteGenerator {
     public void run() throws FileNotFoundException, FormatException, Exception {
         /*read CandidateLists*/
         List<CandidateList> lists = getCandidateLists();
-        boolean partyListSystem = ConfigHelper.getPartyListSystemIndicator();
+        boolean partyListSystem = config.getPartyListSystemIndicator();
                 
         /*create ElectionOptions*/
         ElectionOptions electionOptions = createOptions(lists, partyListSystem);
@@ -56,14 +54,14 @@ public class ElectionOptionsTask extends VoteGenerator {
         electionOptions.setSignature(SignatureGenerator.createSignature(electionOptions, keyStore.electionAdministratorPrivateKey));
         
         /*submit to ElectionBoard*/
-        electionBoard.electionOptions = electionOptions;
+        electionBoard.setElectionOptions(electionOptions);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), electionOptions);
+        DB4O.storeDB(config.getElectionId(), electionOptions);
     }
 
     private List<CandidateList> getCandidateLists() throws FileNotFoundException, FormatException {
-        File file = new File(ConfigHelper.getPoliticalListsFile());
+        File file = new File(config.getPoliticalListsFile());
         if (!file.exists() || !file.isFile()) {
             throw new FileNotFoundException("Die Datei " + file + " wurde nicht gefunden");
         }
@@ -181,7 +179,7 @@ public class ElectionOptionsTask extends VoteGenerator {
 
     private ElectionOptions createOptions(List<CandidateList> lists, boolean partyListSystem) {
         ElectionOptions options = new ElectionOptions();
-        options.setElectionId(ConfigHelper.getElectionId());
+        options.setElectionId(config.getElectionId());
         SummationRule listSummationRule = new SummationRule();
         listSummationRule.setLowerBound(0);
         if (partyListSystem) {
@@ -194,10 +192,10 @@ public class ElectionOptionsTask extends VoteGenerator {
         listForallRule.setUpperBound(1);
         SummationRule candidateSummationRule = new SummationRule();
         candidateSummationRule.setLowerBound(0);
-        candidateSummationRule.setUpperBound(ConfigHelper.getMaxCandidates());
+        candidateSummationRule.setUpperBound(config.getMaxCandidates());
         ForallRule candidateForallRule = new ForallRule();
         candidateForallRule.setLowerBound(0);
-        candidateForallRule.setUpperBound(ConfigHelper.getMaxCumulation());
+        candidateForallRule.setUpperBound(config.getMaxCumulation());
         int choiceId = 1;
         for (CandidateList list : lists) {
             int listId = choiceId++;

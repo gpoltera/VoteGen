@@ -31,23 +31,23 @@ public class VoterCertsTask extends VoteGenerator {
         voterCertificates.setSignature(SignatureGenerator.createSignature(voterCertificates, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
-        electionBoard.voterCertificates = voterCertificates;
+        electionBoard.setVoterCertificates(voterCertificates);
 
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), voterCertificates);
+        DB4O.storeDB(config.getElectionId(), voterCertificates);
     }
 
     private VoterCertificates createVoterCertificates() {
         try {
             VoterCertificates voterCertificates = new VoterCertificates();
-            voterCertificates.setElectionId(ConfigHelper.getElectionId());
-            for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
+            voterCertificates.setElectionId(config.getElectionId());
+            for (int i = 0; i < config.getVotersNumber(); i++) {
                 KeyPair keyPair = RSA.getRSAKeyPair();
                 keyStore.votersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
                 keyStore.votersPublicKey[i] = (RSAPublicKey) keyPair.getPublic();
 
                 keyStore.votersSignatureKey[i] = keyStore.votersPrivateKey[i].getPrivateExponent();
-                keyStore.votersVerificationKey[i] = electionBoard.signatureParameters.getGenerator().modPow(keyStore.votersSignatureKey[i], electionBoard.signatureParameters.getPrime());
+                keyStore.votersVerificationKey[i] = electionBoard.getSignatureParameters().getGenerator().modPow(keyStore.votersSignatureKey[i], electionBoard.getSignatureParameters().getPrime());
                 
                 Certificate certificate = new Certificate();
                 certificate.setValue(CertificateGenerator.main("voter" + i + 1, keyStore.certificateAuthorityPrivateKey, keyStore.votersPublicKey[i]).getBytes());
