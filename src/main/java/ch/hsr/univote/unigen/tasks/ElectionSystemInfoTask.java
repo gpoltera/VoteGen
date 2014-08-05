@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.Certificate;
 import ch.bfh.univote.common.ElectionSystemInfo;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.CertificateGenerator;
 import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -27,13 +26,10 @@ public class ElectionSystemInfoTask extends VoteGenerator {
         ElectionSystemInfo electionSystemInfo = createElectionSystemInfo();
 
         /*sign by ElectionaManger*/
-        electionSystemInfo.setSignature(new SignatureGenerator().createSignature(electionSystemInfo, keyStore.electionManagerPrivateKey));
+        electionSystemInfo.setSignature(new SignatureGenerator().createSignature(electionSystemInfo, keyStore.getElectionManagerPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setElectionSystemInfo(electionSystemInfo);
-
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), electionSystemInfo);
     }
 
     private ElectionSystemInfo createElectionSystemInfo() {
@@ -41,49 +37,48 @@ public class ElectionSystemInfoTask extends VoteGenerator {
             ElectionSystemInfo electionSystemInfo = new ElectionSystemInfo();
             /*set election id*/
             electionSystemInfo.setElectionId(config.getElectionId());
-
             /*CertificateAuthority*/
             KeyPair caKeyPair = new RSA().getRSAKeyPair();
-            keyStore.caKeyPair = caKeyPair;
-            keyStore.certificateAuthorityPrivateKey = (RSAPrivateKey) caKeyPair.getPrivate();
-            keyStore.certificateAuthorityPublicKey = (RSAPublicKey) caKeyPair.getPublic();
+            keyStore.setCaKeyPair(caKeyPair);
+            keyStore.setCertificateAuthorityPrivateKey((RSAPrivateKey) caKeyPair.getPrivate());
+            keyStore.setCertificateAuthorityPublicKey((RSAPublicKey) caKeyPair.getPublic());
             Certificate caCertificate = new Certificate();
-            caCertificate.setValue(new CertificateGenerator().getCertficate(config.getCertificateAuthorityId(), keyStore.certificateAuthorityPrivateKey, keyStore.certificateAuthorityPublicKey).getBytes());
+            caCertificate.setValue(new CertificateGenerator().getCertficate(config.getCertificateAuthorityId(), keyStore.getCertificateAuthorityPrivateKey(), keyStore.getCertificateAuthorityPublicKey()).getBytes());
             electionSystemInfo.setCertificateAuthority(caCertificate);
 
             /*ElectionManager*/
             KeyPair emKeyPair = new RSA().getRSAKeyPair();
-            keyStore.electionManagerPrivateKey = (RSAPrivateKey) emKeyPair.getPrivate();
-            keyStore.electionManagerPublicKey = (RSAPublicKey) emKeyPair.getPublic();
+            keyStore.setElectionManagerPrivateKey((RSAPrivateKey) emKeyPair.getPrivate());
+            keyStore.setElectionManagerPublicKey((RSAPublicKey) emKeyPair.getPublic());
             Certificate emCertificate = new Certificate();
-            emCertificate.setValue(new CertificateGenerator().getCertficate(config.getElectionManagerId(), keyStore.electionManagerPrivateKey, keyStore.electionManagerPublicKey).getBytes());
+            emCertificate.setValue(new CertificateGenerator().getCertficate(config.getElectionManagerId(), keyStore.getElectionManagerPrivateKey(), keyStore.getElectionManagerPublicKey()).getBytes());
             electionSystemInfo.setElectionManager(emCertificate);
 
             /*ElectionAdministrator*/
             KeyPair eaKeyPair = new RSA().getRSAKeyPair();
-            keyStore.electionAdministratorPrivateKey = (RSAPrivateKey) eaKeyPair.getPrivate();
-            keyStore.electionAdministratorPublicKey = (RSAPublicKey) eaKeyPair.getPublic();
+            keyStore.setElectionAdministratorPrivateKey((RSAPrivateKey) eaKeyPair.getPrivate());
+            keyStore.setElectionAdministratorPublicKey((RSAPublicKey) eaKeyPair.getPublic());
             Certificate eaCertificate = new Certificate();
-            eaCertificate.setValue(new CertificateGenerator().getCertficate(config.getElectionAdministratorId(), keyStore.electionAdministratorPrivateKey, keyStore.electionAdministratorPublicKey).getBytes());
+            eaCertificate.setValue(new CertificateGenerator().getCertficate(config.getElectionAdministratorId(), keyStore.getElectionAdministratorPrivateKey(), keyStore.getElectionAdministratorPublicKey()).getBytes());
             electionSystemInfo.setElectionAdministration(eaCertificate);
 
             /*Mixers*/
             for (int i = 0; i < electionBoard.mixers.length; i++) {               
                 KeyPair keyPair = new RSA().getRSAKeyPair();
-                keyStore.mixersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
-                keyStore.mixersPublicKey[i] = (RSAPublicKey) keyPair.getPublic();
+                keyStore.setMixerPrivateKey(i, (RSAPrivateKey) keyPair.getPrivate());
+                keyStore.setMixerPublicKey(i, (RSAPublicKey) keyPair.getPublic());
                 Certificate certificate = new Certificate();
-                certificate.setValue(new CertificateGenerator().getCertficate(electionBoard.mixers[i], keyStore.mixersPrivateKey[i], keyStore.mixersPublicKey[i]).getBytes());
+                certificate.setValue(new CertificateGenerator().getCertficate(electionBoard.mixers[i], keyStore.getMixerPrivateKey(i), keyStore.getMixerPublicKey(i)).getBytes());
                 electionSystemInfo.getMixer().add(certificate);
             }
 
             /*Talliers*/
             for (int i = 0; i < electionBoard.talliers.length; i++) {
                 KeyPair keyPair = new RSA().getRSAKeyPair();
-                keyStore.talliersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
-                keyStore.talliersPublicKey[i] = (RSAPublicKey) keyPair.getPublic();
+                keyStore.setTallierPrivateKey(i, (RSAPrivateKey) keyPair.getPrivate());
+                keyStore.setTallierPublicKey(i, (RSAPublicKey) keyPair.getPublic());
                 Certificate certificate = new Certificate();
-                certificate.setValue(new CertificateGenerator().getCertficate(electionBoard.talliers[i], keyStore.talliersPrivateKey[i], keyStore.talliersPublicKey[i]).getBytes());
+                certificate.setValue(new CertificateGenerator().getCertficate(electionBoard.talliers[i], keyStore.getTallierPrivateKey(i), keyStore.getTallierPublicKey(i)).getBytes());
                 electionSystemInfo.getTallier().add(certificate);
             }
 

@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
 /**
@@ -21,13 +20,10 @@ public class EncryptedVotesTask extends VoteGenerator {
         EncryptedVotes encryptedVotes = createEncryptedVotes();
         
         /*sign by ElectionAdministrator*/
-        encryptedVotes.setSignature(new SignatureGenerator().createSignature(encryptedVotes, keyStore.electionAdministratorPrivateKey));
+        encryptedVotes.setSignature(new SignatureGenerator().createSignature(encryptedVotes, keyStore.getElectionAdministratorPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setEncryptedVotes(encryptedVotes);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), encryptedVotes);
     }
 
     private EncryptedVotes createEncryptedVotes() {

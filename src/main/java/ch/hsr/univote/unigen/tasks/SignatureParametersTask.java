@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.SignatureParameters;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 
 /**
@@ -23,9 +22,6 @@ public class SignatureParametersTask extends VoteGenerator {
         
         /*submit to ElectionBoard*/
         electionBoard.setSignatureParameters(signatureParameters);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), signatureParameters);
     }
     
     private SignatureParameters createSignatureParameters() {

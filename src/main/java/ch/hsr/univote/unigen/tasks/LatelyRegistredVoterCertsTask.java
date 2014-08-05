@@ -26,9 +26,6 @@ public class LatelyRegistredVoterCertsTask extends VoteGenerator {
               
         /*submit to ElectionBoard*/
         electionBoard.setLatelyRegisteredVoterCertificates(listCertificate);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), listCertificate);
     }
     
     private List<Certificate> createListCertficate(List<Certificate> voterCertificates) {

@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.ElectionGenerator;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SchnorrSignature;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -23,13 +22,10 @@ public class ElectionGeneratorTask extends VoteGenerator {
         ElectionGenerator electionGenerator = createElectionGenerator();
         
         /*sign by ElectionManager*/
-        electionGenerator.setSignature(new SignatureGenerator().createSignature(electionGenerator, keyStore.electionManagerPrivateKey));
+        electionGenerator.setSignature(new SignatureGenerator().createSignature(electionGenerator, keyStore.getElectionManagerPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setElectionGenerator(electionGenerator);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), electionGenerator);
     }
 
     private ElectionGenerator createElectionGenerator() {
@@ -43,12 +39,12 @@ public class ElectionGeneratorTask extends VoteGenerator {
                     electionBoard.getSignatureParameters().getPrime(),
                     electionBoard.getSignatureParameters().getGroupOrder(),
                     g);
-            keyStore.mixersSignatureKey[i] = keyPair[0];
-            keyStore.mixersVerificationKey[i] = keyPair[1];
+            keyStore.setMixerSignatureKey(i, keyPair[0]);
+            keyStore.setMixerVerificationKey(i, keyPair[1]);
 
-            g = g.modPow(keyStore.mixersSignatureKey[i], electionBoard.getSignatureParameters().getPrime());
+            g = g.modPow(keyStore.getMixerSignatureKey(i), electionBoard.getSignatureParameters().getPrime());
 
-            keyStore.mixersGenerator[i] = g;
+            keyStore.setMixerGenerator(i, g);
         }
 
         electionGenerator.setGenerator(g);

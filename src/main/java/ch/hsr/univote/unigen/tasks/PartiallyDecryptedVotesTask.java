@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -28,16 +27,13 @@ public class PartiallyDecryptedVotesTask extends VoteGenerator {
             PartiallyDecryptedVotes partiallyDecryptedVotes = createPartiallyDecryptedVotes(i);
         
             /*sign by Tallier*/
-            partiallyDecryptedVotes.setSignature(new SignatureGenerator().createSignature(electionBoard.talliers[i], partiallyDecryptedVotes, keyStore.talliersPrivateKey[i]));
+            partiallyDecryptedVotes.setSignature(new SignatureGenerator().createSignature(electionBoard.talliers[i], partiallyDecryptedVotes, keyStore.getTallierPrivateKey(i)));
             
             /*add to List*/
             partiallyDecryptedVotesList[i] = partiallyDecryptedVotes;
         }
          /*submit to ElectionBoard*/
         electionBoard.setPartiallyDecryptedVotesList(partiallyDecryptedVotesList);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(),partiallyDecryptedVotesList); 
     }
     
     private PartiallyDecryptedVotes createPartiallyDecryptedVotes(int i) {
@@ -50,13 +46,13 @@ public class PartiallyDecryptedVotesTask extends VoteGenerator {
                 partiallyDecryptedVotes.getVote().add(ElGamal.getDecryption(
                         electionBoard.getMixedEncryptedVotes().getVote().get(j).getFirstValue(),
                         electionBoard.getMixedEncryptedVotes().getVote().get(j).getSecondValue(),
-                        keyStore.talliersDecryptionKey[i],
+                        keyStore.getTallierDecryptionKey(i),
                         electionBoard.getEncryptionParameters().getPrime()));
             }
 
             partiallyDecryptedVotes.setProof(new NIZKP().getProof(
                     electionBoard.talliers[i], 
-                    keyStore.talliersDecryptionKey[i], 
+                    keyStore.getTallierDecryptionKey(i), 
                     electionBoard.getEncryptionKeyShare(i), 
                     partiallyDecryptedVotes, 
                     electionBoard.getEncryptionParameters().getPrime(), 

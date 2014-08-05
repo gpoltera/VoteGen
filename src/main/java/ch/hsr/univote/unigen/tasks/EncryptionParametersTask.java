@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptionParameters;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -24,13 +23,10 @@ public class EncryptionParametersTask extends VoteGenerator {
         EncryptionParameters encryptionParameters = createEncryptionParameters();
         
         /*sign by electionamanger*/
-        encryptionParameters.setSignature(new SignatureGenerator().createSignature(encryptionParameters, keyStore.electionManagerPrivateKey));
+        encryptionParameters.setSignature(new SignatureGenerator().createSignature(encryptionParameters, keyStore.getElectionManagerPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setEncryptionParameters(encryptionParameters);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), encryptionParameters);
     }
     
     private EncryptionParameters createEncryptionParameters() {

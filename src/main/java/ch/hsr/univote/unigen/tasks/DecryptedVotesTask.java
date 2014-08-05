@@ -11,7 +11,6 @@ import ch.bfh.univote.common.DecryptedVotes;
 import ch.bfh.univote.common.PoliticalList;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
-import ch.hsr.univote.unigen.db.DB4O;
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -30,9 +29,6 @@ public class DecryptedVotesTask extends VoteGenerator {
         
         /*submit to ElectionBoard*/
         electionBoard.setDecryptedVotes(decryptedVotes);        
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), decryptedVotes);
     }
 
     private DecryptedVotes createDecryptedVotes() {

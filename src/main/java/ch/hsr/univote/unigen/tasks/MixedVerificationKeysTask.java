@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
 
@@ -26,13 +25,10 @@ public class MixedVerificationKeysTask extends VoteGenerator {
         VerificationKeys verificationKeys = createVerificationKeys(mixedVerificationKeys);
         
         /*sign by ElectionManager*/
-        verificationKeys.setSignature(new SignatureGenerator().createSignature(verificationKeys, keyStore.electionManagerPrivateKey));
+        verificationKeys.setSignature(new SignatureGenerator().createSignature(verificationKeys, keyStore.getElectionManagerPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setMixedVerificationKeys(verificationKeys);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), verificationKeys);
     }
 
     private VerificationKeys createVerificationKeys(MixedVerificationKeys mixedVerificationKeys) {

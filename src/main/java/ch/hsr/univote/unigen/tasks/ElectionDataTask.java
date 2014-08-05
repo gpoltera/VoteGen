@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.ElectionData;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
 /**
@@ -21,13 +20,10 @@ public class ElectionDataTask extends VoteGenerator {
         ElectionData electionData = createElectionData();
 
         /*sign by ElectionaManager*/
-        electionData.setSignature(new SignatureGenerator().createSignature(electionData, keyStore.electionManagerPrivateKey));
+        electionData.setSignature(new SignatureGenerator().createSignature(electionData, keyStore.getElectionManagerPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setElectionData(electionData);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), electionData);
     }
 
     private ElectionData createElectionData() {

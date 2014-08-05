@@ -32,7 +32,6 @@ import ch.bfh.univote.common.VoterCertificates;
 import ch.bfh.univote.election.ElectionBoardServiceFault;
 import ch.hsr.univote.unigen.VoteGenerator;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
@@ -50,177 +49,106 @@ import javax.jws.WebService;
 public class ElectionBoardWebService extends VoteGenerator implements ch.bfh.univote.election.ElectionBoard {
 
     public SignatureParameters getSignatureParameters() throws ElectionBoardServiceFault {
-        return electionBoard.signatureParameters;
+        return electionBoard.getSignatureParameters();
     }
 
     public Certificate getRootCertificate() throws ElectionBoardServiceFault {
-        return electionBoard.certificate;
+        return electionBoard.getRootCertificate();
     }
 
     public KnownElectionIds getKnownElectionIds() throws ElectionBoardServiceFault {
-
-        return electionBoard.knownElectionIds;
+        return electionBoard.getKnownElectionIds();
     }
 
     public ElectionSystemInfo getElectionSystemInfo(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.electionSystemInfo;
+        return electionBoard.getElectionSystemInfo();
     }
 
     public ElectionDefinition getElectionDefinition(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.electionDefinition;
+        return electionBoard.getElectionDefinition();
     }
 
     public EncryptionParameters getEncryptionParameters(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.encryptionParameters;
+        return electionBoard.getEncryptionParameters();
     }
 
     public EncryptionKeyShare getEncryptionKeyShare(String electionId, String tallierId) throws ElectionBoardServiceFault {
-        EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
-        for (int i = 0; i < electionBoard.talliers.length; i++) {
-            if (electionBoard.talliers[i].equals(tallierId)) {
-                encryptionKeyShare = electionBoard.encryptionKeyShareList[i];
-            }
-        }
-
-        return encryptionKeyShare;
+        return electionBoard.getEncryptionKeyShare(tallierId);
     }
 
     public EncryptionKey getEncryptionKey(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.encryptionKey;
+        return electionBoard.getEncryptionKey();
     }
 
     public BlindedGenerator getBlindedGenerator(String electionId, String mixerId) throws ElectionBoardServiceFault {
-        BlindedGenerator blindedGenerator = new BlindedGenerator();
-        for (int i = 0; i < electionBoard.mixers.length; i++) {
-            if (electionBoard.mixers[i].equals(mixerId)) {
-                blindedGenerator = electionBoard.blindedGeneratorsList[i];
-            }
-        }
-
-        return blindedGenerator;
+        return electionBoard.getBlindedGenerator(mixerId);
     }
 
     public ElectionGenerator getElectionGenerator(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.electionGenerator;
+        return electionBoard.getElectionGenerator();
     }
 
     public ElectionOptions getElectionOptions(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.electionOptions;
+        return electionBoard.getElectionOptions();
     }
 
     public ElectionData getElectionData(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.electionData;
+        return electionBoard.getElectionData();
     }
 
     public ElectoralRoll getElectoralRoll(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.electoralRoll;
+        return electionBoard.getElectoralRoll();
     }
 
     public VoterCertificates getVoterCertificates(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.voterCertificates;
+        return electionBoard.getVoterCertificates();
     }
 
     public MixedVerificationKeys getVerificationKeysMixedBy(String electionId, String mixerId) throws ElectionBoardServiceFault {
-        MixedVerificationKeys mixedVerificationKeys = new MixedVerificationKeys();
-        
-        for (int i = 0; i < electionBoard.mixers.length; i++) {
-            if (electionBoard.mixers[i].equals(mixerId)) {
-                mixedVerificationKeys = electionBoard.listMixedVerificationKeys.get(i);
-                break;
-            }
-        }
-
-        return mixedVerificationKeys;
+        return electionBoard.getVerificationKeysMixedBy(mixerId);
     }
 
     public VerificationKeys getMixedVerificationKeys(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.verificationKeys;
+        return electionBoard.getMixedVerificationKeys();
     }
 
     public List<Certificate> getLatelyRegisteredVoterCertificates(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.listCertificate;
+        return electionBoard.getLatelyRegisteredVoterCertificates();
     }
 
     public List<MixedVerificationKey> getVerificationKeysLatelyMixedBy(String electionId, String mixerId) throws ElectionBoardServiceFault {
-        List<MixedVerificationKey> mixedVerificationKeys = new ArrayList<MixedVerificationKey>();
-
-        for (int i = 0; i < electionBoard.mixers.length; i++) {
-            if (electionBoard.mixers[i].equals(mixerId)) {
-                mixedVerificationKeys.add(electionBoard.listMixedVerificationKey.get(i));
-                break;
-            }
-        }
-
-        return mixedVerificationKeys;
+        return electionBoard.getVerificationKeysLatelyMixedBy(mixerId);
     }
 
     public List<MixedVerificationKey> getLatelyMixedVerificationKeys(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.listMixedVerificationKey;
+        return electionBoard.getLatelyMixedVerificationKeys();
     }
 
     public Ballot getBallot(String electionId, BigInteger verificationKey) throws ElectionBoardServiceFault {
-        Ballot vkballot = null;
-        for (Ballot ballot : electionBoard.ballots.getBallot()) {
-            if (ballot.getVerificationKey().equals(verificationKey)) {
-                vkballot = ballot;
-                break;
-            }
-        }
-
-        return vkballot;
+        return electionBoard.getBallot(verificationKey);
     }
 
     public Ballots getBallots(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.ballots;
+        return electionBoard.getBallots();
     }
 
     public MixedEncryptedVotes getEncryptedVotesMixedBy(String electionId, String mixerId) throws ElectionBoardServiceFault {
-        MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
-        for (int i = 0; i < electionBoard.mixers.length; i++) {
-            if (electionBoard.mixers[i].equals(mixerId)) {
-                mixedEncryptedVotes = electionBoard.mixedEncryptedVotesList[i];
-            }
-        }
-
-        return mixedEncryptedVotes;
+        return electionBoard.getEncryptedVotesMixedBy(mixerId);
     }
 
     public EncryptedVotes getEncryptedVotes(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.encryptedVotes;
+        return electionBoard.getEncryptedVotes();
     }
 
     public PartiallyDecryptedVotes getPartiallyDecryptedVotes(String electionId, String tallierId) throws ElectionBoardServiceFault {
-        PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
-        for (int i = 0; i < electionBoard.talliers.length; i++) {
-            if (electionBoard.talliers[i].equals(tallierId)) {
-                partiallyDecryptedVotes = electionBoard.partiallyDecryptedVotesList[i];
-            }
-        }
-
-        return partiallyDecryptedVotes;
+        return electionBoard.getPartiallyDecryptedVotes(tallierId);
     }
 
     public DecryptedVotes getDecryptedVotes(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.decryptedVotes;
+        return electionBoard.getDecryptedVotes();
     }
 
     public DecodedVotes getDecodedVotes(String electionId) throws ElectionBoardServiceFault {
-
-        return electionBoard.decodedVotes;
+        return electionBoard.getDecodedVotes();
     }
 }

@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptionKey;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -23,13 +22,10 @@ public class EncryptionKeyTask extends VoteGenerator {
         EncryptionKey encryptionKey = createEncryptionKey();        
         
         /*sign by ElectionManager*/
-        encryptionKey.setSignature(new SignatureGenerator().createSignature(encryptionKey, keyStore.electionManagerPrivateKey));
+        encryptionKey.setSignature(new SignatureGenerator().createSignature(encryptionKey, keyStore.getElectionManagerPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setEncryptionKey(encryptionKey);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), encryptionKey);
     }
     
     // Create the ElectionDefinition
@@ -43,13 +39,13 @@ public class EncryptionKeyTask extends VoteGenerator {
                     electionBoard.getEncryptionParameters().getPrime(),
                     electionBoard.getEncryptionParameters().getGroupOrder(), 
                     electionBoard.getEncryptionParameters().getGenerator());
-            keyStore.talliersDecryptionKey[i] = keyPair[0];
-            keyStore.talliersEncryptionKey[i] = keyPair[1];
+            keyStore.setTallierDecryptionKey(i, keyPair[0]);
+            keyStore.setTallierEncryptionKey(i, keyPair[1]);
             
             if (y == null) {
-                y = keyStore.talliersEncryptionKey[i];
+                y = keyStore.getTallierEncryptionKey(i);
             } else {
-                y = y.multiply(keyStore.talliersEncryptionKey[i]);
+                y = y.multiply(keyStore.getTallierEncryptionKey(i));
             }
         }
         encryptionKey.setKey(y.mod(electionBoard.getEncryptionParameters().getPrime()));

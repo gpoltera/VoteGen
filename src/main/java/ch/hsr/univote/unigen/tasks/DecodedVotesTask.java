@@ -9,7 +9,6 @@ import ch.bfh.univote.common.DecodedVote;
 import ch.bfh.univote.common.DecodedVoteEntry;
 import ch.bfh.univote.common.DecodedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
 /**
@@ -23,13 +22,10 @@ public class DecodedVotesTask extends VoteGenerator {
         DecodedVotes decodedVotes = createDecodedVotes();
 
         /*sign by ElectionManager*/
-        decodedVotes.setSignature(new SignatureGenerator().createSignature(decodedVotes, keyStore.electionManagerPrivateKey));
+        decodedVotes.setSignature(new SignatureGenerator().createSignature(decodedVotes, keyStore.getElectionManagerPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setDecodedVotes(decodedVotes);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), decodedVotes);
     }
 
     private DecodedVotes createDecodedVotes() {

@@ -2,7 +2,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.ElectionDefinition;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
@@ -16,13 +15,10 @@ public class ElectionDefinitionTask extends VoteGenerator {
         ElectionDefinition electionDefinition = createElectionDefinition();
         
         /*sign by ElectionAdministrator*/
-        electionDefinition.setSignature(new SignatureGenerator().createSignature(electionDefinition, keyStore.electionAdministratorPrivateKey));
+        electionDefinition.setSignature(new SignatureGenerator().createSignature(electionDefinition, keyStore.getElectionAdministratorPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setElectionDefinition(electionDefinition);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(),electionDefinition);
     }
 
     // Create the ElectionDefinition

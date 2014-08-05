@@ -5,11 +5,10 @@
  */
 package ch.hsr.univote.unigen.db;
 
+import ch.bfh.univote.common.SignatureParameters;
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 
 /**
  *
@@ -17,12 +16,8 @@ import java.text.SimpleDateFormat;
  */
 public class DB4O {
 
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-    static Timestamp time = new Timestamp(System.currentTimeMillis());
-    static String filename = sdf.format(time);
-
-    public static void storeDB(String electionid, Object object) {
-        ObjectContainer db = Db4o.openFile("db/" + filename + "_" + electionid + ".db");
+    public static void storeDB(Object object, String electionId, String filename) {
+        ObjectContainer db = Db4o.openFile("db/" + filename + "_" + electionId + ".db");
         try {
             db.store(object);
             db.commit();
@@ -31,17 +26,21 @@ public class DB4O {
         }
     }
 
-    public static void readDB(String electionid, Object object) {
-        Timestamp tstamp = new Timestamp(System.currentTimeMillis());
-        ObjectContainer db = Db4o.openFile("db/" + electionid + "_" + tstamp + ".db");
+    public static Object readDB(Object object, String electionid, String filename) {
+        ObjectContainer db = Db4o.openFile("db/" + filename + "_" + electionid + ".db");
+        Object robject = new Object();
         try {
-            ObjectSet result = db.queryByExample(object);
+            
+            ObjectSet<Object> result = db.queryByExample(object);
             while (result.hasNext()) {
-                System.out.println(result.next());
+                robject = result.next();
             }
+            
         } finally {
             db.close();
         }
+        
+        return robject;
     }
 
     public static void changeDB(String electionid, Object object) {

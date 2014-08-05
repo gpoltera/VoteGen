@@ -85,8 +85,7 @@ public class VoteGenerator {
         appendText("1. Public Parameters");
         //Set the Signature Parameters
         appendText(" a) Set the Signature Parameters");
-        SignatureParametersTask signatureParametersTask = new SignatureParametersTask();
-        signatureParametersTask.run(); //Set the Schnorr Parameters -> OK
+        new SignatureParametersTask().run(); //Set the Schnorr Parameters -> OK
     }
 
     /* 1.3.2 Public Indentifiers and Keys */

@@ -21,7 +21,6 @@ import ch.bfh.univote.common.PoliticalList;
 import ch.bfh.univote.common.Sex;
 import ch.bfh.univote.common.SummationRule;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.FormatException;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.File;
@@ -51,13 +50,10 @@ public class ElectionOptionsTask extends VoteGenerator {
         ElectionOptions electionOptions = createOptions(lists, partyListSystem);
         
         /*sign by ElectionAdministrator*/
-        electionOptions.setSignature(new SignatureGenerator().createSignature(electionOptions, keyStore.electionAdministratorPrivateKey));
+        electionOptions.setSignature(new SignatureGenerator().createSignature(electionOptions, keyStore.getElectionAdministratorPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setElectionOptions(electionOptions);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), electionOptions);
     }
 
     private List<CandidateList> getCandidateLists() throws FileNotFoundException, FormatException {

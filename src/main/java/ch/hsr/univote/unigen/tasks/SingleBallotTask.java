@@ -39,9 +39,6 @@ public class SingleBallotTask extends VoteGenerator {
         /*NOT IN USE???*/
         /*submit to ElectionBoard*/
         //electionBoard.ballot = ballot;
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(),ballot);
     }
 
     private Ballot createBallot() {

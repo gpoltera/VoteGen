@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.MixedEncryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
 /**
@@ -25,16 +24,13 @@ public class MixedEncryptedVotesByTask extends VoteGenerator {
             MixedEncryptedVotes mixedEncryptedVotes = createMixedEncryptedVotes();
             
             /*sign by Mixer*/
-            mixedEncryptedVotes.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], mixedEncryptedVotes, keyStore.mixersPrivateKey[i]));
+            mixedEncryptedVotes.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], mixedEncryptedVotes, keyStore.getMixerPrivateKey(i)));
             
             /*add to List*/
             mixedEncryptedVotesList[i] = mixedEncryptedVotes;
         }
         /*submit to ElectionBoard*/
         electionBoard.setEncryptedVotesMixedBy(mixedEncryptedVotesList);
-        
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(),mixedEncryptedVotesList);
     }
 
     private MixedEncryptedVotes createMixedEncryptedVotes() {

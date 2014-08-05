@@ -11,7 +11,6 @@ import ch.bfh.univote.common.EncryptedVote;
 import ch.bfh.univote.common.Proof;
 import ch.bfh.univote.common.VoterSignature;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -27,13 +26,10 @@ public class BallotsTask extends VoteGenerator {
         Ballots ballots = createBallots();
 
         /*sign by ElectionManager*/
-        ballots.setSignature(new SignatureGenerator().createSignature(ballots, keyStore.electionManagerPrivateKey));
+        ballots.setSignature(new SignatureGenerator().createSignature(ballots, keyStore.getElectionManagerPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setBallots(ballots);
-
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), ballots);
     }
 
     private Ballots createBallots() {
@@ -69,7 +65,7 @@ public class BallotsTask extends VoteGenerator {
         ballot.setElectionId(config.getElectionId());
 
         /*Verification Key*/
-        ballot.setVerificationKey(keyStore.votersVerificationKey[i]);
+        ballot.setVerificationKey(keyStore.getVoterVerificationKey(i));
 
         /*Encryption*/
         BigInteger[] ecVote = ElGamal.getEncryption(

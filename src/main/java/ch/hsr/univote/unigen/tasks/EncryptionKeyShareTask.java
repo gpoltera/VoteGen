@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
@@ -28,29 +27,26 @@ public class EncryptionKeyShareTask extends VoteGenerator {
             /*set the proof*/
             encryptionKeyShare.setProof(new NIZKP().getProof(
                     electionBoard.talliers[i],
-                    keyStore.talliersDecryptionKey[i],
-                    keyStore.talliersEncryptionKey[i],
+                    keyStore.getTallierDecryptionKey(i),
+                    keyStore.getTallierEncryptionKey(i),
                     electionBoard.getEncryptionParameters().getPrime(),
                     electionBoard.getEncryptionParameters().getGroupOrder(),
                     electionBoard.getEncryptionParameters().getGenerator()));
 
             /*sign by tallier*/
-            encryptionKeyShare.setSignature(new SignatureGenerator().createSignature(electionBoard.talliers[i], encryptionKeyShare, keyStore.talliersPrivateKey[i]));
+            encryptionKeyShare.setSignature(new SignatureGenerator().createSignature(electionBoard.talliers[i], encryptionKeyShare, keyStore.getTallierPrivateKey(i)));
 
             /*add to list*/
             encryptionKeyShareList[i] = encryptionKeyShare;
         }
         /*submit to ElectionBoard*/
         electionBoard.setEncryptionKeyShareList(encryptionKeyShareList);
-
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), encryptionKeyShareList);
     }
 
     private EncryptionKeyShare createEncryptionKeyShare(int i) {
         EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
         encryptionKeyShare.setElectionId(config.getElectionId());
-        encryptionKeyShare.setKey(keyStore.talliersEncryptionKey[i]);
+        encryptionKeyShare.setKey(keyStore.getTallierEncryptionKey(i));
 
         return encryptionKeyShare;
     }

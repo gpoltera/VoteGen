@@ -203,6 +203,8 @@ public class InitialConfiguration extends javax.swing.JPanel {
         properties.setProperty("partyListSystem", "nein");
         properties.setProperty("electionResultsPath", "xml/ElectionResults.xml");
         properties.setProperty("valueDelimiter", ",");
+        properties.setProperty("votingPhaseBegin", "01.01.2013 08:00");
+        properties.setProperty("votingPhaseEnd", "01.01.2013 12:00");
         
         config.saveProperties("SystemConfigFile", properties);
     }//GEN-LAST:event_jButtonSaveActionPerformed

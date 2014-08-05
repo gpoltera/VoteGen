@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.BlindedGenerator;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -29,32 +28,29 @@ public class BlindedGeneratorTask extends VoteGenerator {
             BlindedGenerator blindedGenerator = createBlindedGenerator(i);
 
             /*sign by Mixer*/
-            blindedGenerator.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], blindedGenerator, keyStore.mixersPrivateKey[i]));
+            blindedGenerator.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], blindedGenerator, keyStore.getMixerPrivateKey(i)));
 
             /*add to list*/
             blindedGeneratorsList[i] = blindedGenerator;
         }
         /*submit to ElectionBoard*/
         electionBoard.setBlindedGeneratorList(blindedGeneratorsList);
-
-        /*save in db*/
-        DB4O.storeDB(config.getElectionId(), blindedGeneratorsList);
     }
 
     private BlindedGenerator createBlindedGenerator(int i) {
         try {
             BlindedGenerator blindedGenerator = new BlindedGenerator();
             blindedGenerator.setElectionId(config.getElectionId());
-            blindedGenerator.setGenerator(keyStore.mixersGenerator[i]);
+            blindedGenerator.setGenerator(keyStore.getMixerGenerator(i));
             if (i == 0) {
                 previousGenerator = electionBoard.getSignatureParameters().getGenerator();
             } else {
-                previousGenerator = keyStore.mixersGenerator[i - 1];
+                previousGenerator = keyStore.getMixerGenerator(i - 1);
             }
             blindedGenerator.setProof(new NIZKP().getProof(
                     electionBoard.mixers[i],
-                    keyStore.mixersSignatureKey[i],
-                    keyStore.mixersVerificationKey[i],
+                    keyStore.getMixerSignatureKey(i),
+                    keyStore.getMixerVerificationKey(i),
                     electionBoard.getSignatureParameters().getPrime(),
                     electionBoard.getSignatureParameters().getGroupOrder(),
                     previousGenerator));
