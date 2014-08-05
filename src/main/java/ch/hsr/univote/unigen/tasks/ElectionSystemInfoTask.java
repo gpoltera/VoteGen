@@ -27,7 +27,7 @@ public class ElectionSystemInfoTask extends VoteGenerator {
         ElectionSystemInfo electionSystemInfo = createElectionSystemInfo();
 
         /*sign by ElectionaManger*/
-        electionSystemInfo.setSignature(SignatureGenerator.createSignature(electionSystemInfo, keyStore.electionManagerPrivateKey));
+        electionSystemInfo.setSignature(new SignatureGenerator().createSignature(electionSystemInfo, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
         electionBoard.setElectionSystemInfo(electionSystemInfo);

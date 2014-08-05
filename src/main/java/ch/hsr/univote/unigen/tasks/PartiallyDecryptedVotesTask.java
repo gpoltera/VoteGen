@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -29,7 +28,7 @@ public class PartiallyDecryptedVotesTask extends VoteGenerator {
             PartiallyDecryptedVotes partiallyDecryptedVotes = createPartiallyDecryptedVotes(i);
         
             /*sign by Tallier*/
-            partiallyDecryptedVotes.setSignature(SignatureGenerator.createSignature(electionBoard.talliers[i], partiallyDecryptedVotes, keyStore.talliersPrivateKey[i]));
+            partiallyDecryptedVotes.setSignature(new SignatureGenerator().createSignature(electionBoard.talliers[i], partiallyDecryptedVotes, keyStore.talliersPrivateKey[i]));
             
             /*add to List*/
             partiallyDecryptedVotesList[i] = partiallyDecryptedVotes;
@@ -47,18 +46,18 @@ public class PartiallyDecryptedVotesTask extends VoteGenerator {
             partiallyDecryptedVotes.setElectionId(config.getElectionId());
 
             /*for each Vote*/
-            for (int j = 0; j < electionBoard.mixedEncryptedVotes.getVote().size(); j++) {
+            for (int j = 0; j < electionBoard.getMixedEncryptedVotes().getVote().size(); j++) {
                 partiallyDecryptedVotes.getVote().add(ElGamal.getDecryption(
-                        electionBoard.mixedEncryptedVotes.getVote().get(j).getFirstValue(),
-                        electionBoard.mixedEncryptedVotes.getVote().get(j).getSecondValue(),
+                        electionBoard.getMixedEncryptedVotes().getVote().get(j).getFirstValue(),
+                        electionBoard.getMixedEncryptedVotes().getVote().get(j).getSecondValue(),
                         keyStore.talliersDecryptionKey[i],
-                        electionBoard.encryptionParameters.getPrime()));
+                        electionBoard.getEncryptionParameters().getPrime()));
             }
 
-            partiallyDecryptedVotes.setProof(NIZKP.getProof(
+            partiallyDecryptedVotes.setProof(new NIZKP().getProof(
                     electionBoard.talliers[i], 
                     keyStore.talliersDecryptionKey[i], 
-                    electionBoard.encryptionKeyShareList[i], 
+                    electionBoard.getEncryptionKeyShare(i), 
                     partiallyDecryptedVotes, 
                     electionBoard.getEncryptionParameters().getPrime(), 
                     electionBoard.getEncryptionParameters().getGroupOrder(),  

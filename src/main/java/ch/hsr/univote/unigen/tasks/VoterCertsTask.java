@@ -9,7 +9,6 @@ import ch.bfh.univote.common.Certificate;
 import ch.bfh.univote.common.VoterCertificates;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.CertificateGenerator;
 import ch.hsr.univote.unigen.krypto.RSA;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
@@ -28,7 +27,7 @@ public class VoterCertsTask extends VoteGenerator {
         VoterCertificates voterCertificates = createVoterCertificates();
 
         /*sign by ElectionaManger*/
-        voterCertificates.setSignature(SignatureGenerator.createSignature(voterCertificates, keyStore.electionManagerPrivateKey));
+        voterCertificates.setSignature(new SignatureGenerator().createSignature(voterCertificates, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
         electionBoard.setVoterCertificates(voterCertificates);
@@ -41,8 +40,8 @@ public class VoterCertsTask extends VoteGenerator {
         try {
             VoterCertificates voterCertificates = new VoterCertificates();
             voterCertificates.setElectionId(config.getElectionId());
-            for (int i = 0; i < config.getVotersNumber(); i++) {
-                KeyPair keyPair = RSA.getRSAKeyPair();
+            for (int i = 0; i < config.getVotersNumber(); i++) {               
+                KeyPair keyPair = new RSA().getRSAKeyPair();
                 keyStore.votersPrivateKey[i] = (RSAPrivateKey) keyPair.getPrivate();
                 keyStore.votersPublicKey[i] = (RSAPublicKey) keyPair.getPublic();
 
@@ -50,7 +49,7 @@ public class VoterCertsTask extends VoteGenerator {
                 keyStore.votersVerificationKey[i] = electionBoard.getSignatureParameters().getGenerator().modPow(keyStore.votersSignatureKey[i], electionBoard.getSignatureParameters().getPrime());
                 
                 Certificate certificate = new Certificate();
-                certificate.setValue(CertificateGenerator.main("voter" + i + 1, keyStore.certificateAuthorityPrivateKey, keyStore.votersPublicKey[i]).getBytes());
+                certificate.setValue(new CertificateGenerator().getCertficate("voter" + i + 1, keyStore.certificateAuthorityPrivateKey, keyStore.votersPublicKey[i]).getBytes());
                 voterCertificates.getCertificate().add(certificate);
             }
             return voterCertificates;

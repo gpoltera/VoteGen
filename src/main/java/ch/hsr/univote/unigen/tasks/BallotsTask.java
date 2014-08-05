@@ -27,7 +27,7 @@ public class BallotsTask extends VoteGenerator {
         Ballots ballots = createBallots();
 
         /*sign by ElectionManager*/
-        ballots.setSignature(SignatureGenerator.createSignature(ballots, keyStore.electionManagerPrivateKey));
+        ballots.setSignature(new SignatureGenerator().createSignature(ballots, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
         electionBoard.setBallots(ballots);

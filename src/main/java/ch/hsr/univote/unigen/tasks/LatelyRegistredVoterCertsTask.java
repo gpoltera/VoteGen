@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.Certificate;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +19,16 @@ public class LatelyRegistredVoterCertsTask extends VoteGenerator {
 
     public void run() throws Exception {
         /*read VoterCertificates from ElectionBoard*/
-        List<Certificate> voterCertificates = electionBoard.voterCertificates.getCertificate();
+        List<Certificate> voterCertificates = electionBoard.getVoterCertificates().getCertificate();
                 
         /*create ElectionOptions*/
         List<Certificate> listCertificate = createListCertficate(voterCertificates);
               
         /*submit to ElectionBoard*/
-        electionBoard.listCertificate = listCertificate;
+        electionBoard.setLatelyRegisteredVoterCertificates(listCertificate);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), listCertificate);
+        DB4O.storeDB(config.getElectionId(), listCertificate);
     }
     
     private List<Certificate> createListCertficate(List<Certificate> voterCertificates) {

@@ -36,7 +36,6 @@ import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SummationRule;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
-import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import ch.hsr.univote.unigen.helper.TimestampGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
@@ -54,12 +53,13 @@ import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
  * @author Gian & Copy From VoteVerifier
  */
 public class SignatureGenerator {
-
-    static {
+    ConfigHelper config = new ConfigHelper();
+    
+    {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    private static final BigInteger[] old(BigInteger m, BigInteger p, BigInteger q, BigInteger g, BigInteger sk) throws NoSuchAlgorithmException {
+    private final BigInteger[] old(BigInteger m, BigInteger p, BigInteger q, BigInteger g, BigInteger sk) throws NoSuchAlgorithmException {
 
         BigInteger r = PrimeGenerator.getPrime(1024).mod(q);
         byte[] gr = g.modPow(r, p).toByteArray();
@@ -80,9 +80,9 @@ public class SignatureGenerator {
         return S;
     }
 
-    public static Signature createSignature(ElectionDefinition electionDefinition, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(ElectionDefinition electionDefinition, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionAdministratorId());
+        signature.setSignerId(config.getElectionAdministratorId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|descr|keyLength|(t_1|...|t_n)|(m_1|...|m_n))|timestamp
@@ -102,14 +102,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(ElectionOptions electionOptions, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(ElectionOptions electionOptions, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionAdministratorId());
+        signature.setSignerId(config.getElectionAdministratorId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|(c1|....|cn)|(r1|...|rn))|timestamp
@@ -212,14 +212,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(ElectoralRoll electoralRoll, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(ElectoralRoll electoralRoll, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionAdministratorId());
+        signature.setSignerId(config.getElectionAdministratorId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|(h1|...|hn))|timestamp
@@ -235,14 +235,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(DecodedVotes decodedVotes, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(DecodedVotes decodedVotes, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|(v1|v2|....|vn))|timestamp
@@ -284,14 +284,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(EncryptionParameters encryptionParameters, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(EncryptionParameters encryptionParameters, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         BigInteger p = encryptionParameters.getPrime();
@@ -310,18 +310,17 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(ElectionData electionData, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(ElectionData electionData, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
-        //change this when it will be available - ToDo
-        String eaIdentifier = ElectionBoard.electionOptions.getSignature().getSignerId();
+        String eaIdentifier = config.getElectionAdministratorId();
 
         //concatenate to (id|EA|descr|P|Q|G|y|g^|(c1|...|cn)|(r1|...|rn))|timestamp
         StringConcatenator sc = new StringConcatenator();
@@ -440,14 +439,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(Ballots bts, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(Ballots bts, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|ballotsstate|ballots)|timestamp
@@ -502,14 +501,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(ElectionGenerator electionGenerator, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(ElectionGenerator electionGenerator, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|g^)|timestamp
@@ -521,14 +520,14 @@ public class SignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(ElectionSystemInfo electionSystemInfo, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(ElectionSystemInfo electionSystemInfo, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|(Z_t1|....|Z_tn)|(Z_m1|...|Z_mn))|timestamp
@@ -544,14 +543,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(EncryptedVotes encryptedVotes, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(EncryptedVotes encryptedVotes, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionAdministratorId());
+        signature.setSignerId(config.getElectionAdministratorId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|((firstValue|secondValue)|.......|(nfirstValue|nSecondValue)))|timestamp
@@ -581,14 +580,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(EncryptionKey encryptionKey, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(EncryptionKey encryptionKey, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|y)|timestamp
@@ -601,12 +600,12 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(String mixerName, BlindedGenerator blindedGenerator, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(String mixerName, BlindedGenerator blindedGenerator, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
         signature.setSignerId(mixerName);
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
@@ -630,14 +629,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(VerificationKeys verificationKeys, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(VerificationKeys verificationKeys, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         //concatenate to (id|(vk1|...|vkn))|timestamp
@@ -651,12 +650,12 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(String mixerName, MixedVerificationKeys mixedVerificationKeys, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(String mixerName, MixedVerificationKeys mixedVerificationKeys, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
         signature.setSignerId(mixerName);
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
@@ -685,12 +684,12 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(String tallierName, PartiallyDecryptedVotes partiallyDecryptedVotes, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(String tallierName, PartiallyDecryptedVotes partiallyDecryptedVotes, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
         signature.setSignerId(tallierName);
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
@@ -716,14 +715,14 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(VoterCertificates voterCertificates, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(VoterCertificates voterCertificates, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
-        signature.setSignerId(ConfigHelper.getElectionManagerId());
+        signature.setSignerId(config.getElectionManagerId());
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
 
         StringConcatenator sc = new StringConcatenator();
@@ -747,11 +746,11 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
         return signature;
     }
 
-    public static Signature createSignature(String tallierName, EncryptionKeyShare encryptionKeyShare, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(String tallierName, EncryptionKeyShare encryptionKeyShare, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
         signature.setSignerId(tallierName);
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
@@ -775,12 +774,12 @@ public class SignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(String mixerName, MixedEncryptedVotes mixedEncryptedVotes, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(String mixerName, MixedEncryptedVotes mixedEncryptedVotes, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
         signature.setSignerId(mixerName);
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
@@ -820,12 +819,12 @@ public class SignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }
 
-    public static Signature createSignature(String mixerName, MixedVerificationKey mixedVerificationKey, RSAPrivateKey privateKey) throws Exception {
+    public Signature createSignature(String mixerName, MixedVerificationKey mixedVerificationKey, RSAPrivateKey privateKey) throws Exception {
         Signature signature = new Signature();
         signature.setSignerId(mixerName);
         signature.setTimestamp(TimestampGenerator.generateTimestamp());
@@ -851,7 +850,7 @@ public class SignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(RSA.signRSA(res, privateKey));
+        signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
     }

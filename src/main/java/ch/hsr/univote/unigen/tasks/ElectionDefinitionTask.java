@@ -16,7 +16,7 @@ public class ElectionDefinitionTask extends VoteGenerator {
         ElectionDefinition electionDefinition = createElectionDefinition();
         
         /*sign by ElectionAdministrator*/
-        electionDefinition.setSignature(SignatureGenerator.createSignature(electionDefinition, keyStore.electionAdministratorPrivateKey));
+        electionDefinition.setSignature(new SignatureGenerator().createSignature(electionDefinition, keyStore.electionAdministratorPrivateKey));
         
         /*submit to ElectionBoard*/
         electionBoard.setElectionDefinition(electionDefinition);

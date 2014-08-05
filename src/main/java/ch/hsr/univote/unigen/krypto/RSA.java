@@ -22,8 +22,6 @@ public class RSA {
     
     /**
      * 
-     * @param signatureKeyType
-     * @param keyLength
      * @return a new RSAKeyPair
      * @throws java.lang.Exception
      */
@@ -38,14 +36,12 @@ public class RSA {
     /**
      *
      * @param value to sign
-     * @param hashAlgorithm
-     * @param charEncoding
      * @param privateKey
      * @return the singature
      * @throws java.security.NoSuchAlgorithmException
      */
-    public BigInteger signRSA(String value, String hashAlgorithm, String charEncoding, RSAPrivateKey privateKey) throws NoSuchAlgorithmException {
-        BigInteger hash = Hash.getHash(value, hashAlgorithm, charEncoding);
+    public BigInteger signRSA(String value, RSAPrivateKey privateKey) throws NoSuchAlgorithmException {
+        BigInteger hash = new Hash().getHash(value, config.getHashAlgorithm(), config.getCharEncoding());
         BigInteger signature = hash.modPow(privateKey.getPrivateExponent(), privateKey.getModulus());
 
         return signature;

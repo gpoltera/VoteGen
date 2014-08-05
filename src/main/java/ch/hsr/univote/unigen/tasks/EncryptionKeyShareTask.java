@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 
@@ -27,7 +26,7 @@ public class EncryptionKeyShareTask extends VoteGenerator {
             EncryptionKeyShare encryptionKeyShare = createEncryptionKeyShare(i);
 
             /*set the proof*/
-            encryptionKeyShare.setProof(NIZKP.getProof(
+            encryptionKeyShare.setProof(new NIZKP().getProof(
                     electionBoard.talliers[i],
                     keyStore.talliersDecryptionKey[i],
                     keyStore.talliersEncryptionKey[i],
@@ -36,7 +35,7 @@ public class EncryptionKeyShareTask extends VoteGenerator {
                     electionBoard.getEncryptionParameters().getGenerator()));
 
             /*sign by tallier*/
-            encryptionKeyShare.setSignature(SignatureGenerator.createSignature(electionBoard.talliers[i], encryptionKeyShare, keyStore.talliersPrivateKey[i]));
+            encryptionKeyShare.setSignature(new SignatureGenerator().createSignature(electionBoard.talliers[i], encryptionKeyShare, keyStore.talliersPrivateKey[i]));
 
             /*add to list*/
             encryptionKeyShareList[i] = encryptionKeyShare;

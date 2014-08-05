@@ -12,8 +12,6 @@ import ch.bfh.univote.common.PoliticalList;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -31,34 +29,34 @@ public class DecryptedVotesTask extends VoteGenerator {
         //decryptedVotes.setSignature(SignatureGenerator.createSignature(decryptedVotes, keyStore.electionManagerPrivateKey));
         
         /*submit to ElectionBoard*/
-        electionBoard.decryptedVotes = decryptedVotes;        
+        electionBoard.setDecryptedVotes(decryptedVotes);        
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), decryptedVotes);
+        DB4O.storeDB(config.getElectionId(), decryptedVotes);
     }
 
     private DecryptedVotes createDecryptedVotes() {
         DecryptedVotes decryptedVotes = new DecryptedVotes();
-        decryptedVotes.setElectionId(ConfigHelper.getElectionId());
+        decryptedVotes.setElectionId(config.getElectionId());
 
         /*for each Voter*/
-        for (int i = 0; i < ConfigHelper.getVotersNumber(); i++) {
+        for (int i = 0; i < config.getVotersNumber(); i++) {
             Random generator = new Random();
             /*concatenate to cnln..c2c1li BitString*/
             StringConcatenator sc = new StringConcatenator();
 
             /*loop each choice and generate a vote*/
-            for (int j = 0; j < electionBoard.electionOptions.getChoice().size(); j++) {
-                Choice choice = electionBoard.electionOptions.getChoice().get(electionBoard.electionOptions.getChoice().size() - j - 1);
+            for (int j = 0; j < electionBoard.getElectionOptions().getChoice().size(); j++) {
+                Choice choice = electionBoard.getElectionOptions().getChoice().get(electionBoard.getElectionOptions().getChoice().size() - j - 1);
                 if (choice instanceof PoliticalList) {
                     PoliticalList politicalList = (PoliticalList) choice;
-                    electionBoard.politicalLists.add(politicalList);
+                    electionBoard.addPoliticalList(politicalList);
                     sc.pushObject(1);
                 } else if (choice instanceof Candidate) {
                     Candidate candidate = (Candidate) choice;
-                    electionBoard.candidateList.add(candidate);
-                    int ramdonCount = generator.nextInt(ConfigHelper.getMaxCumulation());
-                    String maxBinCan = Integer.toBinaryString(ConfigHelper.getMaxCumulation());
+                    electionBoard.addCandidate(candidate);
+                    int ramdonCount = generator.nextInt(config.getMaxCumulation());
+                    String maxBinCan = Integer.toBinaryString(config.getMaxCumulation());
                     String binChoice = Integer.toBinaryString(ramdonCount);
                     /*fill with 0 for correct BitString*/
                     while (binChoice.length() < maxBinCan.length()) {

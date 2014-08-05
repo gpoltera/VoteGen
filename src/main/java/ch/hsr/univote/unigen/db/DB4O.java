@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
  */
 public class DB4O {
 
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
+    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
     static Timestamp time = new Timestamp(System.currentTimeMillis());
     static String filename = sdf.format(time);
 

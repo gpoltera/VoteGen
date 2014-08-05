@@ -48,7 +48,6 @@ public class CryptoConfiguration extends javax.swing.JPanel {
         jCBSignatureAlgorithm = new javax.swing.JComboBox();
         jLblSignatureKeyLength = new javax.swing.JLabel();
         jSSignatureKeyLength = new javax.swing.JSlider();
-        lblHash = new java.awt.Label();
         jLblHashAlgorithm = new javax.swing.JLabel();
         jCBHashAlgorithm = new javax.swing.JComboBox();
         jLblHashCharEncoding = new javax.swing.JLabel();
@@ -59,8 +58,9 @@ public class CryptoConfiguration extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jSeparator3 = new javax.swing.JSeparator();
-        lblSave = new java.awt.Label();
         jBtnSave = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -174,14 +174,6 @@ public class CryptoConfiguration extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jSSignatureKeyLength, gridBagConstraints);
 
-        lblHash.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        lblHash.setText(bundle.getString("hash")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 32;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(lblHash, gridBagConstraints);
-
         jLblHashAlgorithm.setText(bundle.getString("algorithm")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -250,14 +242,6 @@ public class CryptoConfiguration extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jSeparator3, gridBagConstraints);
 
-        lblSave.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        lblSave.setText(bundle.getString("save")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 102;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(lblSave, gridBagConstraints);
-
         jBtnSave.setText(bundle.getString("save")); // NOI18N
         jBtnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jBtnSave.setFocusTraversalPolicyProvider(true);
@@ -273,6 +257,22 @@ public class CryptoConfiguration extends javax.swing.JPanel {
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         add(jBtnSave, gridBagConstraints);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText(bundle.getString("hash")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 32;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jLabel1, gridBagConstraints);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setText(bundle.getString("save")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 102;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jLabel2, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jCBEncryptionAlgorithmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBEncryptionAlgorithmActionPerformed
@@ -302,6 +302,8 @@ public class CryptoConfiguration extends javax.swing.JPanel {
     private javax.swing.JComboBox jCBHashCharEncoding;
     private javax.swing.JComboBox jCBSignatureAlgorithm;
     private javax.swing.JComboBox jCBSignatureKeyType;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLblEncryption;
@@ -318,7 +320,5 @@ public class CryptoConfiguration extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private java.awt.Label lblHash;
-    private java.awt.Label lblSave;
     // End of variables declaration//GEN-END:variables
 }

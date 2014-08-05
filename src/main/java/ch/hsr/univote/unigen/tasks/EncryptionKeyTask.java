@@ -23,7 +23,7 @@ public class EncryptionKeyTask extends VoteGenerator {
         EncryptionKey encryptionKey = createEncryptionKey();        
         
         /*sign by ElectionManager*/
-        encryptionKey.setSignature(SignatureGenerator.createSignature(encryptionKey, keyStore.electionManagerPrivateKey));
+        encryptionKey.setSignature(new SignatureGenerator().createSignature(encryptionKey, keyStore.electionManagerPrivateKey));
         
         /*submit to ElectionBoard*/
         electionBoard.setEncryptionKey(encryptionKey);

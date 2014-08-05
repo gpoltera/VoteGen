@@ -19,7 +19,6 @@ import ch.bfh.univote.common.DecodedVotes;
 import ch.bfh.univote.common.ElectionData;
 import ch.bfh.univote.common.PoliticalList;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,8 +48,8 @@ public class ElectionResultsTask extends VoteGenerator {
     }
 
     private List<Choice> getChoices() {
-        ElectionData data = electionBoard.electionData;
-        List<Choice> choices = new ArrayList<Choice>();
+        ElectionData data = electionBoard.getElectionData();
+        List<Choice> choices = new ArrayList<>();
         for (Choice choice : data.getChoice()) {
             if (choice instanceof PoliticalList) {
                 choices.add(choice);
@@ -65,10 +64,10 @@ public class ElectionResultsTask extends VoteGenerator {
     }
 
     private List<Map<Choice, Integer>> getChoiceCounts(List<Choice> choices) {
-        DecodedVotes votes = electionBoard.decodedVotes;
-        List<Map<Choice, Integer>> choiceCounts = new ArrayList<Map<Choice, Integer>>();
+        DecodedVotes votes = electionBoard.getDecodedVotes();
+        List<Map<Choice, Integer>> choiceCounts = new ArrayList<>();
         for (DecodedVote vote : votes.getDecodedVote()) {
-            Map<Choice, Integer> counts = new HashMap<Choice, Integer>();
+            Map<Choice, Integer> counts = new HashMap<>();
             for (DecodedVoteEntry entry : vote.getEntry()) {
                 for (Choice choice : choices) {
                     if (entry.getChoiceId() == choice.getChoiceId()) {
@@ -83,7 +82,7 @@ public class ElectionResultsTask extends VoteGenerator {
     }
 
     private Map<Choice, Integer> getTotalCounts(List<Map<Choice, Integer>> choiceCounts) {
-        Map<Choice, Integer> totalCounts = new HashMap<Choice, Integer>();
+        Map<Choice, Integer> totalCounts = new HashMap<>();
         for (Map<Choice, Integer> counts : choiceCounts) {
             for (Choice choice : counts.keySet()) {
                 int count = counts.get(choice);
@@ -100,8 +99,8 @@ public class ElectionResultsTask extends VoteGenerator {
     private void writeResults(List<Choice> choices, List<Map<Choice, Integer>> choiceCounts, Map<Choice, Integer> totalCounts) {
         try {
             // print choice numbers
-            PrintWriter writer = new PrintWriter(new FileWriter(ConfigHelper.getElectionResultsPath()));
-            String delimiter = ConfigHelper.getValueDelimiter();
+            PrintWriter writer = new PrintWriter(new FileWriter(config.getElectionResultsPath()));
+            String delimiter = config.getValueDelimiter();
             for (Choice choice : choices) {
                 writer.print(delimiter);
                 if (choice instanceof PoliticalList) {
@@ -141,7 +140,7 @@ public class ElectionResultsTask extends VoteGenerator {
             }
             writer.println();
             writer.close();
-            System.out.println("Die Wahlresultate wurden in die Datei " + ConfigHelper.getElectionResultsPath() + " geschrieben");
+            System.out.println("Die Wahlresultate wurden in die Datei " + config.getElectionResultsPath() + " geschrieben");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

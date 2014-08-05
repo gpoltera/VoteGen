@@ -21,7 +21,7 @@ public class EncryptedVotesTask extends VoteGenerator {
         EncryptedVotes encryptedVotes = createEncryptedVotes();
         
         /*sign by ElectionAdministrator*/
-        encryptedVotes.setSignature(SignatureGenerator.createSignature(encryptedVotes, keyStore.electionAdministratorPrivateKey));
+        encryptedVotes.setSignature(new SignatureGenerator().createSignature(encryptedVotes, keyStore.electionAdministratorPrivateKey));
 
         /*submit to ElectionBoard*/
         electionBoard.setEncryptedVotes(encryptedVotes);

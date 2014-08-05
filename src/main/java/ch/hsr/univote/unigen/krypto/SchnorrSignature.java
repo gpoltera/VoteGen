@@ -17,6 +17,8 @@ import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
  */
 public class SchnorrSignature {
 
+    ConfigHelper config = new ConfigHelper();
+
     /**
      *
      * @param p SchnorrSignature prime
@@ -44,13 +46,13 @@ public class SchnorrSignature {
      * @param sk SignatureKey
      * @return Signature (b,a)
      */
-    public static BigInteger[] sign(BigInteger m, BigInteger p, BigInteger q, BigInteger g, BigInteger sk) throws NoSuchAlgorithmException {
+    public BigInteger[] sign(BigInteger m, BigInteger p, BigInteger q, BigInteger g, BigInteger sk) throws NoSuchAlgorithmException {
 
         BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
         BigInteger gr = g.modPow(r, p);
         byte[] mgr = ByteUtils.concatenate(m.toByteArray(), gr.toByteArray());
 
-        BigInteger a = Hash.getHash(mgr);
+        BigInteger a = new Hash().getHash(mgr, config.getHashAlgorithm());
         BigInteger b = r.subtract(sk.multiply(a)).mod(q);
 
         BigInteger[] S = new BigInteger[2];
@@ -70,7 +72,7 @@ public class SchnorrSignature {
      * @param vk VerificationKey
      * @return boolean match true/false
      */
-    public static boolean verify(BigInteger m, BigInteger[] S, BigInteger p, BigInteger q, BigInteger g, BigInteger vk) throws NoSuchAlgorithmException {
+    public boolean verify(BigInteger m, BigInteger[] S, BigInteger p, BigInteger q, BigInteger g, BigInteger vk) throws NoSuchAlgorithmException {
 
         BigInteger b = S[0];
         BigInteger a = S[1];
@@ -78,7 +80,7 @@ public class SchnorrSignature {
         BigInteger rv = g.modPow(b, p).multiply(vk.modPow(a, p)).mod(p);
         byte[] mrv = ByteUtils.concatenate(m.toByteArray(), rv.toByteArray());
 
-        BigInteger av = Hash.getHash(mrv);
+        BigInteger av = new Hash().getHash(mrv, config.getHashAlgorithm());
 
         if (av.equals(a)) {
             return true;

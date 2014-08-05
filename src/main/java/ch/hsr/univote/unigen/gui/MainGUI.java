@@ -62,7 +62,7 @@ public class MainGUI extends javax.swing.JFrame {
 
         jBtnStartStop = new javax.swing.JButton();
         jTabbedPanel = new javax.swing.JTabbedPane();
-        systemConfiguration = new ch.hsr.univote.unigen.gui.SystemConfiguration();
+        systemConfiguration = new ch.hsr.univote.unigen.gui.InitialConfiguration();
         cryptoConfiguration = new ch.hsr.univote.unigen.gui.CryptoConfiguration();
         candidates = new ch.hsr.univote.unigen.gui.Candidates();
         failureConfiguration = new ch.hsr.univote.unigen.gui.FailureConfiguration();
@@ -394,7 +394,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemSave;
     private javax.swing.JMenu jMenuLanguage;
     private javax.swing.JTabbedPane jTabbedPanel;
-    private ch.hsr.univote.unigen.gui.SystemConfiguration systemConfiguration;
+    private ch.hsr.univote.unigen.gui.InitialConfiguration systemConfiguration;
     private ch.hsr.univote.unigen.gui.VoteGeneration voteGeneration;
     // End of variables declaration//GEN-END:variables
 }

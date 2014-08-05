@@ -7,9 +7,7 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.ElectionGenerator;
 import ch.hsr.univote.unigen.VoteGenerator;
-import static ch.hsr.univote.unigen.board.ElectionBoard.mixers;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.SchnorrSignature;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -25,30 +23,30 @@ public class ElectionGeneratorTask extends VoteGenerator {
         ElectionGenerator electionGenerator = createElectionGenerator();
         
         /*sign by ElectionManager*/
-        electionGenerator.setSignature(SignatureGenerator.createSignature(electionGenerator, keyStore.electionManagerPrivateKey));
+        electionGenerator.setSignature(new SignatureGenerator().createSignature(electionGenerator, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
-        electionBoard.electionGenerator = electionGenerator;
+        electionBoard.setElectionGenerator(electionGenerator);
         
         /*save in db*/
-        DB4O.storeDB(ConfigHelper.getElectionId(), electionGenerator);
+        DB4O.storeDB(config.getElectionId(), electionGenerator);
     }
 
     private ElectionGenerator createElectionGenerator() {
         ElectionGenerator electionGenerator = new ElectionGenerator();
-        electionGenerator.setElectionId(ConfigHelper.getElectionId());
-        BigInteger g = electionBoard.signatureParameters.getGenerator();
+        electionGenerator.setElectionId(config.getElectionId());
+        BigInteger g = electionBoard.getSignatureParameters().getGenerator();
 
         //Mixers
-        for (int i = 0; i < mixers.length; i++) {
+        for (int i = 0; i < electionBoard.mixers.length; i++) {
             BigInteger keyPair[] = SchnorrSignature.getKeyPair(
-                    electionBoard.signatureParameters.getPrime(),
-                    electionBoard.signatureParameters.getGroupOrder(),
+                    electionBoard.getSignatureParameters().getPrime(),
+                    electionBoard.getSignatureParameters().getGroupOrder(),
                     g);
             keyStore.mixersSignatureKey[i] = keyPair[0];
             keyStore.mixersVerificationKey[i] = keyPair[1];
 
-            g = g.modPow(keyStore.mixersSignatureKey[i], electionBoard.signatureParameters.getPrime());
+            g = g.modPow(keyStore.mixersSignatureKey[i], electionBoard.getSignatureParameters().getPrime());
 
             keyStore.mixersGenerator[i] = g;
         }

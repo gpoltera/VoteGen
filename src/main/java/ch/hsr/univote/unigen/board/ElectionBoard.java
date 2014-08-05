@@ -5,7 +5,6 @@
  */
 package ch.hsr.univote.unigen.board;
 
-import ch.bfh.univote.common.Ballot;
 import ch.bfh.univote.common.Ballots;
 import ch.bfh.univote.common.BlindedGenerator;
 import ch.bfh.univote.common.Candidate;
@@ -42,52 +41,53 @@ import java.util.List;
  * @author Gian Poltéra
  */
 public class ElectionBoard {
+
     ConfigHelper config = new ConfigHelper();
-    
+
     public final String[] mixers = config.getMixerIds();
     public final String[] talliers = config.getTallierIds();
-    
-    SignatureParameters signatureParameters = new SignatureParameters();
-    Certificate certificate = new Certificate();
-    KnownElectionIds knownElectionIds = new KnownElectionIds();
-    ElectionSystemInfo electionSystemInfo = new ElectionSystemInfo();
-    ElectionDefinition electionDefinition = new ElectionDefinition();
-    EncryptionParameters encryptionParameters = new EncryptionParameters();
-    EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
-    EncryptionKeyShare[] encryptionKeyShareList = new EncryptionKeyShare[talliers.length];
-    EncryptionKey encryptionKey = new EncryptionKey();
-    BlindedGenerator blindedGenerator = new BlindedGenerator();
-    BlindedGenerator[] blindedGeneratorsList = new BlindedGenerator[mixers.length];
-    ElectionGenerator electionGenerator = new ElectionGenerator();
-    ElectionOptions electionOptions = new ElectionOptions();
-    ElectionData electionData = new ElectionData();
-    ElectoralRoll electoralRoll = new ElectoralRoll();
-    VoterCertificates voterCertificates = new VoterCertificates();
-    VerificationKeys verificationKeys = new VerificationKeys();
-    
-    List<Certificate> listCertificate = new ArrayList<>();
-    PartiallyDecryptedVotes[] partiallyDecryptedVotesList = new PartiallyDecryptedVotes[talliers.length];
-    List<MixedVerificationKey> listMixedVerificationKey = new ArrayList<>();
-    Ballots ballots = new Ballots();
-    EncryptedVotes encryptedVotes = new EncryptedVotes();
-    PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
-    DecryptedVotes decryptedVotes = new DecryptedVotes();
-    DecodedVotes decodedVotes = new DecodedVotes();
-    MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[mixers.length];
-    EncryptedVote encryptedVote = new EncryptedVote();
-    Signature signatures = new Signature();
-    MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
-    List<PoliticalList> politicalLists = new ArrayList<>();
-    List<Candidate> candidateList = new ArrayList<>();
-    
+
+    /*variables initialisation*/
+    private SignatureParameters signatureParameters = new SignatureParameters();
+    private Certificate certificate = new Certificate();
+    private KnownElectionIds knownElectionIds = new KnownElectionIds();
+    private ElectionSystemInfo electionSystemInfo = new ElectionSystemInfo();
+    private ElectionDefinition electionDefinition = new ElectionDefinition();
+    private EncryptionParameters encryptionParameters = new EncryptionParameters();
+    private EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
+    private EncryptionKeyShare[] encryptionKeyShareList = new EncryptionKeyShare[talliers.length];
+    private EncryptionKey encryptionKey = new EncryptionKey();
+    private BlindedGenerator blindedGenerator = new BlindedGenerator();
+    private BlindedGenerator[] blindedGeneratorsList = new BlindedGenerator[mixers.length];
+    private ElectionGenerator electionGenerator = new ElectionGenerator();
+    private ElectionOptions electionOptions = new ElectionOptions();
+    private ElectionData electionData = new ElectionData();
+    private ElectoralRoll electoralRoll = new ElectoralRoll();
+    private VoterCertificates voterCertificates = new VoterCertificates();
+    private VerificationKeys verificationKeys = new VerificationKeys();
+    private List<Certificate> listCertificate = new ArrayList<>();
+    private PartiallyDecryptedVotes[] partiallyDecryptedVotesList = new PartiallyDecryptedVotes[talliers.length];
+    private List<MixedVerificationKey> listMixedVerificationKey = new ArrayList<>();
+    private Ballots ballots = new Ballots();
+    private EncryptedVotes encryptedVotes = new EncryptedVotes();
+    private PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
+    private DecryptedVotes decryptedVotes = new DecryptedVotes();
+    private DecodedVotes decodedVotes = new DecodedVotes();
+    private MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[mixers.length];
+    private EncryptedVote encryptedVote = new EncryptedVote();
+    private Signature signatures = new Signature();
+    private MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
+    private List<PoliticalList> politicalLists = new ArrayList<>();
+    private List<Candidate> candidateList = new ArrayList<>();
+
     public void setSignatureParameters(SignatureParameters signatureParameters) {
         this.signatureParameters = signatureParameters;
     }
-    
+
     public SignatureParameters getSignatureParameters() {
         return this.signatureParameters;
     }
-    
+
     public void setRootCertificate(Certificate certificate) {
         this.certificate = certificate;
     }
@@ -95,131 +95,162 @@ public class ElectionBoard {
     public void setKnownElectionIds(KnownElectionIds knownElectionIds) {
         this.knownElectionIds = knownElectionIds;
     }
-    
+
     public void setElectionSystemInfo(ElectionSystemInfo electionSystemInfo) {
         this.electionSystemInfo = electionSystemInfo;
     }
-    
+
     public void setElectionDefinition(ElectionDefinition electionDefinition) {
         this.electionDefinition = electionDefinition;
     }
-    
+
     public void setEncryptionParameters(EncryptionParameters encryptionParameters) {
         this.encryptionParameters = encryptionParameters;
     }
-    
+
     public EncryptionParameters getEncryptionParameters() {
         return this.encryptionParameters;
     }
-    
+
     public void setEncryptionKeyShare(EncryptionKeyShare encryptionKeyShare) {
         this.encryptionKeyShare = encryptionKeyShare;
     }
-    
+
     public void setEncryptionKeyShareList(EncryptionKeyShare[] encryptionKeyShareList) {
         this.encryptionKeyShareList = encryptionKeyShareList;
+    }
+    
+    public EncryptionKeyShare getEncryptionKeyShare(int i) {
+        return this.encryptionKeyShareList[i];
     }
 
     public void setEncryptionKey(EncryptionKey encryptionKey) {
         this.encryptionKey = encryptionKey;
     }
-    
+
     public EncryptionKey getEncryptionKey() {
         return this.encryptionKey;
     }
-            
+
     public void setBlindedGenerator(BlindedGenerator blindedGenerator) {
         this.blindedGenerator = blindedGenerator;
-    }       
-    
+    }
+
     public void setBlindedGeneratorList(BlindedGenerator[] blindedGeneratorsList) {
         this.blindedGeneratorsList = blindedGeneratorsList;
     }
-    
+
     public void setElectionGenerator(ElectionGenerator electionGenerator) {
         this.electionGenerator = electionGenerator;
     }
-    
+
     public ElectionGenerator getElectionGenerator() {
         return this.electionGenerator;
     }
-    
+
     public void setElectionOptions(ElectionOptions electionOptions) {
         this.electionOptions = electionOptions;
     }
-    
+
     public ElectionOptions getElectionOptions() {
         return this.electionOptions;
     }
-    
+
     public void setElectionData(ElectionData electionData) {
         this.electionData = electionData;
     }
-    
+
+    public ElectionData getElectionData() {
+        return this.electionData;
+    }
+
     public void setElectoralRoll(ElectoralRoll electoralRoll) {
         this.electoralRoll = electoralRoll;
     }
-    
+
     public void setVoterCertificates(VoterCertificates voterCertificates) {
         this.voterCertificates = voterCertificates;
     }
-    
-    public void setVerificationKeysMixedBy() {
-        
+
+    public VoterCertificates getVoterCertificates() {
+        return this.voterCertificates;
     }
-    
+
+    public void setVerificationKeysMixedBy() {
+
+    }
+
     public static List<MixedVerificationKeys> listMixedVerificationKeys = new ArrayList<>();
-    
-    
+
     public void setMixedVerificationKeys(VerificationKeys verificationKeys) {
         this.verificationKeys = verificationKeys;
     }
-    
+
     public void setLatelyRegisteredVoterCertificates(List<Certificate> listCertificate) {
         this.listCertificate = listCertificate;
     }
-    
+
     public void setVerificationKeysLatelyMixedBy() {
-        
+
     }
-    
+
     public void setLatelyMixedVerificationKeys(List<MixedVerificationKey> listMixedVerificationKey) {
         this.listMixedVerificationKey = listMixedVerificationKey;
     }
-    
+
     public void setBallots(Ballots ballots) {
         this.ballots = ballots;
     }
 
     public Ballots getBallots() {
-        return this.ballots;    
+        return this.ballots;
     }
-    
+
     public void setEncryptedVotesMixedBy(MixedEncryptedVotes[] mixedEncryptedVotesList) {
         this.mixedEncryptedVotesList = mixedEncryptedVotesList;
     }
-    
+
+    public void setMixedEncryptedVotes(MixedEncryptedVotes mixedEncryptedVotes) {
+        this.mixedEncryptedVotes = mixedEncryptedVotes;
+    }
+
+    public MixedEncryptedVotes getMixedEncryptedVotes() {
+        return this.mixedEncryptedVotes;
+    }
+
     public void setEncryptedVotes(EncryptedVotes encryptedVotes) {
         this.encryptedVotes = encryptedVotes;
     }
-    
+
     public EncryptedVotes getEncryptedVotes() {
         return this.encryptedVotes;
     }
-    
+
     public void setPartiallyDecryptedVotes(PartiallyDecryptedVotes partiallyDecryptedVotes) {
         this.partiallyDecryptedVotes = partiallyDecryptedVotes;
     }
-    
+
     public void setPartiallyDecryptedVotesList(PartiallyDecryptedVotes[] partiallyDecryptedVotesList) {
         this.partiallyDecryptedVotesList = partiallyDecryptedVotesList;
     }
-    
+
     public void setDecryptedVotes(DecryptedVotes decryptedVotes) {
         this.decryptedVotes = decryptedVotes;
     }
-    
+
     public void setDecodedVotes(DecodedVotes decodedVotes) {
         this.decodedVotes = decodedVotes;
+    }
+
+    public DecodedVotes getDecodedVotes() {
+        return this.decodedVotes;
+    }
+
+    public void addPoliticalList(PoliticalList politicalList) {
+        this.politicalLists.add(politicalList);
+    }
+
+    public void addCandidate(Candidate candidate) {
+        this.candidateList.add(candidate);
     }
 }

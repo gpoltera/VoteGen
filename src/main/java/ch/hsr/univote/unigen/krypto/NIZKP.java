@@ -40,7 +40,7 @@ public class NIZKP {
         String res = sc.pullAll();
 
         // c = H(b,t) mod q
-        BigInteger c = Hash.getHash(res, config.getHashAlgorithm(), config.getCharEncoding()).mod(q);
+        BigInteger c = new Hash().getHash(res, config.getHashAlgorithm(), config.getCharEncoding()).mod(q);
 
         // Proof response
         BigInteger s = c.multiply(a).add(w);
@@ -74,7 +74,7 @@ public class NIZKP {
         
         String res = sc.pullAll();
         
-        BigInteger c = Hash.getHash(res, config.getHashAlgorithm(), config.getCharEncoding()).mod(q);
+        BigInteger c = new Hash().getHash(res, config.getHashAlgorithm(), config.getCharEncoding()).mod(q);
         BigInteger s = c.multiply(a).add(w);
         
         

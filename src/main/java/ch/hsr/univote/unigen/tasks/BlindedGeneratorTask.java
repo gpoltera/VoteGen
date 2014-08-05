@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.BlindedGenerator;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.math.BigInteger;
@@ -30,7 +29,7 @@ public class BlindedGeneratorTask extends VoteGenerator {
             BlindedGenerator blindedGenerator = createBlindedGenerator(i);
 
             /*sign by Mixer*/
-            blindedGenerator.setSignature(SignatureGenerator.createSignature(electionBoard.mixers[i], blindedGenerator, keyStore.mixersPrivateKey[i]));
+            blindedGenerator.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], blindedGenerator, keyStore.mixersPrivateKey[i]));
 
             /*add to list*/
             blindedGeneratorsList[i] = blindedGenerator;
@@ -52,7 +51,7 @@ public class BlindedGeneratorTask extends VoteGenerator {
             } else {
                 previousGenerator = keyStore.mixersGenerator[i - 1];
             }
-            blindedGenerator.setProof(NIZKP.getProof(
+            blindedGenerator.setProof(new NIZKP().getProof(
                     electionBoard.mixers[i],
                     keyStore.mixersSignatureKey[i],
                     keyStore.mixersVerificationKey[i],

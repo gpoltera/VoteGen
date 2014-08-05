@@ -22,8 +22,8 @@ import ch.bfh.univote.common.Sex;
 import ch.bfh.univote.common.SummationRule;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import ch.hsr.univote.unigen.helper.FormatException;
+import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -51,7 +51,7 @@ public class ElectionOptionsTask extends VoteGenerator {
         ElectionOptions electionOptions = createOptions(lists, partyListSystem);
         
         /*sign by ElectionAdministrator*/
-        electionOptions.setSignature(SignatureGenerator.createSignature(electionOptions, keyStore.electionAdministratorPrivateKey));
+        electionOptions.setSignature(new SignatureGenerator().createSignature(electionOptions, keyStore.electionAdministratorPrivateKey));
         
         /*submit to ElectionBoard*/
         electionBoard.setElectionOptions(electionOptions);

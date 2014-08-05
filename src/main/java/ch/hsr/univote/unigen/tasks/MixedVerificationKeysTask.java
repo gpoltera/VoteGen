@@ -26,7 +26,7 @@ public class MixedVerificationKeysTask extends VoteGenerator {
         VerificationKeys verificationKeys = createVerificationKeys(mixedVerificationKeys);
         
         /*sign by ElectionManager*/
-        verificationKeys.setSignature(SignatureGenerator.createSignature(verificationKeys, keyStore.electionManagerPrivateKey));
+        verificationKeys.setSignature(new SignatureGenerator().createSignature(verificationKeys, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
         electionBoard.setMixedVerificationKeys(verificationKeys);

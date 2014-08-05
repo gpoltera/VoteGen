@@ -25,7 +25,7 @@ public class MixedEncryptedVotesByTask extends VoteGenerator {
             MixedEncryptedVotes mixedEncryptedVotes = createMixedEncryptedVotes();
             
             /*sign by Mixer*/
-            mixedEncryptedVotes.setSignature(SignatureGenerator.createSignature(electionBoard.mixers[i], mixedEncryptedVotes, keyStore.mixersPrivateKey[i]));
+            mixedEncryptedVotes.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], mixedEncryptedVotes, keyStore.mixersPrivateKey[i]));
             
             /*add to List*/
             mixedEncryptedVotesList[i] = mixedEncryptedVotes;

@@ -218,7 +218,7 @@ public class VoteGenerator {
         
         //Implements the Faults
         appendText(" a) Implements the Faults");
-        FaultGeneratorTask faultGeneratorTask = new FaultGeneratorTask();
-        faultGeneratorTask.run();
+        //FaultGeneratorTask faultGeneratorTask = new FaultGeneratorTask();
+        //faultGeneratorTask.run();
     }
 }

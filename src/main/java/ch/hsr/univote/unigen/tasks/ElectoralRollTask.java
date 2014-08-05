@@ -41,7 +41,7 @@ public class ElectoralRollTask extends VoteGenerator {
         ElectoralRoll electoralRoll = createRoll(voterIds);
         
         /*sign by ElectionAdministrator*/
-        electoralRoll.setSignature(SignatureGenerator.createSignature(electoralRoll, keyStore.electionAdministratorPrivateKey));
+        electoralRoll.setSignature(new SignatureGenerator().createSignature(electoralRoll, keyStore.electionAdministratorPrivateKey));
         
         /*submit to ElectionBoard*/
         electionBoard.setElectoralRoll(electoralRoll);

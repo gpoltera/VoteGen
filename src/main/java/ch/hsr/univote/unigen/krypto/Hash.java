@@ -18,7 +18,10 @@ public class Hash {
     /**
      *
      * @param value String to hashing
+     * @param hashAlgorithm
+     * @param charEncoding
      * @return hashed value
+     * @throws java.security.NoSuchAlgorithmException
      */
     public BigInteger getHash(String value, String hashAlgorithm, String charEncoding) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(hashAlgorithm);

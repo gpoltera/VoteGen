@@ -13,12 +13,22 @@ import java.util.Properties;
  * @author Gian
  */
 public class FailureConfiguration extends javax.swing.JPanel {
-
+    ConfigHelper config = new ConfigHelper();
+    
     /**
      * Creates new form test
      */
     public FailureConfiguration() {
         initComponents();
+        for (String mixer:config.getMixerIds()) {
+            jComboMixerCert.addItem(mixer);
+        }
+        for (String tallier:config.getTallierIds()) {
+            jComboTallierCert.addItem(tallier);
+        }
+        for (int i = 1; i <= config.getVotersNumber(); i++) {
+            jComboVoterCert.addItem("voter" + i);
+        }
     }
 
     /**
@@ -49,8 +59,11 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBemCertificate = new javax.swing.JCheckBox();
         jCBeaCertificate = new javax.swing.JCheckBox();
         jCBmixerCertificate = new javax.swing.JCheckBox();
+        jComboMixerCert = new javax.swing.JComboBox();
         jCBtallierCertificate = new javax.swing.JCheckBox();
+        jComboTallierCert = new javax.swing.JComboBox();
         jCBvotersCertificate = new javax.swing.JCheckBox();
+        jComboVoterCert = new javax.swing.JComboBox();
         lblSignatures = new javax.swing.JLabel();
         jCBeaCertificateSignature = new javax.swing.JCheckBox();
         jCBelGamalParameterSignature = new javax.swing.JCheckBox();
@@ -85,6 +98,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 102;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBschnorrP_isprime, gridBagConstraints);
         jCBschnorrP_isprime.getAccessibleContext().setAccessibleName("");
@@ -94,6 +108,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBschnorrP_issafeprime.setText("Schnorr's P is SafePrime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 104;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBschnorrP_issafeprime, gridBagConstraints);
 
@@ -101,6 +116,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBschnorrQ_isprime.setText("Schnorr's Q is prime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 106;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBschnorrQ_isprime, gridBagConstraints);
 
@@ -108,6 +124,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBschnorrG_isgenerator.setText("Schnorr's G is generator");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 108;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBschnorrG_isgenerator, gridBagConstraints);
 
@@ -115,6 +132,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBschnorrParameterLength.setText("Schnorr's Parameter Length");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 110;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBschnorrParameterLength, gridBagConstraints);
 
@@ -130,6 +148,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelGamalP_isprime.setText("ElGamal P is prime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 102;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelGamalP_isprime, gridBagConstraints);
 
@@ -137,6 +156,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelGamalP_issafeprime.setText("ElGamal P is SafePrime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 104;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelGamalP_issafeprime, gridBagConstraints);
 
@@ -144,6 +164,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelGamalQ_isprime.setText("ElGamal Q is prime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 106;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelGamalQ_isprime, gridBagConstraints);
 
@@ -151,6 +172,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelGamalG_isprime.setText("ElGamal G is prime");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 108;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelGamalG_isprime, gridBagConstraints);
 
@@ -158,6 +180,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelGamalParameterLength.setText("ElGamal Parameter Length");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 110;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelGamalParameterLength, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -180,6 +203,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBcaCertificate.setText("CA Certificate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 202;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBcaCertificate, gridBagConstraints);
 
@@ -187,6 +211,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBemCertificate.setText("EM Certificate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 204;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBemCertificate, gridBagConstraints);
 
@@ -194,29 +219,51 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBeaCertificate.setText("EA Certificate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 206;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBeaCertificate, gridBagConstraints);
 
         jCBmixerCertificate.setSelected(true);
-        jCBmixerCertificate.setText("Mixer Certificate -> WELCHER?");
+        jCBmixerCertificate.setText("Mixer Certificate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 208;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBmixerCertificate, gridBagConstraints);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 208;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jComboMixerCert, gridBagConstraints);
+
         jCBtallierCertificate.setSelected(true);
-        jCBtallierCertificate.setText("Tallier Certificate -> WELCHER?");
+        jCBtallierCertificate.setText("Tallier Certificate");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 210;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBtallierCertificate, gridBagConstraints);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 210;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jComboTallierCert, gridBagConstraints);
+
         jCBvotersCertificate.setSelected(true);
-        jCBvotersCertificate.setText("Voters Certificates -> WIEVIELE?");
+        jCBvotersCertificate.setText("Voters Certificates");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 212;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBvotersCertificate, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 212;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jComboVoterCert, gridBagConstraints);
 
         lblSignatures.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblSignatures.setText("Signatures");
@@ -230,6 +277,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBeaCertificateSignature.setText("EA Certificate Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 202;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBeaCertificateSignature, gridBagConstraints);
 
@@ -237,6 +285,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelGamalParameterSignature.setText("ElGamal Parameter Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 204;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelGamalParameterSignature, gridBagConstraints);
 
@@ -244,6 +293,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBtallierNIZKPSignature.setText("Tallier NIZKP Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 206;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBtallierNIZKPSignature, gridBagConstraints);
 
@@ -251,6 +301,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBencryptionKeysSignature.setText("Encryption Keys Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 208;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBencryptionKeysSignature, gridBagConstraints);
 
@@ -258,6 +309,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBtallierMixerCertificateSignature.setText("Tallier Mixer Certificate Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 210;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBtallierMixerCertificateSignature, gridBagConstraints);
 
@@ -265,6 +317,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelectionBasicParametersSignature.setText("Election Basic Parameters Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 212;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelectionBasicParametersSignature, gridBagConstraints);
 
@@ -272,6 +325,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelectionGeneratorSignature.setText("Election Generator Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 214;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelectionGeneratorSignature, gridBagConstraints);
 
@@ -279,6 +333,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelectionOptionsSignature.setText("Election Options Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 216;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelectionOptionsSignature, gridBagConstraints);
 
@@ -286,6 +341,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBelectionDataSignature.setText("Election Data Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 218;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jCBelectionDataSignature, gridBagConstraints);
 
@@ -293,6 +349,7 @@ public class FailureConfiguration extends javax.swing.JPanel {
         jCBmixersNIZKPBlindedGeneratorSignature.setText("Mixers NIZKP Blinded Generator Signature");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 220;
         add(jCBmixersNIZKPBlindedGeneratorSignature, gridBagConstraints);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("Bundle"); // NOI18N
@@ -391,6 +448,9 @@ public class FailureConfiguration extends javax.swing.JPanel {
     private javax.swing.JCheckBox jCBtallierMixerCertificateSignature;
     private javax.swing.JCheckBox jCBtallierNIZKPSignature;
     private javax.swing.JCheckBox jCBvotersCertificate;
+    private javax.swing.JComboBox jComboMixerCert;
+    private javax.swing.JComboBox jComboTallierCert;
+    private javax.swing.JComboBox jComboVoterCert;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblCertificates;
     private javax.swing.JLabel lblElGamal;

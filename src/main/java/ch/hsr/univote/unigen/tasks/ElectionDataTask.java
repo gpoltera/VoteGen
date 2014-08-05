@@ -21,7 +21,7 @@ public class ElectionDataTask extends VoteGenerator {
         ElectionData electionData = createElectionData();
 
         /*sign by ElectionaManager*/
-        electionData.setSignature(SignatureGenerator.createSignature(electionData, keyStore.electionManagerPrivateKey));
+        electionData.setSignature(new SignatureGenerator().createSignature(electionData, keyStore.electionManagerPrivateKey));
 
         /*submit to ElectionBoard*/
         electionBoard.setElectionData(electionData);
