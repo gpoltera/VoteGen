@@ -7,7 +7,9 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.MixedEncryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,7 +18,7 @@ import ch.hsr.univote.unigen.krypto.SignatureGenerator;
 public class MixedEncryptedVotesByTask extends VoteGenerator {
 
     public void run() throws Exception {
-        MixedEncryptedVotes[] mixedEncryptedVotesList = new MixedEncryptedVotes[electionBoard.mixers.length];
+        List<MixedEncryptedVotes> mixedEncryptedVotesList = new ArrayList<>();
 
         /*for each Mixer*/
         for (int i = 0; i < electionBoard.mixers.length; i++) {
@@ -24,10 +26,10 @@ public class MixedEncryptedVotesByTask extends VoteGenerator {
             MixedEncryptedVotes mixedEncryptedVotes = createMixedEncryptedVotes();
             
             /*sign by Mixer*/
-            mixedEncryptedVotes.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], mixedEncryptedVotes, keyStore.getMixerPrivateKey(i)));
+            mixedEncryptedVotes.setSignature(new RSASignatureGenerator().createSignature(electionBoard.mixers[i], mixedEncryptedVotes, keyStore.getMixerPrivateKey(i)));
             
             /*add to List*/
-            mixedEncryptedVotesList[i] = mixedEncryptedVotes;
+            mixedEncryptedVotesList.add(i, mixedEncryptedVotes);
         }
         /*submit to ElectionBoard*/
         electionBoard.setEncryptedVotesMixedBy(mixedEncryptedVotesList);

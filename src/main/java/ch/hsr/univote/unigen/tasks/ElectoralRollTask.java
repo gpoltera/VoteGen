@@ -14,7 +14,7 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.ElectoralRoll;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.FormatException;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -40,7 +40,7 @@ public class ElectoralRollTask extends VoteGenerator {
         ElectoralRoll electoralRoll = createRoll(voterIds);
         
         /*sign by ElectionAdministrator*/
-        electoralRoll.setSignature(new SignatureGenerator().createSignature(electoralRoll, keyStore.getElectionAdministratorPrivateKey()));
+        electoralRoll.setSignature(new RSASignatureGenerator().createSignature(electoralRoll, keyStore.getElectionAdministratorPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setElectoralRoll(electoralRoll);

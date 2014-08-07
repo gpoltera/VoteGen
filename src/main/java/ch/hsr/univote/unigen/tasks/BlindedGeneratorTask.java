@@ -8,9 +8,10 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.BlindedGenerator;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.krypto.NIZKP;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -18,46 +19,52 @@ import java.security.NoSuchAlgorithmException;
  */
 public class BlindedGeneratorTask extends VoteGenerator {
 
-    BlindedGenerator[] blindedGeneratorsList = new BlindedGenerator[electionBoard.mixers.length];
-    BigInteger previousGenerator;
+    /*1.3.4 e) Constructing the Election Generator*/
+    List<BlindedGenerator> blindedGeneratorsList = new ArrayList<>();
 
-    public void run() throws Exception {
+    public void run() {
         /*for each mixer*/
-        for (int i = 0; i < electionBoard.mixers.length; i++) {
+        for (int k = 0; k < electionBoard.mixers.length; k++) {
             /*create BlindedGenerator*/
-            BlindedGenerator blindedGenerator = createBlindedGenerator(i);
+            BlindedGenerator blindedGenerator = createBlindedGenerator(k);
 
             /*sign by Mixer*/
-            blindedGenerator.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], blindedGenerator, keyStore.getMixerPrivateKey(i)));
+            blindedGenerator.setSignature(new RSASignatureGenerator().createSignature(electionBoard.mixers[k], blindedGenerator, keyStore.getMixerPrivateKey(k)));
 
             /*add to list*/
-            blindedGeneratorsList[i] = blindedGenerator;
+            blindedGeneratorsList.add(k, blindedGenerator);
         }
         /*submit to ElectionBoard*/
         electionBoard.setBlindedGeneratorList(blindedGeneratorsList);
     }
 
-    private BlindedGenerator createBlindedGenerator(int i) {
-        try {
-            BlindedGenerator blindedGenerator = new BlindedGenerator();
-            blindedGenerator.setElectionId(config.getElectionId());
-            blindedGenerator.setGenerator(keyStore.getMixerGenerator(i));
-            if (i == 0) {
-                previousGenerator = electionBoard.getSignatureParameters().getGenerator();
-            } else {
-                previousGenerator = keyStore.getMixerGenerator(i - 1);
-            }
-            blindedGenerator.setProof(new NIZKP().getProof(
-                    electionBoard.mixers[i],
-                    keyStore.getMixerSignatureKey(i),
-                    keyStore.getMixerVerificationKey(i),
-                    electionBoard.getSignatureParameters().getPrime(),
-                    electionBoard.getSignatureParameters().getGroupOrder(),
-                    previousGenerator));
-
-            return blindedGenerator;
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+    BigInteger previousGenerator = electionBoard.getSignatureParameters().getGenerator();
+    BigInteger p = electionBoard.getSignatureParameters().getPrime();
+    BigInteger g = electionBoard.getSignatureParameters().getGenerator();
+    
+    private BlindedGenerator createBlindedGenerator(int k) {
+        BigInteger signatureKey = keyStore.getMixerSignatureKey(k);
+        
+        BlindedGenerator blindedGenerator = new BlindedGenerator();
+        blindedGenerator.setElectionId(config.getElectionId());
+        g = g.modPow(signatureKey, p);
+        keyStore.setMixerGenerator(k, g);
+        
+        blindedGenerator.setGenerator(keyStore.getMixerGenerator(k));
+        
+        if (k == 0) {
+            previousGenerator = electionBoard.getSignatureParameters().getGenerator();
+        } else {
+            previousGenerator = keyStore.getMixerGenerator(k - 1);
         }
+        blindedGenerator.setProof(new NIZKP().getProof(
+                electionBoard.mixers[k],
+                keyStore.getMixerSignatureKey(k),
+                keyStore.getMixerVerificationKey(k),
+                electionBoard.getEncryptionParameters()));
+
+        return blindedGenerator;
     }
 }
+
+            

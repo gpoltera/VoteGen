@@ -2,7 +2,7 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.ElectionDefinition;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -15,7 +15,7 @@ public class ElectionDefinitionTask extends VoteGenerator {
         ElectionDefinition electionDefinition = createElectionDefinition();
         
         /*sign by ElectionAdministrator*/
-        electionDefinition.setSignature(new SignatureGenerator().createSignature(electionDefinition, keyStore.getElectionAdministratorPrivateKey()));
+        electionDefinition.setSignature(new RSASignatureGenerator().createSignature(electionDefinition, keyStore.getElectionAdministratorPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setElectionDefinition(electionDefinition);

@@ -8,7 +8,7 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.math.BigInteger;
 
 /**
@@ -19,13 +19,13 @@ public class MixedVerificationKeysTask extends VoteGenerator {
 
     public void run() throws Exception {
         /*load the VerificationKey from the last mixer from the ElectionBoard*/
-        MixedVerificationKeys mixedVerificationKeys = electionBoard.listMixedVerificationKeys.get(electionBoard.mixers.length - 1);
+        MixedVerificationKeys mixedVerificationKeys = electionBoard.getVerificationKeysMixedBy(config.getMixerIds()[electionBoard.mixers.length - 1]);
         
         /*create VerificationKeys*/
         VerificationKeys verificationKeys = createVerificationKeys(mixedVerificationKeys);
         
         /*sign by ElectionManager*/
-        verificationKeys.setSignature(new SignatureGenerator().createSignature(verificationKeys, keyStore.getElectionManagerPrivateKey()));
+        verificationKeys.setSignature(new RSASignatureGenerator().createSignature(verificationKeys, keyStore.getElectionManagerPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setMixedVerificationKeys(verificationKeys);

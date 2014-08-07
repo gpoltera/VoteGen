@@ -7,8 +7,7 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptionKey;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.krypto.ElGamal;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.math.BigInteger;
 
 /**
@@ -16,40 +15,38 @@ import java.math.BigInteger;
  * @author Gian Poltéra
  */
 public class EncryptionKeyTask extends VoteGenerator {
-
+    
+    /*1.3.4 d) Distributed Key Generation*/
     public void run() throws Exception {
         /*create EncryptionKey*/
-        EncryptionKey encryptionKey = createEncryptionKey();        
-        
+        EncryptionKey encryptionKey = createEncryptionKey();
+
         /*sign by ElectionManager*/
-        encryptionKey.setSignature(new SignatureGenerator().createSignature(encryptionKey, keyStore.getElectionManagerPrivateKey()));
-        
+        encryptionKey.setSignature(new RSASignatureGenerator().createSignature(encryptionKey, keyStore.getElectionManagerPrivateKey()));
+
         /*submit to ElectionBoard*/
         electionBoard.setEncryptionKey(encryptionKey);
     }
-    
-    // Create the ElectionDefinition
+
+    // Create the EncryptionKey
     private EncryptionKey createEncryptionKey() {
+        BigInteger p = electionBoard.getEncryptionParameters().getPrime();
         EncryptionKey encryptionKey = new EncryptionKey();
         encryptionKey.setElectionId(config.getElectionId());
         BigInteger y = null;
-        //Foreach Tallier generate keys
-        for (int i = 0; i < electionBoard.talliers.length; i++) {
-            BigInteger keyPair[] = ElGamal.getKeyPair(
-                    electionBoard.getEncryptionParameters().getPrime(),
-                    electionBoard.getEncryptionParameters().getGroupOrder(), 
-                    electionBoard.getEncryptionParameters().getGenerator());
-            keyStore.setTallierDecryptionKey(i, keyPair[0]);
-            keyStore.setTallierEncryptionKey(i, keyPair[1]);
+        
+        //Foreach Tallier
+        for (int j = 0; j < electionBoard.talliers.length; j++) {
             
             if (y == null) {
-                y = keyStore.getTallierEncryptionKey(i);
+                y = keyStore.getTallierEncryptionKey(j);
             } else {
-                y = y.multiply(keyStore.getTallierEncryptionKey(i));
+                y = y.multiply(keyStore.getTallierEncryptionKey(j));
             }
         }
-        encryptionKey.setKey(y.mod(electionBoard.getEncryptionParameters().getPrime()));
-        
+        y = y.mod(p);
+        encryptionKey.setKey(y);
+
         return encryptionKey;
     }
 }

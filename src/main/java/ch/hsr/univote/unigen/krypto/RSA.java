@@ -11,6 +11,8 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,17 +21,20 @@ import java.security.interfaces.RSAPrivateKey;
 public class RSA {
 
     ConfigHelper config = new ConfigHelper();
-    
-    /**
-     * 
-     * @return a new RSAKeyPair
-     * @throws java.lang.Exception
-     */
-    public KeyPair getRSAKeyPair() throws Exception {
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(config.getSignatureKeyType());
-        keyGenerator.initialize(config.getSignatureKeyLength());
-        KeyPair keyPair = keyGenerator.generateKeyPair();
 
+    /**
+     *
+     * @return a new RSAKeyPair
+     */
+    public KeyPair getRSAKeyPair() {
+        KeyPair keyPair = null;
+        try {
+            KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(config.getSignatureKeyType());
+            keyGenerator.initialize(config.getSignatureKeyLength());
+            keyPair = keyGenerator.generateKeyPair();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(RSA.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return keyPair;
     }
 
@@ -38,12 +43,11 @@ public class RSA {
      * @param value to sign
      * @param privateKey
      * @return the singature
-     * @throws java.security.NoSuchAlgorithmException
      */
-    public BigInteger signRSA(String value, RSAPrivateKey privateKey) throws NoSuchAlgorithmException {
+    public BigInteger signRSA(String value, RSAPrivateKey privateKey) {
         BigInteger hash = new Hash().getHash(value, config.getHashAlgorithm(), config.getCharEncoding());
         BigInteger signature = hash.modPow(privateKey.getPrivateExponent(), privateKey.getModulus());
-
+        
         return signature;
     }
 }

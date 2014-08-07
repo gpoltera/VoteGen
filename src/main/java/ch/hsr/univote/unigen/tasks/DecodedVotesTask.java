@@ -9,7 +9,7 @@ import ch.bfh.univote.common.DecodedVote;
 import ch.bfh.univote.common.DecodedVoteEntry;
 import ch.bfh.univote.common.DecodedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 
 /**
  *
@@ -22,7 +22,7 @@ public class DecodedVotesTask extends VoteGenerator {
         DecodedVotes decodedVotes = createDecodedVotes();
 
         /*sign by ElectionManager*/
-        decodedVotes.setSignature(new SignatureGenerator().createSignature(decodedVotes, keyStore.getElectionManagerPrivateKey()));
+        decodedVotes.setSignature(new RSASignatureGenerator().createSignature(decodedVotes, keyStore.getElectionManagerPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setDecodedVotes(decodedVotes);

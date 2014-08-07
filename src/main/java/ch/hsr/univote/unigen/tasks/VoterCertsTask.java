@@ -10,7 +10,11 @@ import ch.bfh.univote.common.VoterCertificates;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.krypto.CertificateGenerator;
 import ch.hsr.univote.unigen.krypto.RSA;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
+import ch.hsr.univote.unigen.krypto.Schnorr;
+import ch.hsr.univote.unigen.krypto.SchnorrSignatureKey;
+import ch.hsr.univote.unigen.krypto.SchnorrVerificationKey;
+import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -26,30 +30,35 @@ public class VoterCertsTask extends VoteGenerator {
         VoterCertificates voterCertificates = createVoterCertificates();
 
         /*sign by ElectionaManger*/
-        voterCertificates.setSignature(new SignatureGenerator().createSignature(voterCertificates, keyStore.getElectionManagerPrivateKey()));
+        voterCertificates.setSignature(new RSASignatureGenerator().createSignature(voterCertificates, keyStore.getElectionManagerPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setVoterCertificates(voterCertificates);
     }
 
     private VoterCertificates createVoterCertificates() {
-        try {
-            VoterCertificates voterCertificates = new VoterCertificates();
-            voterCertificates.setElectionId(config.getElectionId());
-            for (int i = 0; i < config.getVotersNumber(); i++) {               
-                KeyPair keyPair = new RSA().getRSAKeyPair();
-                keyStore.setVoterPrivateKey(i, (RSAPrivateKey) keyPair.getPrivate());
-                keyStore.setVoterPublicKey(i, (RSAPublicKey) keyPair.getPublic());
-                keyStore.setVoterSignatureKey(i, keyStore.getVoterPrivateKey(i).getPrivateExponent());
-                keyStore.setVoterVerificationKey(i, electionBoard.getSignatureParameters().getGenerator().modPow(keyStore.getVoterSignatureKey(i), electionBoard.getSignatureParameters().getPrime()));
-                
-                Certificate certificate = new Certificate();
-                certificate.setValue(new CertificateGenerator().getCertficate("voter" + i + 1, keyStore.getCertificateAuthorityPrivateKey(), keyStore.getVoterPublicKey(i)).getBytes());
-                voterCertificates.getCertificate().add(certificate);
-            }
-            return voterCertificates;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        VoterCertificates voterCertificates = new VoterCertificates();
+        voterCertificates.setElectionId(config.getElectionId());
+        for (int i = 0; i < config.getVotersNumber(); i++) {
+            createVoterKeys(i);
+            Certificate certificate = new Certificate();
+            certificate.setValue(new CertificateGenerator().getCertficate("voter" + i + 1, keyStore.getCertificateAuthorityPrivateKey(), keyStore.getVoterPublicKey(i)).getBytes());
+            voterCertificates.getCertificate().add(certificate);
         }
+        return voterCertificates;
+    }
+
+    private void createVoterKeys(int i) {
+        // RSA Keys
+        KeyPair keyPair = new RSA().getRSAKeyPair();
+
+        keyStore.setVoterPrivateKey(i, (RSAPrivateKey) keyPair.getPrivate());
+        keyStore.setVoterPublicKey(i, (RSAPublicKey) keyPair.getPublic());
+
+        // Schnorr Keys
+        BigInteger[] skp = new Schnorr().getKeyPair(electionBoard.getSignatureParameters());
+
+        keyStore.setVoterSignatureKey(i, new SchnorrSignatureKey(electionBoard.getSignatureParameters(), skp[0]));
+        keyStore.setVoterVerificationKey(i, new SchnorrVerificationKey(electionBoard.getSignatureParameters(), skp[1]));
     }
 }

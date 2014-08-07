@@ -5,6 +5,7 @@ import ch.hsr.univote.unigen.tasks.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.tasks.ElectionOptionsTask;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.db.DBKeyStoreManager;
 import static ch.hsr.univote.unigen.gui.VoteGeneration.appendText;
 import static ch.hsr.univote.unigen.gui.VoteGeneration.updateProgress;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
@@ -78,6 +79,9 @@ public class VoteGenerator {
         voteGenerator.phase8();
         updateProgress();
         appendText("----------------------------------");
+        
+        voteGenerator.phaseStore();
+        appendText("----------------------------------");
     }
 
     /* 1.3.1 Public Parameters */
@@ -93,8 +97,7 @@ public class VoteGenerator {
         appendText("2. Public Indentifiers and Keys");
         //Generate the certificates and keys
         appendText(" a) Generate the certificates and keys");
-        ElectionSystemInfoTask electionSystemInfoTask = new ElectionSystemInfoTask();
-        electionSystemInfoTask.run(); // -> OK
+        new ElectionSystemInfoTask().run(); //-> OK
     }
 
     /* 1.3.3 Registration */
@@ -102,8 +105,7 @@ public class VoteGenerator {
         appendText("3. Registration");
         //Generate the voters certificates
         appendText(" a) Generate the voters certificates");
-        VoterCertsTask voterCertsTask = new VoterCertsTask();
-        voterCertsTask.run();  // -> OK
+        new VoterCertsTask().run();  // -> OK
     }
 
     /* 1.3.4 Election Setup */
@@ -117,27 +119,21 @@ public class VoteGenerator {
         
         //b) Election Definition
         appendText(" b) Election Definition");
-        ElectionDefinitionTask electionDefinitionTask = new ElectionDefinitionTask();
-        electionDefinitionTask.run(); // -> OK
+        new ElectionDefinitionTask().run(); // -> OK
         
         //c) Parameter Generation
         appendText(" c) Parameter Generation");
-        EncryptionParametersTask encryptionParametersTask = new EncryptionParametersTask();
-        encryptionParametersTask.run(); //Set the ElGamal Parameters -> OK
+        new EncryptionParametersTask().run(); //Set the ElGamal Parameters -> OK
         
         //d) Distributed Key Generation
         appendText(" d) Distributed Key Generation");
-        EncryptionKeyTask encryptionKeyTask = new EncryptionKeyTask();
-        encryptionKeyTask.run(); // -> OK
-        EncryptionKeyShareTask encryptionKeyShareTask = new EncryptionKeyShareTask();
-        encryptionKeyShareTask.run(); // -> OK
+        new EncryptionKeyShareTask().run(); // -> OK
+        new EncryptionKeyTask().run(); // -> OK
         
         //e) Constructing the Election Generator
         appendText(" e) Constructing the Election Generator");
-        ElectionGeneratorTask electionGeneratorTask = new ElectionGeneratorTask();
-        electionGeneratorTask.run(); // -> OK
-        BlindedGeneratorTask blindedGeneratorTask = new BlindedGeneratorTask();
-        blindedGeneratorTask.run(); // -> OK
+        new BlindedGeneratorTask().run(); // -> OK
+        new ElectionGeneratorTask().run(); // -> OK   
     }
 
     /* 1.3.5 Election Preparation */
@@ -219,5 +215,13 @@ public class VoteGenerator {
         appendText(" a) Implements the Faults");
         //FaultGeneratorTask faultGeneratorTask = new FaultGeneratorTask();
         //faultGeneratorTask.run();
+    }
+    
+    /* Store in DB */
+    private void phaseStore() throws Exception {
+        appendText("Store the Keys in the DB");
+        DBKeyStoreManager dbksm = new DBKeyStoreManager();
+        dbksm.saveInDB(config.getElectionId());
+        appendText("Store the ElectionBoard in the DB");
     }
 }

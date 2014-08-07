@@ -7,7 +7,7 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.ElectionData;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 
 /**
  *
@@ -20,7 +20,7 @@ public class ElectionDataTask extends VoteGenerator {
         ElectionData electionData = createElectionData();
 
         /*sign by ElectionaManager*/
-        electionData.setSignature(new SignatureGenerator().createSignature(electionData, keyStore.getElectionManagerPrivateKey()));
+        electionData.setSignature(new RSASignatureGenerator().createSignature(electionData, keyStore.getElectionManagerPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setElectionData(electionData);

@@ -9,6 +9,8 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,19 +23,28 @@ public class Hash {
      * @param hashAlgorithm
      * @param charEncoding
      * @return hashed value
-     * @throws java.security.NoSuchAlgorithmException
      */
-    public BigInteger getHash(String value, String hashAlgorithm, String charEncoding) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
-        md.reset();
-        md.update(value.getBytes(Charset.forName(charEncoding)));
+    public BigInteger getHash(String value, String hashAlgorithm, String charEncoding) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance(hashAlgorithm);
+            md.reset();
+            md.update(value.getBytes(Charset.forName(charEncoding))); 
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Hash.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return new BigInteger(1, md.digest());
     }
     
-    public BigInteger getHash(byte[] value, String hashAlgorithm) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
-        md.reset();
-        md.update(value);
+    public BigInteger getHash(byte[] value, String hashAlgorithm) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance(hashAlgorithm);
+            md.reset();
+            md.update(value);        
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Hash.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return new BigInteger(1, md.digest());
     }
 }

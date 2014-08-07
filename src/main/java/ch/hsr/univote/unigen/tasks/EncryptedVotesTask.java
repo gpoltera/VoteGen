@@ -7,7 +7,7 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 
 /**
  *
@@ -20,7 +20,7 @@ public class EncryptedVotesTask extends VoteGenerator {
         EncryptedVotes encryptedVotes = createEncryptedVotes();
         
         /*sign by ElectionAdministrator*/
-        encryptedVotes.setSignature(new SignatureGenerator().createSignature(encryptedVotes, keyStore.getElectionAdministratorPrivateKey()));
+        encryptedVotes.setSignature(new RSASignatureGenerator().createSignature(encryptedVotes, keyStore.getElectionAdministratorPrivateKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setEncryptedVotes(encryptedVotes);

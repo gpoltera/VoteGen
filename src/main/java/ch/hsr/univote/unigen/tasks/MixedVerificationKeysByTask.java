@@ -8,8 +8,8 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.Proof;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.math.BigInteger;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
+import ch.hsr.univote.unigen.krypto.SchnorrVerificationKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class MixedVerificationKeysByTask extends VoteGenerator {
         List<MixedVerificationKeys> listMixedVerificationKeys = new ArrayList<>();
         
         /*load the verification keys*/
-        BigInteger[] verificationKeys = keyStore.getVotersVerificationKey();
+        List<SchnorrVerificationKey> verificationKeys = keyStore.getVotersVerificationKey();
         
         /*for each mixer*/
         for (int i = 0; i < electionBoard.mixers.length; i++) {
@@ -37,21 +37,21 @@ public class MixedVerificationKeysByTask extends VoteGenerator {
             mixedVerificationKeys.setProof(proof);
             
             /*sign by mixer*/
-            mixedVerificationKeys.setSignature(new SignatureGenerator().createSignature(electionBoard.mixers[i], mixedVerificationKeys, keyStore.getMixerPrivateKey(i)));
+            mixedVerificationKeys.setSignature(new RSASignatureGenerator().createSignature(electionBoard.mixers[i], mixedVerificationKeys, keyStore.getMixerPrivateKey(i)));
             
             /*add to list*/
             listMixedVerificationKeys.add(mixedVerificationKeys);
         }
         /*submit to ElectionBoard*/
-        electionBoard.listMixedVerificationKeys = listMixedVerificationKeys;
+        electionBoard.setVerificationKeysMixedBy(listMixedVerificationKeys);
     }
 
-    private MixedVerificationKeys createMixedVerificationKeys(BigInteger[] verificationKeys) {
+    private MixedVerificationKeys createMixedVerificationKeys(List<SchnorrVerificationKey> verificationKeys) {
         MixedVerificationKeys mixedVerificationKeys = new MixedVerificationKeys();
         mixedVerificationKeys.setElectionId(config.getElectionId());
 
-        for (BigInteger verificationKey : verificationKeys) {
-            mixedVerificationKeys.getKey().add(verificationKey);
+        for (SchnorrVerificationKey verificationKey : verificationKeys) {
+            mixedVerificationKeys.getKey().add(verificationKey.getVerificationKey());
         }
 
         return mixedVerificationKeys;

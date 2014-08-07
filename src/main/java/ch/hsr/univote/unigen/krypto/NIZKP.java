@@ -6,12 +6,12 @@
 package ch.hsr.univote.unigen.krypto;
 
 import ch.bfh.univote.common.EncryptionKeyShare;
+import ch.bfh.univote.common.EncryptionParameters;
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.bfh.univote.common.Proof;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 
 /**
  *
@@ -20,7 +20,11 @@ import java.security.NoSuchAlgorithmException;
 public class NIZKP {
     ConfigHelper config = new ConfigHelper();
     
-    public Proof getProof(String Name, BigInteger a, BigInteger b, BigInteger p, BigInteger q, BigInteger g) throws NoSuchAlgorithmException {
+    public Proof getProof(String name, BigInteger a, BigInteger b, EncryptionParameters encryptionParameters) {
+        BigInteger p = encryptionParameters.getPrime();
+        BigInteger q = encryptionParameters.getGroupOrder();
+        BigInteger g = encryptionParameters.getGenerator();
+        
         Proof proof = new Proof();
 
         // 1. Choose w E X randomly
@@ -35,7 +39,7 @@ public class NIZKP {
         StringConcatenator sc = new StringConcatenator();
         sc.pushObject(b);
         sc.pushObject(t);
-        sc.pushObject(Name);
+        sc.pushObject(name);
 
         String res = sc.pullAll();
 
@@ -51,7 +55,8 @@ public class NIZKP {
         return proof;
     }
     
-    public Proof getProof(String tallierName, BigInteger a, EncryptionKeyShare encryptionKeyShare, PartiallyDecryptedVotes partiallyDecryptedVotes, BigInteger p, BigInteger q, BigInteger g) throws NoSuchAlgorithmException {
+    /*
+    public Proof getProof(String tallierName, BigInteger a, EncryptionKeyShare encryptionKeyShare, PartiallyDecryptedVotes partiallyDecryptedVotes, BigInteger p, BigInteger q, BigInteger g) {
         Proof proof = new Proof();
         
         BigInteger w = PrimeGenerator.getPrime(config.getEncryptionKeyLength());
@@ -82,4 +87,5 @@ public class NIZKP {
         
         return proof;
     }
+    */
 }

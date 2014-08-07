@@ -8,8 +8,7 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.EncryptionParameters;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.krypto.ElGamal;
-import ch.hsr.univote.unigen.krypto.SignatureGenerator;
-import java.math.BigInteger;
+import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 
 /**
  *
@@ -23,19 +22,15 @@ public class EncryptionParametersTask extends VoteGenerator {
         EncryptionParameters encryptionParameters = createEncryptionParameters();
         
         /*sign by electionamanger*/
-        encryptionParameters.setSignature(new SignatureGenerator().createSignature(encryptionParameters, keyStore.getElectionManagerPrivateKey()));
+        encryptionParameters.setSignature(new RSASignatureGenerator().createSignature(encryptionParameters, keyStore.getElectionManagerPrivateKey()));
         
         /*submit to ElectionBoard*/
         electionBoard.setEncryptionParameters(encryptionParameters);
     }
     
     private EncryptionParameters createEncryptionParameters() {
-        EncryptionParameters encryptionParameters = new EncryptionParameters();
+        EncryptionParameters encryptionParameters = new ElGamal().getPublicParameters(config.getEncryptionKeyLength());
         encryptionParameters.setElectionId(config.getElectionId());
-        BigInteger[] keys = ElGamal.getPublicParameters(config.getEncryptionKeyLength());
-        encryptionParameters.setPrime(keys[0]); //ElGamal's p
-        encryptionParameters.setGroupOrder(keys[1]); //ElGamal's q
-        encryptionParameters.setGenerator(keys[2]); //ElGamal's g
         
         return encryptionParameters;       
     }

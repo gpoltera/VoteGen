@@ -5,14 +5,14 @@
  */
 package ch.hsr.univote.unigen.board;
 
-import ch.hsr.univote.unigen.db.DB4O;
-import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.krypto.SchnorrSignatureKey;
+import ch.hsr.univote.unigen.krypto.SchnorrVerificationKey;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -21,67 +21,26 @@ import java.text.SimpleDateFormat;
 public class KeyStore {
     /*Variable declaration*/
 
-    private static ConfigHelper config;
-
-    private static SimpleDateFormat sdf;
-    private static Timestamp time;
-    private static String filename;
-
-    private static String[] mixers;
-    private static String[] talliers;
-
     private static KeyPair caKeyPair;
-
     private static RSAPrivateKey certificateAuthorityPrivateKey;
     private static RSAPublicKey certificateAuthorityPublicKey;
-
     private static RSAPrivateKey electionManagerPrivateKey;
     private static RSAPublicKey electionManagerPublicKey;
-
     private static RSAPrivateKey electionAdministratorPrivateKey;
     private static RSAPublicKey electionAdministratorPublicKey;
-
-    private static RSAPrivateKey[] mixersPrivateKey;
-    private static RSAPublicKey[] mixersPublicKey;
-
-    private static RSAPrivateKey[] talliersPrivateKey;
-    private static RSAPublicKey[] talliersPublicKey;
-
-    private static RSAPrivateKey[] votersPrivateKey;
-    private static RSAPublicKey[] votersPublicKey;
-
-    private static BigInteger[] talliersDecryptionKey;
-    private static BigInteger[] talliersEncryptionKey;
-
-    private static BigInteger[] mixersSignatureKey;
-    private static BigInteger[] mixersVerificationKey;
-    private static BigInteger[] mixersGenerator;
-
-    private static BigInteger[] votersSignatureKey;
-    private static BigInteger[] votersVerificationKey;
-
-    /*constructor*/
-    public KeyStore() {
-        config = new ConfigHelper();
-        sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-        time = new Timestamp(System.currentTimeMillis());
-        filename = sdf.format(time);
-        mixers = config.getMixerIds();
-        talliers = config.getTallierIds();
-        mixersPrivateKey = new RSAPrivateKey[mixers.length];
-        mixersPublicKey = new RSAPublicKey[mixers.length];
-        talliersPrivateKey = new RSAPrivateKey[talliers.length];
-        talliersPublicKey = new RSAPublicKey[talliers.length];
-        votersPrivateKey = new RSAPrivateKey[config.getVotersNumber()];
-        votersPublicKey = new RSAPublicKey[config.getVotersNumber()];
-        talliersDecryptionKey = new BigInteger[talliers.length];
-        talliersEncryptionKey = new BigInteger[talliers.length];
-        mixersSignatureKey = new BigInteger[mixers.length];
-        mixersVerificationKey = new BigInteger[mixers.length];
-        mixersGenerator = new BigInteger[mixers.length];
-        votersSignatureKey = new BigInteger[config.getVotersNumber()];
-        votersVerificationKey = new BigInteger[config.getVotersNumber()];
-    }
+    private static List<RSAPrivateKey> mixersPrivateKey = new ArrayList<>();
+    private static List<RSAPublicKey> mixersPublicKey = new ArrayList<>();
+    private static List<RSAPrivateKey> talliersPrivateKey = new ArrayList<>();
+    private static List<RSAPublicKey> talliersPublicKey = new ArrayList<>();
+    private static List<RSAPrivateKey> votersPrivateKey = new ArrayList<>();
+    private static List<RSAPublicKey> votersPublicKey = new ArrayList<>();
+    private static List<BigInteger> talliersDecryptionKey = new ArrayList<>();
+    private static List<BigInteger> talliersEncryptionKey = new ArrayList<>();
+    private static List<BigInteger> mixersSignatureKey = new ArrayList<>();
+    private static List<BigInteger> mixersVerificationKey = new ArrayList<>();
+    private static List<BigInteger> mixersGenerator = new ArrayList<>();
+    private static List<SchnorrSignatureKey> votersSignatureKey = new ArrayList<>();
+    private static List<SchnorrVerificationKey> votersVerificationKey = new ArrayList<>();
 
     /*accessors SET*/
     public void setCaKeyPair(KeyPair caKeyPair) {
@@ -113,55 +72,55 @@ public class KeyStore {
     }
 
     public void setMixerPrivateKey(int mixer, RSAPrivateKey mixerPrivateKey) {
-        KeyStore.mixersPrivateKey[mixer] = mixerPrivateKey;
+        KeyStore.mixersPrivateKey.add(mixer, mixerPrivateKey);
     }
 
     public void setMixerPublicKey(int mixer, RSAPublicKey mixerPublicKey) {
-        KeyStore.mixersPublicKey[mixer] = mixerPublicKey;
+        KeyStore.mixersPublicKey.add(mixer, mixerPublicKey);
     }
 
     public void setTallierPrivateKey(int tallier, RSAPrivateKey tallierPrivateKey) {
-        KeyStore.talliersPrivateKey[tallier] = tallierPrivateKey;
+        KeyStore.talliersPrivateKey.add(tallier, tallierPrivateKey);
     }
 
     public void setTallierPublicKey(int tallier, RSAPublicKey tallierPublicKey) {
-        KeyStore.talliersPublicKey[tallier] = tallierPublicKey;
+        KeyStore.talliersPublicKey.add(tallier, tallierPublicKey);
     }
 
     public void setVoterPrivateKey(int voter, RSAPrivateKey voterPrivateKey) {
-        KeyStore.votersPrivateKey[voter] = voterPrivateKey;
+        KeyStore.votersPrivateKey.add(voter, voterPrivateKey);
     }
 
     public void setVoterPublicKey(int voter, RSAPublicKey voterPublicKey) {
-        KeyStore.votersPublicKey[voter] = voterPublicKey;
+        KeyStore.votersPublicKey.add(voter, voterPublicKey);
     }
 
     public void setTallierDecryptionKey(int tallier, BigInteger tallierDecryptionKey) {
-        KeyStore.talliersDecryptionKey[tallier] = tallierDecryptionKey;
+        KeyStore.talliersDecryptionKey.add(tallier, tallierDecryptionKey);
     }
 
     public void setTallierEncryptionKey(int tallier, BigInteger tallierEncryptionKey) {
-        KeyStore.talliersEncryptionKey[tallier] = tallierEncryptionKey;
+        KeyStore.talliersEncryptionKey.add(tallier, tallierEncryptionKey);
     }
 
     public void setMixerSignatureKey(int mixer, BigInteger mixerSignatureKey) {
-        KeyStore.mixersSignatureKey[mixer] = mixerSignatureKey;
+        KeyStore.mixersSignatureKey.add(mixer, mixerSignatureKey);
     }
 
     public void setMixerVerificationKey(int mixer, BigInteger mixerVerificationKey) {
-        KeyStore.mixersVerificationKey[mixer] = mixerVerificationKey;
+        KeyStore.mixersVerificationKey.add(mixer, mixerVerificationKey);
     }
 
     public void setMixerGenerator(int mixer, BigInteger mixerGenerator) {
-        KeyStore.mixersGenerator[mixer] = mixerGenerator;
+        KeyStore.mixersGenerator.add(mixer, mixerGenerator);
     }
 
-    public void setVoterSignatureKey(int voter, BigInteger voterSignatureKey) {
-        KeyStore.votersSignatureKey[voter] = voterSignatureKey;
+    public void setVoterSignatureKey(int voter, SchnorrSignatureKey voterSignatureKey) {
+        KeyStore.votersSignatureKey.add(voter, voterSignatureKey);
     }
 
-    public void setVoterVerificationKey(int voter, BigInteger voterVerificationKey) {
-        KeyStore.votersVerificationKey[voter] = voterVerificationKey;
+    public void setVoterVerificationKey(int voter, SchnorrVerificationKey voterVerificationKey) {
+        KeyStore.votersVerificationKey.add(voter, voterVerificationKey);
     }
 
     /*accessors GET*/
@@ -194,70 +153,106 @@ public class KeyStore {
     }
 
     public RSAPrivateKey getMixerPrivateKey(int mixer) {
-        return mixersPrivateKey[mixer];
+        return mixersPrivateKey.get(mixer);
+    }
+
+    public List<RSAPrivateKey> getMixersPrivateKey() {
+        return mixersPrivateKey;
     }
 
     public RSAPublicKey getMixerPublicKey(int mixer) {
-        return mixersPublicKey[mixer];
+        return mixersPublicKey.get(mixer);
+    }
+
+    public List<RSAPublicKey> getMixersPublicKey() {
+        return mixersPublicKey;
     }
 
     public RSAPrivateKey getTallierPrivateKey(int tallier) {
-        return talliersPrivateKey[tallier];
+        return talliersPrivateKey.get(tallier);
+    }
+
+    public List<RSAPrivateKey> getTalliersPrivateKey() {
+        return talliersPrivateKey;
     }
 
     public RSAPublicKey getTallierPublicKey(int tallier) {
-        return talliersPublicKey[tallier];
+        return talliersPublicKey.get(tallier);
+    }
+
+    public List<RSAPublicKey> getTalliersPublicKey() {
+        return talliersPublicKey;
     }
 
     public RSAPrivateKey getVoterPrivateKey(int voter) {
-        return votersPrivateKey[voter];
+        return votersPrivateKey.get(voter);
+    }
+
+    public List<RSAPrivateKey> getVotersPrivateKey() {
+        return votersPrivateKey;
     }
 
     public RSAPublicKey getVoterPublicKey(int voter) {
-        return votersPublicKey[voter];
+        return votersPublicKey.get(voter);
+    }
+
+    public List<RSAPublicKey> getVotersPublicKey() {
+        return votersPublicKey;
     }
 
     public BigInteger getTallierDecryptionKey(int tallier) {
-        return talliersDecryptionKey[tallier];
+        return talliersDecryptionKey.get(tallier);
+    }
+
+    public List<BigInteger> getTalliersDecryptionKey() {
+        return talliersDecryptionKey;
     }
 
     public BigInteger getTallierEncryptionKey(int tallier) {
-        return talliersEncryptionKey[tallier];
+        return talliersEncryptionKey.get(tallier);
+    }
+
+    public List<BigInteger> getTalliersEncryptionKey() {
+        return talliersEncryptionKey;
     }
 
     public BigInteger getMixerSignatureKey(int mixer) {
-        return mixersSignatureKey[mixer];
+        return mixersSignatureKey.get(mixer);
+    }
+
+    public List<BigInteger> getMixersSignatureKey() {
+        return mixersSignatureKey;
     }
 
     public BigInteger getMixerVerificationKey(int mixer) {
-        return mixersVerificationKey[mixer];
+        return mixersVerificationKey.get(mixer);
+    }
+
+    public List<BigInteger> getMixersVerificationKey() {
+        return mixersVerificationKey;
     }
 
     public BigInteger getMixerGenerator(int mixer) {
-        return mixersGenerator[mixer];
+        return mixersGenerator.get(mixer);
     }
 
-    public BigInteger getVoterSignatureKey(int voter) {
-        return votersSignatureKey[voter];
+    public List<BigInteger> getMixersGenerator() {
+        return mixersGenerator;
     }
-    
-    public BigInteger getVoterVerificationKey(int voter) {
-        return votersVerificationKey[voter];
+
+    public SchnorrSignatureKey getVoterSignatureKey(int voter) {
+        return votersSignatureKey.get(voter);
     }
-    
-    public BigInteger[] getVotersVerificationKey() {
+
+    public List<SchnorrSignatureKey> getVotersSignatureKey() {
+        return votersSignatureKey;
+    }
+
+    public SchnorrVerificationKey getVoterVerificationKey(int voter) {
+        return votersVerificationKey.get(voter);
+    }
+
+    public List<SchnorrVerificationKey> getVotersVerificationKey() {
         return votersVerificationKey;
-    }
-
-
-    /*accessors DB*/
-    public void storeInDB(String electionId) {
-        DB4O.storeDB(caKeyPair, electionId, filename);
-        DB4O.storeDB(certificateAuthorityPrivateKey, electionId, filename);
-    }
-
-    public void readFromDB(String electionId) {
-        caKeyPair = (KeyPair) DB4O.readDB(caKeyPair, electionId, filename);
-        certificateAuthorityPrivateKey = (RSAPrivateKey) DB4O.readDB(certificateAuthorityPrivateKey, electionId, filename);
     }
 }

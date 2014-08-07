@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.Certificate;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,22 +18,22 @@ public class LatelyRegistredVoterCertsTask extends VoteGenerator {
 
     public void run() throws Exception {
         /*read VoterCertificates from ElectionBoard*/
-        List<Certificate> voterCertificates = electionBoard.getVoterCertificates().getCertificate();
+        List<Certificate> voterCertificates = new ArrayList<>();
                 
-        /*create ElectionOptions*/
-        List<Certificate> listCertificate = createListCertficate(voterCertificates);
+        /*create certificates*/
+        //List<Certificate> listCertificate = createListCertficate();
               
         /*submit to ElectionBoard*/
-        electionBoard.setLatelyRegisteredVoterCertificates(listCertificate);
+        electionBoard.setLatelyRegisteredVoterCertificates(voterCertificates);
     }
     
-    private List<Certificate> createListCertficate(List<Certificate> voterCertificates) {
+    private List<Certificate> createListCertficate() {
         List<Certificate> listCertificate = new ArrayList<>();
                 
         // for each certificate
-        for (Certificate certificate : voterCertificates) {
-            listCertificate.add(certificate);    
-        }
+        //for (Certificate certificate : voterCertificates) {
+        //    listCertificate.add(certificate);    
+        //}
         
         return listCertificate;
     }
