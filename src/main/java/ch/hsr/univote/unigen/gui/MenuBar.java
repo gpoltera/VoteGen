@@ -1,0 +1,138 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ch.hsr.univote.unigen.gui;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import javax.swing.Box;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
+/**
+ *
+ * @author Gian
+ */
+public class MenuBar extends JMenuBar {
+    private ResourceBundle resourceBundle;
+    private MainGUI mainGUI;
+    
+    public MenuBar(MainGUI mainGUI) {
+        resourceBundle = ResourceBundle.getBundle("Bundle");
+        createFileMenu();
+        createLanguageMenu();
+        createHelpMenu();
+        
+        this.add(Box.createHorizontalGlue());
+        this.mainGUI = mainGUI;
+    }
+    
+    private void createFileMenu() {
+        JMenu menu = new JMenu(resourceBundle.getString("file"));
+        
+        //OpenItem
+        JMenuItem openItem = new JMenuItem(resourceBundle.getString("open"));
+        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+        openItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                //HIER OEFFNE WAS!!!
+            }
+        });
+        menu.add(openItem);
+
+        //SaveItem
+        JMenuItem saveItem = new JMenuItem(resourceBundle.getString("save"));
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+        saveItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                //HIER SAVE!!!
+            }
+        });
+        menu.add(saveItem);
+
+        //ExitItem
+        JMenuItem exitItem = new JMenuItem(resourceBundle.getString("exit"));
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
+        exitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                System.exit(0);
+            }
+        });
+        menu.add(exitItem);
+        
+        this.add(menu);
+    }
+    
+    private void createLanguageMenu() {
+        JMenu menu = new JMenu(resourceBundle.getString("language"));
+        
+        //GermanItem
+        JMenuItem germanItem = new JMenuItem(resourceBundle.getString("german"));
+        germanItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
+        germanItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                //Change to german
+                Locale locale = new Locale("de", "DE");
+                Locale.setDefault(locale);
+                mainGUI.resetContentPanel();
+            }
+        });
+        menu.add(germanItem);
+        
+        //EnglishItem
+        JMenuItem englishItem = new JMenuItem(resourceBundle.getString("english"));
+        englishItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+        englishItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                //Change to english
+                Locale locale = new Locale("en", "EN");
+                Locale.setDefault(locale);
+                mainGUI.resetContentPanel();
+            }
+        });
+        menu.add(englishItem);
+        
+        this.add(menu);
+    }   
+    
+    private void createHelpMenu() {
+        JMenu menu = new JMenu(resourceBundle.getString("help"));
+        
+        //DocumentationItem
+        JMenuItem documentationItem = new JMenuItem(resourceBundle.getString("documentation"));
+        documentationItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
+        documentationItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                //Load docu
+            }
+        });
+        menu.add(documentationItem);
+
+        //AboutItem
+        JMenuItem aboutItem = new JMenuItem(resourceBundle.getString("about"));
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                //Load about
+            }
+        });
+        menu.add(aboutItem);
+        
+        this.add(menu);
+    }
+}

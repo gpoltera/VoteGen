@@ -12,6 +12,7 @@
 package ch.hsr.univote.unigen.helper;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,6 +25,7 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  * Configuration helper class.
@@ -32,24 +34,15 @@ import java.util.logging.Logger;
  */
 public class ConfigHelper {
 
-    private final String SYSTEM_CONFIG_FILE = "SystemConfigFile";
-    private final String CRYPTO_CONFIG_FILE = "CryptoConfigFile";
-    private final String FAULT_CONFIG_FILE = "FaultConfigFile";
-    private Properties properties;
+    public final String CONFIG_FILE = "config";
     private Scanner scanner = new Scanner(System.in);
     private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    private Properties properties;
 
-    public void saveProperties(String configname, Properties properties) {
-        try {
-            BufferedOutputStream streamout = new BufferedOutputStream(new FileOutputStream("properties/" + configname + ".properties"));
-            properties.store(streamout, configname);
-            streamout.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+    public ConfigHelper() {
+        properties = new Properties();
+        loadProperties(CONFIG_FILE);
+        System.out.println("geht rein in die Config");
     }
 
     public String getCertificateAuthorityId() {
@@ -86,6 +79,10 @@ public class ConfigHelper {
 
     public String[] getTallierIds() {
         return getListProperty("tallierIds", "Identifikator der Tallier");
+    }
+
+    public String[] getCandidate(int i) {
+        return getListProperty("candidate" + i, "Kandidat defininieren (Nummer, Name, Vorname, Geschlecht, Alter");
     }
 
     public int getEncryptionKeyLength() {
@@ -220,6 +217,18 @@ public class ConfigHelper {
         return getIntProperty("voters", "Anzahl der Waehlenden");
     }
 
+    public int getCandidatesNumber() {
+        return getIntProperty("candidates", "Anzahl der Kandidaten");
+    }
+
+    public int getMixersNumber() {
+        return getIntProperty("mixers", "Anzahl der Mixer");
+    }
+
+    public int getTalliersNumber() {
+        return getIntProperty("talliers", "Anzahl der Tallier");
+    }
+
     //Faults
     public boolean getFault(String fault) {
         return getBooleanProperty(fault, fault);
@@ -238,15 +247,31 @@ public class ConfigHelper {
     }
 
     private String getProperty(String key, String label) {
-        String value = getProperties().getProperty(key);
+        String value = properties.getProperty(key);
         while (value == null || value.isEmpty()) {
-            System.out.print(label + ": ");
-            value = scanner.nextLine().trim();
+            value = JOptionPane.showInputDialog(label);
             if (!value.isEmpty()) {
                 properties.put(key, value);
             }
         }
         return value;
+    }
+
+    public String getProperty(String key) {
+        String value = properties.getProperty(key);
+
+        return value;
+    }
+
+    public boolean existProperty(String key) {
+        boolean result;
+        String value = properties.getProperty(key);
+        if (value == null || value.isEmpty()) {
+            result = false;
+        } else {
+            result = true;
+        }
+        return result;
     }
 
     private int getIntProperty(String key, String label) {
@@ -284,25 +309,35 @@ public class ConfigHelper {
         throw new ConfigException(label + ": " + value + " ist keine gueltige Liste");
     }
 
-    private Properties getProperties() {
-        if (properties == null) {
-            properties = new Properties();
-            try {
-                properties.load(new FileInputStream("properties/" + SYSTEM_CONFIG_FILE + ".properties"));
-            } catch (IOException e) {
-                throw new ConfigException("Die Konfigurationsdatei " + SYSTEM_CONFIG_FILE + ".properties konnte nicht gelesen werden", e);
-            }
-            try {
-                properties.load(new FileInputStream("properties/" + CRYPTO_CONFIG_FILE + ".properties"));
-            } catch (IOException e) {
-                throw new ConfigException("Die Konfigurationsdatei " + CRYPTO_CONFIG_FILE + ".properties konnte nicht gelesen werden", e);
-            }
-            try {
-                properties.load(new FileInputStream("properties/" + FAULT_CONFIG_FILE + ".properties"));
-            } catch (IOException e) {
-                throw new ConfigException("Die Konfigurationsdatei " + FAULT_CONFIG_FILE + ".properties konnte nicht gelesen werden", e);
-            }
+    public void setProperty(String key, String value) {
+        properties.put(key, value);
+    }
+
+    public void saveProperties(String filename) {
+        try {
+            BufferedOutputStream streamout = new BufferedOutputStream(new FileOutputStream("properties/" + filename + ".properties"));
+            properties.store(streamout, filename);
+            streamout.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return properties;
+
+    }
+
+    //Load the Properties from the ConfigFile
+    public void loadProperties(String filename) {
+        properties = new Properties();
+        try {
+            File file = new File("properties/" + filename + ".properties");
+            if (file.exists()) {
+                properties.load(new FileInputStream(file));
+            } else {
+                saveProperties(filename);
+            }
+        } catch (IOException e) {
+            throw new ConfigException("Die Konfigurationsdatei " + filename + ".properties konnte nicht gelesen werden", e);
+        }
     }
 }

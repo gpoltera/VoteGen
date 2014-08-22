@@ -1,14 +1,14 @@
 #FaultConfigFile
 #Mon Aug 04 18:23:01 CEST 2014
 tallierNIZKPSignature=false
-schnorrP_isprime=false
+
 schnorrParameterLength=false
 eaCertificate=false
 verificationKeys=true
 mixerCertificate=false
 elGamalG_isprime=false
 mixersNIZKPBlindedGeneratorSignature=false
-schnorrG_isgenerator=false
+
 electionBasicParametersSignature=false
 electionGenerator=true
 eaCertificateSignature=false
@@ -17,8 +17,8 @@ electionOptionsSignature=false
 elGamalP_isprime=false
 elGamalParameterLength=false
 tallierCertificate=false
-schnorrQ_isprime=false
-elGamalP_issafeprime=false
+
+
 electionGeneratorSignature=false
 mixerNIZKPBlindedGenerator=true
 encryptionKeysSignature=false
@@ -29,5 +29,5 @@ encryptionKey=true
 votersCertificate=false
 electionDataSignature=false
 caCertificate=false
-schnorrP_issafeprime=false
+
 elGamalQ_isprime=false

@@ -10,4 +10,3 @@ public class ConfigException extends RuntimeException {
 		super(message, throwable);
 	}
 }
-

@@ -9,6 +9,7 @@ import ch.bfh.univote.common.SignatureParameters;
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
+import java.sql.Timestamp;
 
 /**
  *

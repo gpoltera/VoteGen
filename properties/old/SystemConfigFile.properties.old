@@ -1,5 +1,5 @@
 #SystemConfigFile
-#Tue Aug 05 16:24:47 CEST 2014
+#Wed Aug 20 13:34:34 CEST 2014
 partyListSystem=nein
 votingPhaseEnd=01.01.2013 12\:00
 maxCandidates=5
@@ -10,11 +10,11 @@ mixers=5
 electionManagerId=electionmanager
 maxCumulation=5
 certificateAuthorityId=certificateauthority
-talliers=5
-electionId=Gian
+talliers=3
+electionId=HSR2013
 voters=3
 politicalListsFile=candidates/Kandidierendenlisten.xlsx
 electionResultsPath=xml/ElectionResults.xml
 electionAdministratorId=electionadministrator
-tallierIds=tallier1,tallier2,tallier3,tallier4,tallier5
+tallierIds=tallier1,tallier2,tallier3
 votingPhaseBegin=01.01.2013 08\:00
