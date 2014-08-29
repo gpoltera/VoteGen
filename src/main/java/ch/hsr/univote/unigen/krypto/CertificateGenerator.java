@@ -3,17 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ch.hsr.univote.unigen.krypto;
 
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
@@ -34,24 +35,28 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
  * @author Gian Poltéra
  */
 public class CertificateGenerator {
-    ConfigHelper config = new ConfigHelper();
-    
+
+    private ConfigHelper config;
+
     //Adapt to config file
     public static final String STORETYPE = "JKS";
     public static final int KEYSIZE = 1024;
     public static final int VALIDITY = 1000; // days
 
+    public CertificateGenerator() {
+        this.config = VoteGenerator.config;
+    }
+
     /*
      * keytool -genkeypair -storetype JKS -keystore config\keystore.jks -storepass %password% -keypass %password% -alias vsuzh -keyalg RSA -keysize 1024 -dname "CN=VSUZH UniverstÃ¤t ZÃ¼rich" -validity 1000
-keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -alias vsuzh -file data\output\vsuzh.pem
+     keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -alias vsuzh -file data\output\vsuzh.pem
      */
-
-    public String getCertficate(String alias, RSAPrivateKey privateKey, RSAPublicKey publicKey) {
+    public String getCertficate(String alias, PrivateKey privateKey, PublicKey publicKey) {
         // 
         CertificateGenerator ku = new CertificateGenerator();
         X509Certificate cert = ku.createCertitificate("CN=" + config.getElectionId(), config.getSignatureAlgorithm(), privateKey, publicKey);
         String pem = ku.x509ToBase64PEMString(cert);
-        
+
         return pem;
     }
 
@@ -64,52 +69,52 @@ keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -al
      * @param publicKey
      * @return an X%09 V1 certificate
      */
-    public X509Certificate createCertitificate(String cname, String signatureAlgorithm, RSAPrivateKey privateKey, RSAPublicKey publicKey) {
-        X509Certificate cert = null;
+    public X509Certificate createCertitificate(String cname, String signatureAlgorithm, PrivateKey privateKey, PublicKey publicKey) {
+        X509Certificate certificate = null;
         try {
             // See also:
             // http://www.bouncycastle.org/wiki/display/JA1/X.509+Public+Key+Certificate+and+Certification+Request+Generation
             Security.addProvider(new BouncyCastleProvider());
-            
+
             Calendar c = Calendar.getInstance();
             c.setTime(new Date());
-            
+
             // time from which certificate is valid
             Date startDate = c.getTime();
             c.add(Calendar.DATE, VALIDITY); // Adding count of VALIDITY days
             // time after which certificate is not valid
             Date expiryDate = c.getTime();
-            
+
             // serial number for certificate
             BigInteger serialNumber = BigInteger.valueOf(System.currentTimeMillis());
-            
+
             // public/private key pair
             // See also:
             // http://stackoverflow.com/questions/1709441/generate-rsa-key-pair-and-encode-private-as-string
-            
-            
             // construct certificate
-            X509V1CertificateGenerator certGenerator = new X509V1CertificateGenerator();
+            X509V1CertificateGenerator certificateGenerator = new X509V1CertificateGenerator();
             X500Principal dnName = new X500Principal(cname);
-            certGenerator.setSerialNumber(serialNumber);
-            certGenerator.setIssuerDN(dnName);
-            certGenerator.setNotBefore(startDate);
-            certGenerator.setNotAfter(expiryDate);
-            certGenerator.setSubjectDN(dnName);     // note: same as issuer
-            certGenerator.setPublicKey(publicKey);
-            certGenerator.setSignatureAlgorithm(signatureAlgorithm);
-            
+            certificateGenerator.setSerialNumber(serialNumber);
+            certificateGenerator.setIssuerDN(dnName);
+            certificateGenerator.setNotBefore(startDate);
+            certificateGenerator.setNotAfter(expiryDate);
+            certificateGenerator.setSubjectDN(dnName);     // note: same as issuer
+            certificateGenerator.setPublicKey(publicKey);
+            certificateGenerator.setSignatureAlgorithm(signatureAlgorithm);
+
             // get certificate
-            cert = certGenerator.generate(privateKey, "BC");
-            
+            certificate = certificateGenerator.generate(privateKey, "BC");
+
         } catch (CertificateEncodingException | IllegalStateException | NoSuchProviderException | NoSuchAlgorithmException | SignatureException | InvalidKeyException ex) {
             Logger.getLogger(CertificateGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return cert;
+        return certificate;
     }
 
     /**
-     * Converts a X509Certificate instance into a Base64 encoded string (PEM format).
+     * Converts a X509Certificate instance into a Base64 encoded string (PEM
+     * format).
+     *
      * @param cert a certificate
      * @return a string (PEM format)
      */

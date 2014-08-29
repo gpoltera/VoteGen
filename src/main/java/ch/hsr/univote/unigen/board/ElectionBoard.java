@@ -33,6 +33,7 @@ import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SignatureParameters;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
@@ -47,7 +48,7 @@ import java.util.List;
  */
 public class ElectionBoard {
 
-    private ConfigHelper config;
+    private static ConfigHelper config;
     private String electionId;
     public static String[] mixers;
     public static String[] talliers;
@@ -74,11 +75,14 @@ public class ElectionBoard {
     private static List<PoliticalList> politicalLists = new ArrayList<>();
     private static List<Candidate> candidateList = new ArrayList<>();
     private static List<MixedVerificationKey> listMixedVerificationKey = new ArrayList<>();
+    private static List<MixedVerificationKeys> listMixedVerificationKeys = new ArrayList<>();
+    private static List<MixedVerificationKey> listLatelyMixedVerificationKey = new ArrayList<>();
+    private static List<MixedVerificationKeys> listLatelyMixedVerificationKeys = new ArrayList<>();
+    private static List<Certificate> listLatelyCertificate = new ArrayList<>();
     private static List<EncryptionKeyShare> encryptionKeyShareList = new ArrayList<>();
     private static List<MixedEncryptedVotes> mixedEncryptedVotesList = new ArrayList<>();
     private static List<PartiallyDecryptedVotes> partiallyDecryptedVotesList = new ArrayList<>();
     private static List<BlindedGenerator> blindedGeneratorsList = new ArrayList<>();
-    private static List<MixedVerificationKeys> listMixedVerificationKeys = new ArrayList<>();
     private static MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
     private static PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
     private static Signature signatures = new Signature();
@@ -88,7 +92,7 @@ public class ElectionBoard {
 
     /*constructor*/
     public ElectionBoard() {
-        config = new ConfigHelper();
+        this.config = VoteGenerator.config;
         electionId = config.getElectionId();
         talliers = config.getTallierIds();
         mixers = config.getMixerIds();
@@ -264,15 +268,15 @@ public class ElectionBoard {
 
     //OK
     public void setLatelyRegisteredVoterCertificates(List<Certificate> listCertificate) {
-        ElectionBoard.listCertificate = listCertificate;
+        ElectionBoard.listLatelyCertificate = listCertificate;
     }
 
     public List<Certificate> getLatelyRegisteredVoterCertificates() {
-        return ElectionBoard.listCertificate;
+        return ElectionBoard.listLatelyCertificate;
     }
-    
-    public void setLatelyMixedVerificationKeys(List<MixedVerificationKey> listMixedVerificationKey) {
-        ElectionBoard.listMixedVerificationKey = listMixedVerificationKey;
+
+    public void setVerificationKeysLatelyMixedBy(List<MixedVerificationKeys> listMixedVerificationKeys) {
+        ElectionBoard.listLatelyMixedVerificationKeys = listMixedVerificationKeys;
     }
 
     public List<MixedVerificationKey> getVerificationKeysLatelyMixedBy(String mixerId) {
@@ -280,7 +284,7 @@ public class ElectionBoard {
 
         for (int i = 0; i < mixers.length; i++) {
             if (mixers[i].equals(mixerId)) {
-                mixedVerificationKeys.add(this.listMixedVerificationKey.get(i));
+                mixedVerificationKeys.add(this.listLatelyMixedVerificationKey.get(i));
                 break;
             }
         }
@@ -289,10 +293,15 @@ public class ElectionBoard {
     }
 
     // OK
-
-    public List<MixedVerificationKey> getLatelyMixedVerificationKeys() {
-        return ElectionBoard.listMixedVerificationKey;
+    public void setLatelyMixedVerificationKeys(List<MixedVerificationKey> mixedVerificationKeys) {
+        ElectionBoard.listLatelyMixedVerificationKey = mixedVerificationKeys;
     }
+        
+    public List<MixedVerificationKey> getLatelyMixedVerificationKeys() {
+        return ElectionBoard.listLatelyMixedVerificationKey;
+    }
+
+
 
     //OK
     public void setBallots(Ballots ballots) {
@@ -330,15 +339,6 @@ public class ElectionBoard {
         }
 
         return mixedEncryptedVotes;
-    }
-
-    // NICHT OK!!!!
-    public void setMixedEncryptedVotes(MixedEncryptedVotes mixedEncryptedVotes) {
-        ElectionBoard.mixedEncryptedVotes = mixedEncryptedVotes;
-    }
-
-    public MixedEncryptedVotes getMixedEncryptedVotes() {
-        return this.mixedEncryptedVotes;
     }
 
     // OK
@@ -384,8 +384,6 @@ public class ElectionBoard {
         return ElectionBoard.decodedVotes;
     }
 
-    
-    // WIRD NIE BENUTZT!!!
     public void addPoliticalList(PoliticalList politicalList) {
         ElectionBoard.politicalLists.add(politicalList);
     }

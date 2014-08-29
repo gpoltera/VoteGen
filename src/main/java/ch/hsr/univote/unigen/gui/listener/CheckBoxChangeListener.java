@@ -16,11 +16,11 @@ import javax.swing.event.ChangeListener;
  *
  * @author Gian
  */
-public class CheckBoxListener implements ChangeListener {
+public class CheckBoxChangeListener implements ChangeListener {
     private ConfigHelper config;
     private JCheckBox checkBox;
     
-    public CheckBoxListener(JCheckBox checkBox) {
+    public CheckBoxChangeListener(JCheckBox checkBox) {
         this.config = MiddlePanel.config;
         this.checkBox = checkBox;
     }

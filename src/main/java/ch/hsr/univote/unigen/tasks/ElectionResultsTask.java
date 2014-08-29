@@ -19,6 +19,9 @@ import ch.bfh.univote.common.DecodedVotes;
 import ch.bfh.univote.common.ElectionData;
 import ch.bfh.univote.common.PoliticalList;
 import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,7 +35,19 @@ import java.util.Map;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectionResultsTask extends VoteGenerator {
+public class ElectionResultsTask {
+
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+
+    public ElectionResultsTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+
+        run();
+    }
 
     public void run() {
         List<Choice> choices = getChoices();

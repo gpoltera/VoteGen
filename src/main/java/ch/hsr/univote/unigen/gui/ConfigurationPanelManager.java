@@ -5,6 +5,12 @@
  */
 package ch.hsr.univote.unigen.gui;
 
+import ch.hsr.univote.unigen.gui.configuration.AdminsConfigurationPanel;
+import ch.hsr.univote.unigen.gui.configuration.CandidatesConfigurationPanel;
+import ch.hsr.univote.unigen.gui.configuration.InitialConfigurationPanel;
+import ch.hsr.univote.unigen.gui.configuration.FailureConfigurationPanel;
+import ch.hsr.univote.unigen.gui.configuration.CryptoConfigurationPanel;
+import ch.hsr.univote.unigen.gui.configuration.FinishConfigurationPanel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,6 +37,7 @@ public class ConfigurationPanelManager {
         panelsclass.add(2, CandidatesConfigurationPanel.class);
         panelsclass.add(3, CryptoConfigurationPanel.class);
         panelsclass.add(4, FailureConfigurationPanel.class);
+        panelsclass.add(5, FinishConfigurationPanel.class);
     }
 
     public int getSize() {
@@ -39,6 +46,14 @@ public class ConfigurationPanelManager {
 
     public int getActualNumber() {
         return iterator;
+    }
+
+    public String getActualTitle() {
+        String title = new String();
+        if (iterator > 0) {
+            title = panels.get(iterator - 1).getName();
+        }
+        return title;
     }
 
     public JPanel getActualPanel() {

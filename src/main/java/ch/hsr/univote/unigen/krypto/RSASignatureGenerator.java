@@ -36,6 +36,7 @@ import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SummationRule;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import ch.hsr.univote.unigen.helper.TimestampGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
@@ -49,10 +50,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  * @author Gian & Copy From VoteVerifier
  */
 public class RSASignatureGenerator {
-    ConfigHelper config = new ConfigHelper();
+    private ConfigHelper config;
     
     {
         Security.addProvider(new BouncyCastleProvider());
+    }
+
+    public RSASignatureGenerator() {
+        this.config = VoteGenerator.config;
     }
 
     public Signature createSignature(ElectionDefinition electionDefinition, RSAPrivateKey privateKey) {

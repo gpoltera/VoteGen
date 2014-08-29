@@ -8,6 +8,7 @@ package ch.hsr.univote.unigen.krypto;
 import ch.bfh.univote.common.Ballot;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import java.math.BigInteger;
+import java.security.interfaces.DSAPrivateKey;
 
 /**
  *
@@ -15,7 +16,7 @@ import java.math.BigInteger;
  */
 public class SchnorrSignatureGenerator {
 
-    public BigInteger[] createSignature(Ballot ballot, SchnorrSignatureKey schnorrSignatureKey) {
+    public BigInteger[] createSignature(Ballot ballot, DSAPrivateKey privateKey) {
         //concatenate to ( id | (firstValue|secondValue) | ((t)|(s)) )
         StringConcatenator sc = new StringConcatenator();
         sc.pushLeftDelim();
@@ -42,6 +43,6 @@ public class SchnorrSignatureGenerator {
 
         String res = sc.pullAll();
         
-        return new Schnorr().signSchnorr(res, schnorrSignatureKey);
+        return new Schnorr().signSchnorr(res, privateKey);
     }
 }

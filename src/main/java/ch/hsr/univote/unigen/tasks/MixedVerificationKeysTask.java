@@ -8,6 +8,9 @@ package ch.hsr.univote.unigen.tasks;
 import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.math.BigInteger;
 
@@ -15,17 +18,29 @@ import java.math.BigInteger;
  *
  * @author Gian Poltéra
  */
-public class MixedVerificationKeysTask extends VoteGenerator {
+public class MixedVerificationKeysTask {
 
-    public void run() throws Exception {
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+
+    public MixedVerificationKeysTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+
+        run();
+    }
+
+    public void run() {
         /*load the VerificationKey from the last mixer from the ElectionBoard*/
         MixedVerificationKeys mixedVerificationKeys = electionBoard.getVerificationKeysMixedBy(config.getMixerIds()[electionBoard.mixers.length - 1]);
-        
+
         /*create VerificationKeys*/
         VerificationKeys verificationKeys = createVerificationKeys(mixedVerificationKeys);
-        
+
         /*sign by ElectionManager*/
-        verificationKeys.setSignature(new RSASignatureGenerator().createSignature(verificationKeys, keyStore.getElectionManagerPrivateKey()));
+        verificationKeys.setSignature(new RSASignatureGenerator().createSignature(verificationKeys, keyStore.getEMSignatureKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setMixedVerificationKeys(verificationKeys);

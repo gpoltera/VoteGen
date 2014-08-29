@@ -5,9 +5,9 @@ import ch.hsr.univote.unigen.tasks.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.tasks.ElectionOptionsTask;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.board.Publisher;
 import ch.hsr.univote.unigen.db.DBKeyStoreManager;
-import static ch.hsr.univote.unigen.gui.VoteGeneration.appendText;
-import static ch.hsr.univote.unigen.gui.VoteGeneration.updateProgress;
+import ch.hsr.univote.unigen.gui.votegeneration.VoteGenerationPanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.tasks.BallotsTask;
 import ch.hsr.univote.unigen.tasks.BlindedGeneratorTask;
@@ -34,194 +34,275 @@ import ch.hsr.univote.unigen.tasks.LatelyMixedVerificationKeysTask;
 import ch.hsr.univote.unigen.tasks.LatelyRegistredVoterCertsTask;
 import ch.hsr.univote.unigen.tasks.MixedEncryptedVotesByTask;
 
-
-
 /**
  * VoteGenerator
  *
  */
 public class VoteGenerator {
-    public ConfigHelper config = new ConfigHelper();
-    public ElectionBoard electionBoard = new ElectionBoard();
-    public KeyStore keyStore = new KeyStore();
-    
-    public static void electionSequence() throws Exception { 
-        VoteGenerator voteGenerator = new VoteGenerator();
-        
-        voteGenerator.phase1();
-        updateProgress();
-        appendText("----------------------------------");
 
-        voteGenerator.phase2();
-        updateProgress();
-        appendText("----------------------------------");
+    public static ConfigHelper config;
+    public static ElectionBoard electionBoard;
+    public static KeyStore keyStore;
+    public VoteGenerationPanel voteGenerationPanel;
 
-        voteGenerator.phase3();
-        updateProgress();
-        appendText("----------------------------------");
-                
-        voteGenerator.phase4();
-        updateProgress();
-        appendText("----------------------------------");
+    public VoteGenerator(VoteGenerationPanel voteGenerationPanel) {
+        config = new ConfigHelper();
+        electionBoard = new ElectionBoard();
+        keyStore = new KeyStore();
+        this.voteGenerationPanel = voteGenerationPanel;
+        electionSequence();
+    }
+
+    private void electionSequence() {
+        phase1();
+        //updateProgress();
+        voteGenerationPanel.appendText("----------------------------------");
+
+        phase2();
+        //updateProgress();
+        voteGenerationPanel.appendText("----------------------------------");
+
+        phase3();
+        //updateProgress();
+        voteGenerationPanel.appendText("----------------------------------");
+
+        phase4();
+        //updateProgress();
+        voteGenerationPanel.appendText("----------------------------------");
+
+        phase5();
+        //updateProgress();
+        voteGenerationPanel.appendText("----------------------------------");
+
+        phase6();
+        //updateProgress();
+        voteGenerationPanel.appendText("----------------------------------");
+
+        phase7();
+        //updateProgress();
+        voteGenerationPanel.appendText("----------------------------------");
+
+        phase8();
+        //updateProgress();
+        voteGenerationPanel.appendText("----------------------------------");
+
+        phaseStore();
+        voteGenerationPanel.appendText("----------------------------------");
         
-        voteGenerator.phase5();
-        updateProgress();
-        appendText("----------------------------------");
-        
-        voteGenerator.phase6();
-        updateProgress();
-        appendText("----------------------------------");
-        
-        voteGenerator.phase7();
-        updateProgress();
-        appendText("----------------------------------");
-        
-        voteGenerator.phase8();
-        updateProgress();
-        appendText("----------------------------------");
-        
-        voteGenerator.phaseStore();
-        appendText("----------------------------------");
+        Publisher publisher = new Publisher(electionBoard);
+        publisher.startWebSrv();
     }
 
     /* 1.3.1 Public Parameters */
-    private void phase1() throws Exception {
-        appendText("1. Public Parameters");
+    private void phase1() {
+        voteGenerationPanel.appendText("1. Public Parameters");
         //Set the Signature Parameters
-        appendText(" a) Set the Signature Parameters");
-        new SignatureParametersTask().run(); //Set the Schnorr Parameters -> OK
+        voteGenerationPanel.appendText(" a) Set the Signature Parameters");
+        try {
+            new SignatureParametersTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
     }
 
-    /* 1.3.2 Public Indentifiers and Keys */
-    private void phase2() throws Exception {
-        appendText("2. Public Indentifiers and Keys");
+    /* 1.3.2 Public Identifiers and Keys */
+    private void phase2() {
+        voteGenerationPanel.appendText("2. Public Identifiers and Keys");
         //Generate the certificates and keys
-        appendText(" a) Generate the certificates and keys");
-        new ElectionSystemInfoTask().run(); //-> OK
+        voteGenerationPanel.appendText(" a) Generate the certificates and keys");
+        try {
+            new ElectionSystemInfoTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
     }
 
     /* 1.3.3 Registration */
-    private void phase3() throws Exception {
-        appendText("3. Registration");
+    private void phase3() {
+        voteGenerationPanel.appendText("3. Registration");
         //Generate the voters certificates
-        appendText(" a) Generate the voters certificates");
-        new VoterCertsTask().run();  // -> OK
+        voteGenerationPanel.appendText(" a) Generate the voters certificates and keys");
+        try {
+            new VoterCertsTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
     }
 
     /* 1.3.4 Election Setup */
-    private void phase4() throws Exception {
-        appendText("4. Election Setup");
+    private void phase4() {
+        voteGenerationPanel.appendText("4. Election Setup");
         //a) Initialization
-        appendText(" a) Initialization");
+        voteGenerationPanel.appendText(" a) Initialization");
+
         KnownElectionIds knownElectionIds = new KnownElectionIds();
         knownElectionIds.getElectionId().add(config.getElectionId()); //Add the election id
         electionBoard.setKnownElectionIds(knownElectionIds);
-        
+        voteGenerationPanel.appendSuccess();
+
         //b) Election Definition
-        appendText(" b) Election Definition");
-        new ElectionDefinitionTask().run(); // -> OK
-        
+        voteGenerationPanel.appendText(" b) Election Definition");
+        try {
+            new ElectionDefinitionTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
+
         //c) Parameter Generation
-        appendText(" c) Parameter Generation");
-        new EncryptionParametersTask().run(); //Set the ElGamal Parameters -> OK
-        
+        voteGenerationPanel.appendText(" c) Parameter Generation");
+        try {
+            new EncryptionParametersTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        } //Set the ElGamal Parameters -> OK
+
         //d) Distributed Key Generation
-        appendText(" d) Distributed Key Generation");
-        new EncryptionKeyShareTask().run(); // -> OK
-        new EncryptionKeyTask().run(); // -> OK
-        
+        voteGenerationPanel.appendText(" d) Distributed Key Generation");
+        try {
+            new EncryptionKeyShareTask();
+            new EncryptionKeyTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        } // OK
+
         //e) Constructing the Election Generator
-        appendText(" e) Constructing the Election Generator");
-        new BlindedGeneratorTask().run(); // -> OK
-        new ElectionGeneratorTask().run(); // -> OK   
+        voteGenerationPanel.appendText(" e) Constructing the Election Generator");
+        try {
+            new BlindedGeneratorTask();
+            new ElectionGeneratorTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        } // OK
     }
 
     /* 1.3.5 Election Preparation */
-    private void phase5() throws Exception {
-        appendText("5. Election Preparation");
+    private void phase5() {
+        voteGenerationPanel.appendText("5. Election Preparation");
         //a) Definition of Election Options
-        appendText(" a) Definition of Election Options");
-        ElectionOptionsTask electionOptionsTask = new ElectionOptionsTask();
-        electionOptionsTask.run(); //Set the ElectionOptions -> OK
+        voteGenerationPanel.appendText(" a) Definition of Election Options");
+        try {
+            new ElectionOptionsTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        } //Set the ElectionOptions -> OK
 
         //b) Publication of Election Data
-        appendText(" b) Publication of Election Data");
-        ElectionDataTask electionDataTask = new ElectionDataTask();
-        electionDataTask.run(); //Add the results to the electionData -> OK
+        voteGenerationPanel.appendText(" b) Publication of Election Data");
+        try {
+            new ElectionDataTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        } //Add the results to the electionData -> OK
 
         //c) Electoral Roll Preparation 
-        appendText(" c) Electoral Roll Preparation ");
-        ElectoralRollTask electoralRollTask = new ElectoralRollTask();
-        electoralRollTask.run(); //Lists the votersid -> OK
+        voteGenerationPanel.appendText(" c) Electoral Roll Preparation ");
+        try {
+            new ElectoralRollTask(); //??????
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        } //Lists the votersid -> OK
 
         //d) Mixing the Public Verification Keys
-        appendText(" d) Mixing the Public Verification Keys");
-        MixedVerificationKeysByTask mixedVerificationKeysByTask = new MixedVerificationKeysByTask();
-        mixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
-        MixedVerificationKeysTask mixedVerificationKeysTask = new MixedVerificationKeysTask();
-        mixedVerificationKeysTask.run(); //NOT YET IMPLEMENTED
+        voteGenerationPanel.appendText(" d) Mixing the Public Verification Keys");
+        try {
+            new MixedVerificationKeysByTask();
+            new MixedVerificationKeysTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        } //NOT YET IMPLEMENTED
     }
 
     /* 1.3.6 Election Period */
-    private void phase6() throws Exception {
-        appendText("6. Election Period");
-        
+    private void phase6() {
+        voteGenerationPanel.appendText("6. Election Period");
+
         //a) Late Registration
-        appendText(" a) Late Registration");
-        LatelyRegistredVoterCertsTask latelyRegistredVoterCertsTask = new LatelyRegistredVoterCertsTask();
-        latelyRegistredVoterCertsTask.run(); //Add the Certificates of the voters to the list -> OK
-        LatelyMixedVerificationKeysByTask latelyMixedVerificationKeysByTask = new LatelyMixedVerificationKeysByTask();
-        latelyMixedVerificationKeysByTask.run(); //NOT YET IMPLEMENTED
-        LatelyMixedVerificationKeysTask latelyMixedVerificationKeysTask = new LatelyMixedVerificationKeysTask();
-        latelyMixedVerificationKeysTask.run(); //NOT YET IMPLEMENTED
+        voteGenerationPanel.appendText(" a) Late Registration");
+        try {
+            new LatelyRegistredVoterCertsTask(); //Add the Certificates of the voters to the list -> OK
+            new LatelyMixedVerificationKeysByTask(); //NOT YET IMPLEMENTED
+            new LatelyMixedVerificationKeysTask(); //NOT YET IMPLEMENTED
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
 
         //c) Vote Creation and Casting
-        appendText(" b) Vote Creation and Casting");
-        BallotsTask ballotsTask = new BallotsTask();
-        ballotsTask.run(); //Create the ballots
-        SingleBallotTask singleBallotTask = new SingleBallotTask();
-        singleBallotTask.run();
-        EncryptedVotesTask encryptedVotesTask = new EncryptedVotesTask();
-        encryptedVotesTask.run();
+        voteGenerationPanel.appendText(" b) Vote Creation and Casting");
+        try {
+            new BallotsTask(); //Create the ballots
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
     }
 
     /* 1.3.7 Mixing and Tallying */
-    private void phase7() throws Exception {
-        appendText("7. Mixing and Tallying");
-        
+    private void phase7() {
+        voteGenerationPanel.appendText("7. Mixing and Tallying");
+
         //a) Mixing the Encryptions
-        appendText(" a) Mixing the Encryptions");
-        MixedEncryptedVotesByTask mixedEncryptedVotesByTask = new MixedEncryptedVotesByTask();
-        mixedEncryptedVotesByTask.run();
+        voteGenerationPanel.appendText(" a) Mixing the Encryptions");
+        try {
+            new MixedEncryptedVotesByTask();
+            new EncryptedVotesTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
 
         //b) Decrypting the Votes
-        appendText(" b) Decrypting the Votes");
-        PartiallyDecryptedVotesTask partiallyDecryptedVotesTask = new PartiallyDecryptedVotesTask();
-        partiallyDecryptedVotesTask.run();
-        DecryptedVotesTask decryptedVotesTask = new DecryptedVotesTask();
-        decryptedVotesTask.run();
-        DecodedVotesTask decodedVotesTask = new DecodedVotesTask();
-        decodedVotesTask.run();
+        voteGenerationPanel.appendText(" b) Decrypting the Votes");
+        try {
+            new PartiallyDecryptedVotesTask();
+            new DecryptedVotesTask();
+            new DecodedVotesTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
 
-        ElectionResultsTask electionResultsTask = new ElectionResultsTask();
-        electionResultsTask.run(); //Performing the election results  
+        try {
+            //new ElectionResultsTask(); //Performing the election results 
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
     }
 
     /* Fault Implementation */
-    private void phase8() throws Exception {
-        appendText("8. Fault Implementation");
-        
+    private void phase8() {
+        voteGenerationPanel.appendText("8. Fault Implementation");
+
         //Implements the Faults
-        appendText(" a) Implements the Faults");
-        //FaultGeneratorTask faultGeneratorTask = new FaultGeneratorTask();
-        //faultGeneratorTask.run();
+        voteGenerationPanel.appendText(" a) Implements the Faults");
+        try {
+            new FaultGeneratorTask();
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
     }
-    
+
     /* Store in DB */
-    private void phaseStore() throws Exception {
-        appendText("Store the Keys in the DB");
-        DBKeyStoreManager dbksm = new DBKeyStoreManager();
-        dbksm.saveInDB(config.getElectionId());
-        appendText("Store the ElectionBoard in the DB");
+    private void phaseStore() {
+        voteGenerationPanel.appendText("Store the Keys in the DB");
+        try {
+            new DBKeyStoreManager().saveInDB(config.getElectionId());
+            voteGenerationPanel.appendSuccess();
+        } catch (Exception e) {
+            voteGenerationPanel.appendFailure(e.getMessage().toString());
+        }
     }
 }

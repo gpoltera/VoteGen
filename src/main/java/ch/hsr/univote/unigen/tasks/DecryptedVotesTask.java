@@ -5,73 +5,96 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
-import ch.bfh.univote.common.Candidate;
-import ch.bfh.univote.common.Choice;
 import ch.bfh.univote.common.DecryptedVotes;
-import ch.bfh.univote.common.PoliticalList;
+import ch.bfh.univote.common.EncryptedVote;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.helper.StringConcatenator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.krypto.ElGamal;
 import java.math.BigInteger;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Gian Poltéra
  */
-public class DecryptedVotesTask extends VoteGenerator {
+public class DecryptedVotesTask {
 
-    public void run() throws Exception {
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+
+    public DecryptedVotesTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+
+        run();
+    }
+
+    private void run() {
         /*create DecryptedVotes*/
         DecryptedVotes decryptedVotes = createDecryptedVotes();
-        
-        /*sign by ElectionManager TBA*/
-        //decryptedVotes.setSignature(SignatureGenerator.createSignature(decryptedVotes, keyStore.electionManagerPrivateKey));
-        
+
+        /*sign by ElectionManager*/
+        //decryptedVotes.setSignature(new RSASignatureGenerator().createSignature(decryptedVotes, keyStore.getEMSignatureKey()));
         /*submit to ElectionBoard*/
-        electionBoard.setDecryptedVotes(decryptedVotes);        
+        electionBoard.setDecryptedVotes(decryptedVotes);
     }
 
     private DecryptedVotes createDecryptedVotes() {
         DecryptedVotes decryptedVotes = new DecryptedVotes();
         decryptedVotes.setElectionId(config.getElectionId());
 
-        /*for each Voter*/
-        for (int i = 0; i < config.getVotersNumber(); i++) {
-            Random generator = new Random();
-            /*concatenate to cnln..c2c1li BitString*/
-            StringConcatenator sc = new StringConcatenator();
+        List<EncryptedVote> encryptedVotes = electionBoard.getEncryptedVotes().getVote();
+        String[] talliers = electionBoard.talliers;
 
-            /*loop each choice and generate a vote*/
-            for (int j = 0; j < electionBoard.getElectionOptions().getChoice().size(); j++) {
-                Choice choice = electionBoard.getElectionOptions().getChoice().get(electionBoard.getElectionOptions().getChoice().size() - j - 1);
-                if (choice instanceof PoliticalList) {
-                    PoliticalList politicalList = (PoliticalList) choice;
-                    electionBoard.addPoliticalList(politicalList);
-                    sc.pushObject(1);
-                } else if (choice instanceof Candidate) {
-                    Candidate candidate = (Candidate) choice;
-                    electionBoard.addCandidate(candidate);
-                    int ramdonCount = generator.nextInt(config.getMaxCumulation());
-                    String maxBinCan = Integer.toBinaryString(config.getMaxCumulation());
-                    String binChoice = Integer.toBinaryString(ramdonCount);
-                    /*fill with 0 for correct BitString*/
-                    while (binChoice.length() < maxBinCan.length()) {
-                        binChoice = "0" + binChoice;
-                    }
-                    sc.pushObject(binChoice);
-                }
+        BigInteger p = electionBoard.getEncryptionParameters().getPrime();
+        BigInteger q = electionBoard.getEncryptionParameters().getGroupOrder();
+        List<BigInteger> a = new ArrayList<>();
+        List<BigInteger> b = new ArrayList<>();
+
+        /*for each tallier*/
+        BigInteger[][] a_ij = new BigInteger[encryptedVotes.size()][talliers.length];
+
+        for (int j = 0; j < talliers.length; j++) {
+            List<BigInteger> partiallyDecryptedVotes = electionBoard.getPartiallyDecryptedVotes(talliers[j]).getVote();
+            for (int i = 0; i < partiallyDecryptedVotes.size(); i++) {
+                a_ij[i][j] = partiallyDecryptedVotes.get(i);
             }
-            /*convert from BitString to decimal*/
-            BigInteger vote = new BigInteger(sc.pullAll(), 2);
-
-            decryptedVotes.getVote().add(vote);
-
-            //     00  0  00 00 00 0
-            //     --  -  -- -- -- -
-            //     C4  L2 C3 C2 C1 L1
-            //
-            // cId 6  5  4  3  2  1                      
         }
-        return decryptedVotes; 
+
+        /*compute a*/
+        for (int i = 0; i < a_ij.length; i++) {
+            BigInteger multi = new BigInteger("1");
+            for (int j = 0; j < a_ij[i].length; j++) {
+                multi = multi.multiply(a_ij[i][j]).mod(p);
+            }
+            a.add(multi);
+        }
+
+        /*for each EncryptedVote*/
+        for (EncryptedVote encryptedVote : encryptedVotes) {
+            b.add(encryptedVote.getSecondValue());
+        }
+
+        /*Decryption*/
+        for (int i = 0; i < a.size(); i++) {
+
+            BigInteger m = b.get(i).multiply(a.get(i)).mod(p);
+            if (m.compareTo(q) < 1) {
+                m.subtract(BigInteger.ONE);
+            } else {
+                p.subtract(m).subtract(BigInteger.ONE);
+            }
+
+            decryptedVotes.getVote().add(m);
+            System.out.println("DecryptedVotes:");
+            System.out.println(m);
+        }
+
+        return decryptedVotes;
     }
 }

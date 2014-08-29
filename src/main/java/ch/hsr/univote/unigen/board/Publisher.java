@@ -19,41 +19,47 @@ import javax.xml.ws.Endpoint;
  */
 public class Publisher {
 
-    private static String ip = "localhost";
-    private static int port = 8080;
-    static Endpoint ep = Endpoint.create(new ElectionBoardWebService());
+    private ElectionBoard electionBoard;
+    private Endpoint endpoint;
 
-    public static void startWebSrv() throws IOException {
+    private final static String IP = "localhost";
+    private final static int PORT = 8080;
+
+    public Publisher(ElectionBoard electionBoard) {
+        this.electionBoard = electionBoard;
+    }
+
+    public void startWebSrv() {
+        endpoint = Endpoint.create(new ElectionBoardWebService(this.electionBoard));
 
         if (checkPort()) {
-            appendFailure("Port " + port + " wird bereits verwendet");
+            appendFailure("Port " + PORT + " wird bereits verwendet");
         } else {
-            ep.publish("http://" + ip + ":" + port + "/ElectionBoardService/ElectionBoardServiceImpl");
-            updateProgress();
+            endpoint.publish("http://" + IP + ":" + PORT + "/ElectionBoardService/ElectionBoardServiceImpl");
+            //updateProgress();
             System.out.println("Webservice start");
-            appendText("Webservice gestartet");
+            //appendText("Webservice gestartet");
         }
     }
 
-    public static void stopWebSrv() {
-        appendText("Webservice wird beendet");
-        ep.stop();
-        ep = Endpoint.create(new ElectionBoardWebService());
+    public void stopWebSrv() {
+        //appendText("Webservice wird beendet");
+        endpoint.stop();
         System.out.println("Webservice stop");
     }
 
-    public static boolean checkPort() throws IOException {
+    private boolean checkPort() {
         Boolean result = false;
 
         try {
-            InetAddress ia = InetAddress.getByName(ip);
-            Socket s = new Socket(ia, port);
+            InetAddress ia = InetAddress.getByName(IP);
+            Socket s = new Socket(ia, PORT);
             result = true;
             s.close();
         } catch (IOException ex) {
             result = false;
         }
-        
+
         return result;
     }
 }

@@ -6,8 +6,21 @@
 package ch.hsr.univote.unigen.krypto;
 
 import ch.bfh.univote.common.SignatureParameters;
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
+import java.security.spec.DSAPrivateKeySpec;
+import java.security.spec.DSAPublicKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 
 /**
@@ -16,25 +29,36 @@ import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
  */
 public class Schnorr {
 
-    ConfigHelper config = new ConfigHelper();
+    private ConfigHelper config;
+
+    public Schnorr() {
+        this.config = VoteGenerator.config;
+    }
 
     /**
      *
      * @param signatureParameters
      * @return keyPair
      */
-    public BigInteger[] getKeyPair(SignatureParameters signatureParameters) {
-        
-        BigInteger p = signatureParameters.getPrime();
-        BigInteger q = signatureParameters.getGroupOrder();
-        BigInteger g = signatureParameters.getGenerator();
-        
-        BigInteger[] keyPair = new BigInteger[2];
-        BigInteger signatureKey = PrimeGenerator.getPrime(q.bitLength() - 1);
-        BigInteger verificationKey = g.modPow(signatureKey, p);
+    public KeyPair getKeyPair(SignatureParameters signatureParameters) {
+        KeyPair keyPair = null;
+        try {
+            BigInteger p = signatureParameters.getPrime();
+            BigInteger q = signatureParameters.getGroupOrder();
+            BigInteger g = signatureParameters.getGenerator();
 
-        keyPair[0] = signatureKey;
-        keyPair[1] = verificationKey;
+            BigInteger x = PrimeGenerator.getPrime(q.bitLength() - 1);
+            BigInteger y = g.modPow(x, p);
+
+            KeyFactory keyFactory = KeyFactory.getInstance("DSA");
+            PrivateKey privateKey = keyFactory.generatePrivate(new DSAPrivateKeySpec(x, p, q, g));
+            PublicKey publicKey = keyFactory.generatePublic(new DSAPublicKeySpec(y, p, q, g));
+            
+            keyPair = new KeyPair(publicKey, privateKey);
+            
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            Logger.getLogger(Schnorr.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         return keyPair;
     }
@@ -42,15 +66,15 @@ public class Schnorr {
     /**
      *
      * @param m Message to sign
-     * @param schnorrSignatureKey
+     * @param privateKey Schnorr PrivateKey
      * @return Signature (b,a)
      */
-    public BigInteger[] signSchnorr(String m, SchnorrSignatureKey schnorrSignatureKey) {
+    public BigInteger[] signSchnorr(String m, DSAPrivateKey privateKey) {
 
-        BigInteger p = schnorrSignatureKey.getPrime();
-        BigInteger q = schnorrSignatureKey.getGroupOrder();
-        BigInteger g = schnorrSignatureKey.getGenerator();
-        BigInteger sk = schnorrSignatureKey.getSignatureKey();
+        BigInteger p = privateKey.getParams().getP();
+        BigInteger q = privateKey.getParams().getQ();
+        BigInteger g = privateKey.getParams().getG();
+        BigInteger x = privateKey.getX();
         BigInteger[] s = new BigInteger[2];
 
         BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
@@ -58,7 +82,7 @@ public class Schnorr {
         byte[] mgr = ByteUtils.concatenate(m.getBytes(), gr.toByteArray());
 
         BigInteger a = new Hash().getHash(mgr, config.getHashAlgorithm());
-        BigInteger b = r.subtract(sk.multiply(a)).mod(q);
+        BigInteger b = r.subtract(x.multiply(a)).mod(q);
 
         s[0] = b;
         s[1] = a;
@@ -70,20 +94,20 @@ public class Schnorr {
      *
      * @param m Message to verify
      * @param s Signature (b,a)
-     * @param verificationKey
+     * @param publicKey Schnorr PublicKey
      * @return boolean match true/false
      */
-    public boolean verifySchnorr(String m, BigInteger[] s, SchnorrVerificationKey verificationKey) {
+    public boolean verifySchnorr(String m, BigInteger[] s, DSAPublicKey publicKey) {
 
         BigInteger b = s[0];
         BigInteger a = s[1];
 
-        BigInteger p = verificationKey.getPrime();
-        BigInteger q = verificationKey.getGroupOrder();
-        BigInteger g = verificationKey.getGenerator();
-        BigInteger vk = verificationKey.getVerificationKey();
+        BigInteger p = publicKey.getParams().getP();
+        BigInteger q = publicKey.getParams().getQ();
+        BigInteger g = publicKey.getParams().getG();
+        BigInteger y = publicKey.getY();
 
-        BigInteger rv = g.modPow(b, p).multiply(vk.modPow(a, p)).mod(p);
+        BigInteger rv = g.modPow(b, p).multiply(y.modPow(a, p)).mod(p);
         byte[] mrv = ByteUtils.concatenate(m.getBytes(), rv.toByteArray());
 
         BigInteger av = new Hash().getHash(mrv, config.getHashAlgorithm());

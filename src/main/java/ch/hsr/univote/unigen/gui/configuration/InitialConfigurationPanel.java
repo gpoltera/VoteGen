@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.univote.unigen.gui;
+package ch.hsr.univote.unigen.gui.configuration;
 
+import ch.hsr.univote.unigen.gui.MiddlePanel;
 import ch.hsr.univote.unigen.gui.listener.SpinnerChangeListener;
 import ch.hsr.univote.unigen.gui.listener.TextFieldChangeListener;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
@@ -38,18 +39,21 @@ public class InitialConfigurationPanel extends JPanel {
         panel = new JPanel();
         createInitialConfigurationPanel();
         this.add(panel);
+        this.setName(bundle.getString("initialconfiguration"));
     }
 
     private void createInitialConfigurationPanel() {
         panel.setBorder(new EtchedBorder());
+        panel.setName(bundle.getString("initialconfiguration"));
 
         labels = new ArrayList<>();
         labels.add("electionId");
         labels.add("electionTitle");
-        labels.add("voters");
-        labels.add("mixers");
-        labels.add("talliers");
+        labels.add("Voters");
+        labels.add("Mixers");
+        labels.add("Talliers");
         labels.add("candidates");
+        labels.add("lists");
         labels.add("maxCandidates");
         labels.add("maxCumulation");
 

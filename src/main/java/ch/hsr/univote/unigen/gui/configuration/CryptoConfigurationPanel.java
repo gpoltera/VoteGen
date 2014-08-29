@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.univote.unigen.gui;
+package ch.hsr.univote.unigen.gui.configuration;
 
+import ch.hsr.univote.unigen.gui.MiddlePanel;
 import ch.hsr.univote.unigen.gui.listener.ComboBoxChangeListener;
 import ch.hsr.univote.unigen.gui.listener.SliderChangeListener;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
@@ -38,10 +39,12 @@ public class CryptoConfigurationPanel extends JPanel {
 
         createCryptoConfigurationPanel();
         this.add(panel);
+        this.setName(bundle.getString("cryptoconfiguration"));
     }
 
     private void createCryptoConfigurationPanel() {
         panel.setBorder(new EtchedBorder());
+        panel.setName(bundle.getString("cryptoconfiguration"));
 
         builder = new PanelBuilder(new FormLayout(""));
         builder.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -114,7 +117,10 @@ public class CryptoConfigurationPanel extends JPanel {
         slider.setMajorTickSpacing(1024);
         slider.setMaximum(4096);
         slider.setMinimum(1024);
-        slider.setValue(Integer.parseInt(config.getProperty(key)));
+        slider.setValue(1024);
+        if (config.existProperty(key)) {
+            slider.setValue(Integer.parseInt(config.getProperty(key)));
+        }
         slider.setMinorTickSpacing(1024);
         slider.setPaintLabels(true);
         slider.setPaintTicks(true);

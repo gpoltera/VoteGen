@@ -34,7 +34,12 @@ public class TextFieldChangeListener implements DocumentListener {
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-        textField.setBackground(Color.red);
+        if (textField.getText().isEmpty()) {
+            textField.setBackground(Color.red);
+        } else {
+            textField.setBackground(Color.white);
+            config.setProperty(textField.getName(), textField.getText());
+        }
     }
 
     @Override

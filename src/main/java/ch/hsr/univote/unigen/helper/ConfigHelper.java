@@ -74,15 +74,29 @@ public class ConfigHelper {
     }
 
     public String[] getMixerIds() {
-        return getListProperty("mixerIds", "Identifikator der Mixer");
+        int mixerNumber = getMixersNumber();
+        String[] mixerIds = new String[mixerNumber];
+
+        for (int i = 0; i < mixerNumber; i++) {
+            String mixerId = "Mixer" + (i + 1) + "Id";
+            mixerIds[i] = getProperty(mixerId);
+        }
+        return mixerIds;
     }
 
     public String[] getTallierIds() {
-        return getListProperty("tallierIds", "Identifikator der Tallier");
+        int tallierNumber = getTalliersNumber();
+        String[] tallierIds = new String[tallierNumber];
+
+        for (int i = 0; i < tallierNumber; i++) {
+            String tallierId = "Tallier" + (i + 1) + "Id";
+            tallierIds[i] = getProperty(tallierId);
+        }
+        return tallierIds;
     }
 
     public String[] getCandidate(int i) {
-        return getListProperty("candidate" + i, "Kandidat defininieren (Nummer, Name, Vorname, Geschlecht, Alter");
+        return getListProperty("candidate" + i, "Kandidat defininieren (Nummer, Name, Vorname, Geschlecht, Alter, Liste");
     }
 
     public int getEncryptionKeyLength() {
@@ -214,19 +228,23 @@ public class ConfigHelper {
     }
 
     public int getVotersNumber() {
-        return getIntProperty("voters", "Anzahl der Waehlenden");
+        return getIntProperty("Voters", "Anzahl der Waehlenden");
     }
 
     public int getCandidatesNumber() {
         return getIntProperty("candidates", "Anzahl der Kandidaten");
     }
 
+    public int getListsNumber() {
+        return getIntProperty("lists", "Anzahl Listen");
+    }
+
     public int getMixersNumber() {
-        return getIntProperty("mixers", "Anzahl der Mixer");
+        return getIntProperty("Mixers", "Anzahl der Mixer");
     }
 
     public int getTalliersNumber() {
-        return getIntProperty("talliers", "Anzahl der Tallier");
+        return getIntProperty("Talliers", "Anzahl der Tallier");
     }
 
     //Faults

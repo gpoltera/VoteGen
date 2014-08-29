@@ -5,6 +5,7 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
+import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -20,13 +21,17 @@ import java.util.logging.Logger;
  */
 public class RSA {
 
-    ConfigHelper config = new ConfigHelper();
+    private ConfigHelper config;
+
+    public RSA() {
+        this.config = VoteGenerator.config;
+    }
 
     /**
      *
      * @return a new RSAKeyPair
      */
-    public KeyPair getRSAKeyPair() {
+    public KeyPair getKeyPair() {
         KeyPair keyPair = null;
         try {
             KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(config.getSignatureKeyType());

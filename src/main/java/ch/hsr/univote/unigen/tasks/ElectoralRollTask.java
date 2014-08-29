@@ -13,6 +13,9 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.ElectoralRoll;
 import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FormatException;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.io.FileNotFoundException;
@@ -27,9 +30,21 @@ import java.util.List;
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectoralRollTask extends VoteGenerator {
+public class ElectoralRollTask {
 
-    public void run() throws FileNotFoundException, FormatException, NoSuchAlgorithmException, Exception {
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+
+    public ElectoralRollTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+
+        run();
+    }
+
+    private void run() {
         List<String> voterIds = new ArrayList<>();
 
         for (int i = 0; i < config.getVotersNumber(); i++) {
@@ -38,17 +53,17 @@ public class ElectoralRollTask extends VoteGenerator {
 
         /*create ElectoralRoll*/
         ElectoralRoll electoralRoll = createRoll(voterIds);
-        
+
         /*sign by ElectionAdministrator*/
-        electoralRoll.setSignature(new RSASignatureGenerator().createSignature(electoralRoll, keyStore.getElectionAdministratorPrivateKey()));
-        
+        electoralRoll.setSignature(new RSASignatureGenerator().createSignature(electoralRoll, keyStore.getEASignatureKey()));
+
         /*submit to ElectionBoard*/
         electionBoard.setElectoralRoll(electoralRoll);
     }
 
     private ElectoralRoll createRoll(List<String> voterIds) {
+        ElectoralRoll electoralRoll = new ElectoralRoll();
         try {
-            ElectoralRoll electoralRoll = new ElectoralRoll();
             electoralRoll.setElectionId(config.getElectionId());
             MessageDigest messageDigest = MessageDigest.getInstance(config.getHashAlgorithm());
             for (String voterId : voterIds) {
@@ -56,9 +71,11 @@ public class ElectoralRollTask extends VoteGenerator {
                 byte[] digest = messageDigest.digest();
                 electoralRoll.getVoterHash().add(new BigInteger(digest));
             }
-            return electoralRoll;
+            
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+        
+        return electoralRoll;
     }
 }

@@ -5,14 +5,19 @@
  */
 package ch.hsr.univote.unigen.gui;
 
+import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.gui.votegeneration.VoteGenerationPanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
 /**
@@ -20,9 +25,12 @@ import javax.swing.border.EtchedBorder;
  * @author Gian
  */
 public class MiddlePanel extends JPanel {
+
     private ResourceBundle bundle;
-    private JPanel panel, statusBar;
-    private JButton prevButton, nextButton, saveButton;
+    private JPanel panel, startpage, statusBar, titleBar;
+    private VoteGenerationPanel voteGeneration;
+    private JButton prevButton, nextButton, saveButton, generateButton;
+    private JLabel title;
     private JProgressBar progressBar;
     private ConfigurationPanelManager panelManager;
     public static ConfigHelper config;
@@ -33,36 +41,68 @@ public class MiddlePanel extends JPanel {
         config = new ConfigHelper();
         panel = new JPanel();
         panelManager = new ConfigurationPanelManager();
-        
-        createConfigurationPanel();
-        nextPanel();
+        panel.setLayout(new BorderLayout());
+        createTitleBarPanel();
+        createStartpagePanel();
 
         this.add(panel);
     }
 
-    public void nextPanel() {
-        if (panelManager.getActualNumber() < panelManager.getSize()) {
-            panel.remove(panelManager.getActualPanel());
-            panel.add(panelManager.getNextPanel(), BorderLayout.CENTER);
-            updateProgressBar(panelManager.getActualNumber()-1);
-            validate();
-            repaint();
-        }
+    private void createTitleBarPanel() {
+        titleBar = new JPanel();
+        titleBar.setBorder(new EtchedBorder());
+
+        title = new JLabel();
+        title.setText("TITLE");
+        title.setFont(new Font("Tahoma", 1, 24));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        titleBar.add(title);
+
+        panel.add(titleBar, BorderLayout.NORTH);
     }
 
-    public void previousPanel() {
-        if (panelManager.getActualNumber() > 1) {
-            panel.remove(panelManager.getActualPanel());
-            panel.add(panelManager.getPreviousPanel(), BorderLayout.CENTER);
-            updateProgressBar(panelManager.getActualNumber()-1);
-            validate();
-            repaint();
-        }
+    private void updateTitle(String name) {
+        title.setText(name);
+    }
+
+    private void createStartpagePanel() {
+        startpage = new JPanel();
+        JButton button = new JButton();
+        button.setText("Starte die Konfiguration");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                createConfigurationPanel();
+            }
+        });
+        startpage.add(button);
+
+        panel.add(startpage);
     }
 
     private void createConfigurationPanel() {
-        panel.setLayout(new BorderLayout());
+        panel.remove(startpage);
         createConfigurationStatusBarPanel();
+        nextPanel();
+    }
+
+    private void createVoteGenerationPanel() {
+        panel.remove(panelManager.getActualPanel());
+
+        voteGeneration = new VoteGenerationPanel();
+
+        voteGeneration.setName(bundle.getString("generatevote"));
+
+        new Thread() {
+            public void run() {
+                new VoteGenerator(voteGeneration);
+            }
+        }.start();
+        //new VoteGenerator(voteGeneration);
+
+        panel.add(voteGeneration);
+        validate();
+        repaint();
     }
 
     private void createConfigurationStatusBarPanel() {
@@ -90,7 +130,18 @@ public class MiddlePanel extends JPanel {
             }
         });
         statusBar.add(saveButton, BorderLayout.CENTER);
-        
+
+        generateButton = new JButton();
+        generateButton.setText(bundle.getString("generatevote"));
+        generateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                config.saveProperties(config.CONFIG_FILE);
+                removeConfigurationStatusBarPanel();
+                createVoteGenerationPanel();
+            }
+        });
+
         nextButton = new JButton();
         nextButton.setText(bundle.getString("nextpage"));
         nextButton.addActionListener(new ActionListener() {
@@ -102,25 +153,54 @@ public class MiddlePanel extends JPanel {
         statusBar.add(nextButton, BorderLayout.EAST);
 
         progressBar = new JProgressBar();
-        progressBar.setMaximum(panelManager.getSize()-1);
+        progressBar.setMaximum(panelManager.getSize() - 1);
         statusBar.add(progressBar, BorderLayout.SOUTH);
 
         panel.add(statusBar, BorderLayout.SOUTH);
     }
-    
+
+    private void removeConfigurationStatusBarPanel() {
+        statusBar.removeAll();
+        validate();
+        repaint();
+    }
+
+    public void nextPanel() {
+        if (panelManager.getActualNumber() < panelManager.getSize()) {
+            panel.remove(panelManager.getActualPanel());
+            panel.add(panelManager.getNextPanel(), BorderLayout.CENTER);
+            updateTitle(panelManager.getActualTitle());
+            updateProgressBar(panelManager.getActualNumber() - 1);
+            validate();
+            repaint();
+        }
+    }
+
+    public void previousPanel() {
+        if (panelManager.getActualNumber() > 1) {
+            panel.remove(panelManager.getActualPanel());
+            panel.add(panelManager.getPreviousPanel(), BorderLayout.CENTER);
+            updateTitle(panelManager.getActualTitle());
+            updateProgressBar(panelManager.getActualNumber() - 1);
+            validate();
+            repaint();
+        }
+    }
+
     private void updateProgressBar(int value) {
         progressBar.setValue(value);
-        
+
         if (value == 0) {
             prevButton.setEnabled(false);
         } else {
             prevButton.setEnabled(true);
         }
-        if (value == panelManager.getSize()-1) {
+        if (value == panelManager.getSize() - 1) {
             nextButton.setEnabled(false);
+            statusBar.remove(saveButton);
+            statusBar.add(generateButton, BorderLayout.CENTER);
         } else {
             nextButton.setEnabled(true);
         }
-        
     }
 }

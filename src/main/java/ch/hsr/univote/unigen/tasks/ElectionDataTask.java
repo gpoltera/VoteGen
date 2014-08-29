@@ -7,20 +7,35 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.ElectionData;
 import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 
 /**
  *
  * @author Gian
  */
-public class ElectionDataTask extends VoteGenerator {
+public class ElectionDataTask {
 
-    public void run() throws Exception {
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+
+    public ElectionDataTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+        
+        run();
+    }
+
+    private void run() {
         /*create ElectionData*/
         ElectionData electionData = createElectionData();
 
         /*sign by ElectionaManager*/
-        electionData.setSignature(new RSASignatureGenerator().createSignature(electionData, keyStore.getElectionManagerPrivateKey()));
+        electionData.setSignature(new RSASignatureGenerator().createSignature(electionData, keyStore.getEMSignatureKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setElectionData(electionData);
@@ -34,7 +49,7 @@ public class ElectionDataTask extends VoteGenerator {
         electionData.setGenerator(electionBoard.getEncryptionParameters().getGenerator());
         electionData.setGroupOrder(electionBoard.getEncryptionParameters().getGroupOrder());
         electionData.setPrime(electionBoard.getEncryptionParameters().getPrime());
-        electionData.setTitle(config.getElectionId());
+        electionData.setTitle(config.getElectionTitle());
         electionData.getChoice().addAll(electionBoard.getElectionOptions().getChoice());
         electionData.getRule().addAll(electionBoard.getElectionOptions().getRule());
 

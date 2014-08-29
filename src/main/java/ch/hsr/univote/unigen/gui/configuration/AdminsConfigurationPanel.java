@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.univote.unigen.gui;
+package ch.hsr.univote.unigen.gui.configuration;
 
+import ch.hsr.univote.unigen.gui.MiddlePanel;
 import ch.hsr.univote.unigen.gui.listener.TextFieldChangeListener;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -12,7 +13,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -38,11 +38,13 @@ public class AdminsConfigurationPanel extends JPanel {
         createAdminsConfigurationPanel();
 
         this.add(panel);
+        this.setName(bundle.getString("adminconfiguration"));
     }
 
     private void createAdminsConfigurationPanel() {
         panel.setBorder(new EtchedBorder());
-        
+        panel.setName(bundle.getString("adminconfiguration"));
+
         labels = new ArrayList<>();
         labels.add("certificateAuthorityId");
         labels.add("electionManagerId");
@@ -71,13 +73,15 @@ public class AdminsConfigurationPanel extends JPanel {
         //Mixers
         for (int i = 0; i < config.getMixersNumber(); i++) {
             y++;
-            String mixerName = "mixer" + (i + 1);
-            if (config.getMixerIds().length > i && config.getMixerIds()[i] != null) {
-                mixerName = config.getMixerIds()[i];
+            String mixerId = "Mixer" + (i + 1) + "Id";
+            String mixerName = "Mixer" + (i + 1);
+            if (config.existProperty(mixerId)) {
+                mixerName = config.getProperty(mixerId);
             }
             builder.appendRow("top:pref");
-            builder.addLabel("mixer" + (i + 1) + ": ", cellConstraints.xy(1, y));
+            builder.addLabel("Mixer" + (i + 1) + ": ", cellConstraints.xy(1, y));
             JTextField textField = new JTextField(mixerName, 15);
+            textField.setName(mixerId);
             textField.getDocument().addDocumentListener(new TextFieldChangeListener(textField));
             builder.add(textField, cellConstraints.xy(2, y));
         }
@@ -85,13 +89,15 @@ public class AdminsConfigurationPanel extends JPanel {
         //Talliers
         for (int i = 0; i < config.getTalliersNumber(); i++) {
             y++;
-            String tallierName = "tallier" + (i + 1);
-            if (config.getTallierIds().length > i && config.getTallierIds()[i] != null) {
-                    tallierName = config.getTallierIds()[i];
+            String tallierId = "Tallier" + (i + 1) + "Id";
+            String tallierName = "Tallier" + (i + 1);
+            if (config.existProperty(tallierId)) {
+                tallierName = config.getProperty(tallierId);
             }
             builder.appendRow("top:pref");
-            builder.addLabel("tallier" + (i + 1) + ": ", cellConstraints.xy(1, y));
+            builder.addLabel("Tallier" + (i + 1) + ": ", cellConstraints.xy(1, y));
             JTextField textField = new JTextField(tallierName, 15);
+            textField.setName(tallierId);
             textField.getDocument().addDocumentListener(new TextFieldChangeListener(textField));
             builder.add(textField, cellConstraints.xy(2, y));
         }

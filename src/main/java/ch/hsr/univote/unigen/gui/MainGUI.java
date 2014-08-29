@@ -60,7 +60,7 @@ public class MainGUI extends JFrame {
         this.setIconImage(img.getImage()); //GUI Icon
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setMinimumSize(new Dimension(500, 500));
+        this.setMinimumSize(new Dimension(650, 650));
         this.setLocationRelativeTo(null); //Mittig zentrieren
 
         //intro/loader

@@ -46,8 +46,13 @@ import javax.jws.WebService;
         endpointInterface = "ch.bfh.univote.election.ElectionBoard",
         targetNamespace = "http://univote.bfh.ch/election")
 		//wsdlLocation = "/wsdl/ElectionBoardService.wsdl")
-public class ElectionBoardWebService extends VoteGenerator implements ch.bfh.univote.election.ElectionBoard {
-
+public class ElectionBoardWebService implements ch.bfh.univote.election.ElectionBoard {
+    private ElectionBoard electionBoard;
+    
+    public ElectionBoardWebService(ElectionBoard electionBoard) {
+        this.electionBoard = electionBoard;
+    }
+    
     public SignatureParameters getSignatureParameters() throws ElectionBoardServiceFault {
         return electionBoard.getSignatureParameters();
     }

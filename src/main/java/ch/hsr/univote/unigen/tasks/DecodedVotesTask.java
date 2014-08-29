@@ -9,21 +9,37 @@ import ch.bfh.univote.common.DecodedVote;
 import ch.bfh.univote.common.DecodedVoteEntry;
 import ch.bfh.univote.common.DecodedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
+import java.math.BigInteger;
 
 /**
  *
  * @author Gian
  */
-public class DecodedVotesTask extends VoteGenerator {
+public class DecodedVotesTask {
 
-    public void run() throws Exception {
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+
+    public DecodedVotesTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+
+        run();
+    }
+
+    private void run() {
         /*create DecodedVotes*/
         DecodedVotes decodedVotes = createDecodedVotes();
 
         /*sign by ElectionManager*/
-        decodedVotes.setSignature(new RSASignatureGenerator().createSignature(decodedVotes, keyStore.getElectionManagerPrivateKey()));
-        
+        decodedVotes.setSignature(new RSASignatureGenerator().createSignature(decodedVotes, keyStore.getEMSignatureKey()));
+
         /*submit to ElectionBoard*/
         electionBoard.setDecodedVotes(decodedVotes);
     }
@@ -31,29 +47,32 @@ public class DecodedVotesTask extends VoteGenerator {
     private DecodedVotes createDecodedVotes() {
         DecodedVotes decodedVotes = new DecodedVotes();
         decodedVotes.setElectionId(config.getElectionId());
-
-        /*for each Ballot*/
-        for (int i = 0; i < electionBoard.getBallots().getBallot().size(); i++) {
-            DecodedVote decodedeVote = createDecodedVote();
-            DecodedVoteEntry decodededVoteEntry = createDecodedVoteEntry();
-            decodedeVote.getEntry().add(decodededVoteEntry);
-            decodedVotes.getDecodedVote().add(decodedeVote);
+        /*For all decryptedVotes*/
+        for (BigInteger decryptedVote : electionBoard.getDecryptedVotes().getVote()) {
+            decodedVotes.getDecodedVote().add(createDecodedVote(decryptedVote));
         }
+        
+        decodedVotes.setSignature(null);
 
         return decodedVotes;
     }
 
-    private DecodedVote createDecodedVote() {
-        DecodedVote decodedeVote = new DecodedVote();
-
-        return decodedeVote;
+    private DecodedVote createDecodedVote(BigInteger decryptedVote) {
+        DecodedVote decodedVote = new DecodedVote();
+        
+        
+        
+        
+        decodedVote.getEntry().add(createDecodedVoteEntry());
+        
+        return decodedVote;
     }
 
     private DecodedVoteEntry createDecodedVoteEntry() {
-        DecodedVoteEntry decodededVoteEntry = new DecodedVoteEntry();
-        decodededVoteEntry.setChoiceId(1);
-        decodededVoteEntry.setCount(3);
+        DecodedVoteEntry decodedVoteEntry = new DecodedVoteEntry();
+        decodedVoteEntry.setChoiceId(1);
+        decodedVoteEntry.setCount(3);
 
-        return decodededVoteEntry;
+        return decodedVoteEntry;
     }
 }

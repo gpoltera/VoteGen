@@ -7,7 +7,9 @@ package ch.hsr.univote.unigen.krypto;
 
 import ch.bfh.univote.common.SignatureParameters;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
+import java.security.KeyPair;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -43,13 +45,12 @@ public class SchnorrSignatureTest extends TestCase {
         signatureParameters.setGenerator(g);
         
         Schnorr schnorr = new Schnorr();
-        BigInteger[] keyPair = schnorr.getKeyPair(signatureParameters);
-        SchnorrSignatureKey ssk = new SchnorrSignatureKey(signatureParameters, keyPair[0]);
+        KeyPair keyPair = schnorr.getKeyPair(signatureParameters);
+        DSAPrivateKey privateKey = (DSAPrivateKey) keyPair.getPrivate();
+        DSAPublicKey publicKey = (DSAPublicKey) keyPair.getPublic();
         
-        SchnorrVerificationKey svk = new SchnorrVerificationKey(signatureParameters, keyPair[1]);
-        
-        BigInteger[] s = schnorr.signSchnorr(m, ssk);
-        boolean result = schnorr.verifySchnorr(m, s, svk);
+        BigInteger[] s = schnorr.signSchnorr(m, privateKey);
+        boolean result = schnorr.verifySchnorr(m, s, publicKey);
         
         //check the results
         if (result) {

@@ -5,22 +5,39 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
+import ch.bfh.univote.common.EncryptedVote;
 import ch.bfh.univote.common.EncryptedVotes;
+import ch.bfh.univote.common.MixedEncryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 
 /**
  *
  * @author Gian Poltéra
  */
-public class EncryptedVotesTask extends VoteGenerator {
+public class EncryptedVotesTask {
 
-    public void run() throws Exception {
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+
+    public EncryptedVotesTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+            
+        run();
+    }
+
+    private void run() {
         /*create EncryptedVotes*/
         EncryptedVotes encryptedVotes = createEncryptedVotes();
-        
+
         /*sign by ElectionAdministrator*/
-        encryptedVotes.setSignature(new RSASignatureGenerator().createSignature(encryptedVotes, keyStore.getElectionAdministratorPrivateKey()));
+        encryptedVotes.setSignature(new RSASignatureGenerator().createSignature(encryptedVotes, keyStore.getEASignatureKey()));
 
         /*submit to ElectionBoard*/
         electionBoard.setEncryptedVotes(encryptedVotes);
@@ -29,11 +46,13 @@ public class EncryptedVotesTask extends VoteGenerator {
     private EncryptedVotes createEncryptedVotes() {
         EncryptedVotes encryptedVotes = new EncryptedVotes();
         encryptedVotes.setElectionId(config.getElectionId());
-        /*for each Ballot*/
-        for (int i = 0; i < electionBoard.getBallots().getBallot().size(); i++) {
-            encryptedVotes.getVote().add(electionBoard.getBallots().getBallot().get(i).getEncryptedVote());
-        }
+        /*from the last Mixer*/
+        MixedEncryptedVotes mixedEncryptedVotes = electionBoard.getEncryptedVotesMixedBy(electionBoard.mixers[electionBoard.mixers.length - 1]);
         
+        for (EncryptedVote encryptedVote : mixedEncryptedVotes.getVote()) {
+            encryptedVotes.getVote().add(encryptedVote);
+        }
+
         return encryptedVotes;
     }
 }

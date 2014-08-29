@@ -32,7 +32,8 @@ public class TableChangeListener implements TableModelListener {
                     + "," + table.getValueAt(i, 1).toString()
                     + "," + table.getValueAt(i, 2).toString()
                     + "," + table.getValueAt(i, 3).toString()
-                    + "," + table.getValueAt(i, 4).toString();
+                    + "," + table.getValueAt(i, 4).toString()
+                    + "," + table.getValueAt(i, 5).toString();
             config.setProperty("candidate" + (i + 1), candidate);
         }
     }

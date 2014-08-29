@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.univote.unigen.gui;
+package ch.hsr.univote.unigen.gui.configuration;
 
+import ch.hsr.univote.unigen.gui.MiddlePanel;
 import ch.hsr.univote.unigen.gui.listener.TableChangeListener;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.awt.BorderLayout;
@@ -36,10 +37,12 @@ public class CandidatesConfigurationPanel extends JPanel {
         createCandidatesConfigurationPanel();
 
         this.add(panel);
+        this.setName(bundle.getString("candidatesconfiguration"));
     }
 
     private void createCandidatesConfigurationPanel() {
         panel.setBorder(new EtchedBorder());
+        panel.setName(bundle.getString("candidatesconfiguration"));
 
         JComboBox genderComboBox = new JComboBox();
         genderComboBox.addItem(bundle.getString("male"));
@@ -49,10 +52,15 @@ public class CandidatesConfigurationPanel extends JPanel {
         for (int i = 1900; i <= 2014; i++) {
             borninComboBox.addItem(i);
         }
+        
+        JComboBox listComboBox = new JComboBox();
+        for (int i = 0; i < config.getListsNumber(); i++) {
+            listComboBox.addItem((i+1));
+        }
 
-        String[] headers = {bundle.getString("listposition"), bundle.getString("name"), bundle.getString("firstname"), bundle.getString("gender"), bundle.getString("bornin")};
-        final Class[] types = new Class[]{Integer.class, String.class, String.class, Object.class, Object.class};
-        final Boolean[] editable = {false, true, true, true, true};
+        String[] headers = {bundle.getString("number"), bundle.getString("name"), bundle.getString("firstname"), bundle.getString("gender"), bundle.getString("bornin"), bundle.getString("list")};
+        final Class[] types = new Class[]{String.class, String.class, String.class, Object.class, Object.class, Object.class};
+        final Boolean[] editable = {false, true, true, true, true, true};
 
         Object[][] data = new Object[config.getCandidatesNumber()][headers.length];
         for (int i = 0; i < config.getCandidatesNumber(); i++) {
@@ -60,6 +68,7 @@ public class CandidatesConfigurationPanel extends JPanel {
             String firstname = "Firstname" + (i + 1);
             Object gender = genderComboBox.getItemAt(0);
             Object bornin = borninComboBox.getItemAt(87);
+            Object list = listComboBox.getItemAt(0);
             
             if (config.existProperty("candidate" + (i + 1))) {
                 String[] candidate = config.getCandidate(i + 1);
@@ -71,6 +80,9 @@ public class CandidatesConfigurationPanel extends JPanel {
                     gender = genderComboBox.getItemAt(1);
                 }
                 bornin = borninComboBox.getItemAt(Integer.parseInt(candidate[4]) - 1900);
+                if(Integer.parseInt(candidate[5]) <= listComboBox.getItemCount()) {
+                    list = listComboBox.getItemAt(Integer.parseInt(candidate[5]) - 1);
+                }
             }
      
             data[i][0] = i + 1;
@@ -78,6 +90,7 @@ public class CandidatesConfigurationPanel extends JPanel {
             data[i][2] = firstname;
             data[i][3] = gender;
             data[i][4] = bornin;
+            data[i][5] = list;
         }
 
         Container container = new Container();
@@ -100,6 +113,9 @@ public class CandidatesConfigurationPanel extends JPanel {
 
         //Vintage selector
         table.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(borninComboBox));
+        
+        //List selector
+        table.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(listComboBox));
 
         table.setFillsViewportHeight(true);
         table.getModel().addTableModelListener(new TableChangeListener(table));

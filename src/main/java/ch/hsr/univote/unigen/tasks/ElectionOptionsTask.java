@@ -21,201 +21,168 @@ import ch.bfh.univote.common.PoliticalList;
 import ch.bfh.univote.common.Sex;
 import ch.bfh.univote.common.SummationRule;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.helper.FormatException;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * User interface class to define election options.
  *
  * @author Stephan Fischli &lt;stephan.fischli@bfh.ch&gt;
  */
-public class ElectionOptionsTask extends VoteGenerator {
+public class ElectionOptionsTask {
 
-    public void run() throws FileNotFoundException, FormatException, Exception {
-        /*read CandidateLists*/
-        List<CandidateList> lists = getCandidateLists();
-        boolean partyListSystem = config.getPartyListSystemIndicator();
-                
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+    private int choiceId;
+
+    public ElectionOptionsTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+
+        run();
+    }
+
+    private void run() {
         /*create ElectionOptions*/
-        ElectionOptions electionOptions = createOptions(lists, partyListSystem);
-        
+        ElectionOptions electionOptions = createElectionOptions(getCandidateLists());
+
         /*sign by ElectionAdministrator*/
-        electionOptions.setSignature(new RSASignatureGenerator().createSignature(electionOptions, keyStore.getElectionAdministratorPrivateKey()));
-        
+        electionOptions.setSignature(new RSASignatureGenerator().createSignature(electionOptions, keyStore.getEASignatureKey()));
+
         /*submit to ElectionBoard*/
         electionBoard.setElectionOptions(electionOptions);
     }
 
-    private List<CandidateList> getCandidateLists() throws FileNotFoundException, FormatException {
-        File file = new File(config.getPoliticalListsFile());
-        if (!file.exists() || !file.isFile()) {
-            throw new FileNotFoundException("Die Datei " + file + " wurde nicht gefunden");
-        }
-        FileInputStream fis = null;
-        List<CandidateList> lists = new ArrayList<CandidateList>();
-        try {
-            fis = new FileInputStream(file);
-            Workbook workbook = WorkbookFactory.create(fis);
-            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-                CandidateList list = getCandidateList(workbook.getSheetAt(i));
-                if (list != null) {
-                    lists.add(list);
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new FormatException("Die Kandidierendenliste hat ein ungueltiges Format", e);
-        } finally {
-            try {
-                if (fis != null) {
-                    fis.close();
-                }
-            } catch (IOException e) {
-            }
-        }
-        return lists;
-    }
+    private ElectionOptions createElectionOptions(List<CandidateList> lists) {
+        ElectionOptions electionOptions = new ElectionOptions();
+        electionOptions.setElectionId(config.getElectionId());
 
-    private CandidateList getCandidateList(Sheet sheet) {
-        CandidateList list = new CandidateList();
-
-        // parse header
-        list.setNumber(sheet.getRow(2).getCell(2).getStringCellValue().trim());
-        if (list.getNumber().isEmpty()) {
-            return null;
-        }
-        list.getTitle().add(getLocalizedText(sheet, 3, 2));
-        list.getPartyName().add(getLocalizedText(sheet, 4, 2));
-        list.getPartyShortName().add(getLocalizedText(sheet, 5, 2));
-
-        // parse candidates
-        for (int i = 8; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
-            if (row == null) {
-                break;
-            }
-            Candidate candidate = getCandidate(row);
-            if (candidate == null) {
-                continue;
-            }
-            int index = -1;
-            for (int j = 0; j < list.getCandidates().size(); j++) {
-                Candidate c = list.getCandidates().get(j);
-                if (c.getLastName().equals(candidate.getLastName())
-                        && c.getFirstName().equals(candidate.getFirstName())) {
-                    index = j;
-                    break;
-                }
-            }
-            if (index >= 0) {
-                candidate = list.getCandidates().get(index);
-                candidate.setCumulation(candidate.getCumulation() + 1);
-            } else {
-                candidate.setCumulation(1);
-                list.getCandidates().add(candidate);
-            }
-        }
-        return list;
-    }
-
-    private Candidate getCandidate(Row row) {
-        if (row.getCell(1) == null || row.getCell(1).getStringCellValue().trim().isEmpty()) {
-            return null;
-        }
-        Candidate candidate = new Candidate();
-        candidate.setLastName(row.getCell(1).getStringCellValue().trim());
-        candidate.setFirstName(row.getCell(2).getStringCellValue().trim());
-        candidate.setStatus(CandidateStatus.NEW);
-        String status = row.getCell(3).getStringCellValue().trim();
-        if (status.toLowerCase().equals("neu")) {
-            candidate.setStatus(CandidateStatus.NEW);
-        } else if (status.toLowerCase().equals("bisher")) {
-            candidate.setStatus(CandidateStatus.PREVIOUS);
-        } else {
-            candidate.setStatus(CandidateStatus.UNDEF);
-        }
-        String sex = row.getCell(4).getStringCellValue().trim();
-        if (sex.toLowerCase().equals("m")) {
-            candidate.setSex(Sex.M);
-        } else if (sex.toLowerCase().equals("w")) {
-            candidate.setSex(Sex.F);
-        } else {
-            candidate.setSex(Sex.UNDEF);
-        }
-        candidate.setYearOfBirth((int) row.getCell(5).getNumericCellValue());
-        candidate.getStudyBranch().add(getLocalizedText(row, 6));
-        candidate.getStudyDegree().add(getLocalizedText(row, 7));
-        candidate.setSemesterCount((int) row.getCell(8).getNumericCellValue());
-        candidate.setCumulation(1);
-        return candidate;
-    }
-
-    private LocalizedText getLocalizedText(Sheet sheet, int row, int col) {
-        return getLocalizedText(sheet.getRow(row), col);
-    }
-
-    private LocalizedText getLocalizedText(Row row, int col) {
-        String text = row.getCell(col).getStringCellValue().trim();
-        LocalizedText localizedText = new LocalizedText();
-        localizedText.setLanguage(LanguageCode.DE);
-        localizedText.setText(text.isEmpty() ? "-" : text);
-        return localizedText;
-    }
-
-    private ElectionOptions createOptions(List<CandidateList> lists, boolean partyListSystem) {
-        ElectionOptions options = new ElectionOptions();
-        options.setElectionId(config.getElectionId());
         SummationRule listSummationRule = new SummationRule();
         listSummationRule.setLowerBound(0);
-        if (partyListSystem) {
+        if (config.getPartyListSystemIndicator()) {
             listSummationRule.setUpperBound(1);
         } else {
             listSummationRule.setUpperBound(0);
         }
+
         ForallRule listForallRule = new ForallRule();
         listForallRule.setLowerBound(0);
         listForallRule.setUpperBound(1);
+
         SummationRule candidateSummationRule = new SummationRule();
         candidateSummationRule.setLowerBound(0);
         candidateSummationRule.setUpperBound(config.getMaxCandidates());
+
         ForallRule candidateForallRule = new ForallRule();
         candidateForallRule.setLowerBound(0);
         candidateForallRule.setUpperBound(config.getMaxCumulation());
-        int choiceId = 1;
-        for (CandidateList list : lists) {
-            int listId = choiceId++;
-            list.setChoiceId(listId);
-            options.getChoice().add(list);
-            listSummationRule.getChoiceId().add(listId);
-            listForallRule.getChoiceId().add(listId);
-            int count = 1;
-            for (Candidate candidate : list.getCandidates()) {
-                String number = list.getNumber() + "." + count++;
-                candidate.setNumber(number);
-                int candidateId = choiceId++;
-                candidate.setChoiceId(candidateId);
-                candidate.setListId(listId);
-                options.getChoice().add(candidate);
-                candidateSummationRule.getChoiceId().add(candidateId);
-                candidateForallRule.getChoiceId().add(candidateId);
+
+        for (CandidateList candidateList : lists) {
+            electionOptions.getChoice().add(candidateList);
+            listSummationRule.getChoiceId().add(candidateList.getChoiceId());
+            listForallRule.getChoiceId().add(candidateList.getChoiceId());
+            for (Candidate candidate : candidateList.getCandidates()) {
+                electionOptions.getChoice().add(candidate);
+                candidateSummationRule.getChoiceId().add(candidate.getChoiceId());
+                candidateForallRule.getChoiceId().add(candidate.getChoiceId());
             }
         }
-        options.getRule().add(listSummationRule);
-        options.getRule().add(listForallRule);
-        options.getRule().add(candidateSummationRule);
-        options.getRule().add(candidateForallRule);
-        return options;
+
+        electionOptions.getRule().add(listSummationRule);
+        electionOptions.getRule().add(listForallRule);
+        electionOptions.getRule().add(candidateSummationRule);
+        electionOptions.getRule().add(candidateForallRule);
+        
+        return electionOptions;
+    }
+
+    private List<CandidateList> getCandidateLists() {
+        List<CandidateList> candidateLists = new ArrayList<>();
+
+        choiceId = 0;
+        for (int i = 1; i <= config.getListsNumber(); i++) {
+            choiceId++;
+            candidateLists.add(createCandidateList(i));
+        }
+        return candidateLists;
+    }
+
+    private CandidateList createCandidateList(int listId) {
+        CandidateList candidateList = new CandidateList();
+
+        LocalizedText title = createLocalizedText("List " + listId);
+        LocalizedText partyname = createLocalizedText("partyname");
+        LocalizedText partyshortname = createLocalizedText("partyshortname");
+        
+        candidateList.setChoiceId(choiceId);
+        candidateList.setNumber(String.valueOf(listId));
+        candidateList.getTitle().add(title);
+        candidateList.getPartyName().add(partyname);
+        candidateList.getPartyShortName().add(partyshortname);
+
+        int listPlace = 0;
+        for (int i = 1; i <= config.getCandidatesNumber(); i++) {
+            if (Integer.parseInt(config.getCandidate(i)[5]) == listId) {
+                choiceId++;
+                listPlace++;
+                candidateList.addCandidate(createCandidate(listId, i, listPlace));
+            }
+        }
+        
+        return candidateList;
+    }
+
+    private Candidate createCandidate(int listId, int candidateNumber, int listPlace) {
+        Candidate candidate = new Candidate();
+
+        String[] candidateItems = config.getCandidate(candidateNumber);
+
+        String number = listId + "." + listPlace;
+
+        String lastname = candidateItems[1];
+        String firstname = candidateItems[2];
+        CandidateStatus status = CandidateStatus.UNDEF;
+        Sex sex = Sex.UNDEF;
+        if (candidateItems[3].equals("Male") || candidateItems[2].equals("Männlich")) {
+            sex = Sex.M;
+        }
+        if (candidateItems[3].equals("Female") || candidateItems[2].equals("Weiblich")) {
+            sex = Sex.F;
+        }
+        int yearofbirth = Integer.parseInt(candidateItems[4]);
+        LocalizedText studybranch = createLocalizedText("branch");
+        LocalizedText studydegree = createLocalizedText("degree");
+        int semestercount = 1;
+        int cumulation = 1;
+
+        candidate.setChoiceId(choiceId);
+        candidate.setListId(listId);
+        candidate.setNumber(number);
+        candidate.setLastName(lastname);
+        candidate.setFirstName(firstname);
+        candidate.setStatus(status);
+        candidate.setSex(sex);
+        candidate.setYearOfBirth(yearofbirth);
+        candidate.getStudyBranch().add(studybranch);
+        candidate.getStudyDegree().add(studydegree);
+        candidate.setSemesterCount(semestercount);
+        candidate.setCumulation(cumulation);
+        
+        return candidate;
+    }
+
+    private LocalizedText createLocalizedText(String string) {
+        LocalizedText localizedText = new LocalizedText();
+        localizedText.setLanguage(LanguageCode.DE);
+        localizedText.setText(string);
+
+        return localizedText;
     }
 }
 
@@ -223,13 +190,18 @@ class CandidateList extends PoliticalList {
 
     private List<Candidate> candidates;
 
-    public List<Candidate> getCandidates() {
-        if (candidates == null) {
-            candidates = new ArrayList<Candidate>();
-        }
+    public CandidateList() {
+        candidates = new ArrayList<>();
+    }
+    
+    public void addCandidate(Candidate candidate) {
+        candidates.add(candidate);
+    }
+    
+    public List<Candidate> getCandidates() {   
         return candidates;
     }
-
+    
     public void setCandidates(List<Candidate> candidates) {
         this.candidates = candidates;
     }

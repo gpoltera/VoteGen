@@ -7,10 +7,15 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.board.KeyStore;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
-import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,47 +23,59 @@ import java.util.List;
  *
  * @author Gian Poltéra
  */
-public class EncryptionKeyShareTask extends VoteGenerator {
+public class EncryptionKeyShareTask {
+
+    private ConfigHelper config;
+    private ElectionBoard electionBoard;
+    private KeyStore keyStore;
+
+    public EncryptionKeyShareTask() {
+        this.config = VoteGenerator.config;
+        this.electionBoard = VoteGenerator.electionBoard;
+        this.keyStore = VoteGenerator.keyStore;
+
+        run();
+    }
 
     /*1.3.4 d) Distributed Key Generation*/
-    public void run() {
+    private void run() {
         List<EncryptionKeyShare> encryptionKeyShareList = new ArrayList<>();
 
         /*for each tallier*/
-        for (int i = 0; i < electionBoard.talliers.length; i++) {
+        for (int j = 0; j < electionBoard.talliers.length; j++) {
 
             /*create EncryptionKeyShare*/
-            EncryptionKeyShare encryptionKeyShare = createEncryptionKeyShare(i);
-
-            /*set the proof*/
-            encryptionKeyShare.setProof(new NIZKP().getProof(
-                    electionBoard.talliers[i],
-                    keyStore.getTallierDecryptionKey(i),
-                    keyStore.getTallierEncryptionKey(i),
-                    electionBoard.getEncryptionParameters()));
-
-            /*sign by tallier*/
-            encryptionKeyShare.setSignature(new RSASignatureGenerator().createSignature(electionBoard.talliers[i], encryptionKeyShare, keyStore.getTallierPrivateKey(i)));
+            EncryptionKeyShare encryptionKeyShare = createEncryptionKeyShare(j);
 
             /*add to list*/
-            encryptionKeyShareList.add(i, encryptionKeyShare);
+            encryptionKeyShareList.add(j, encryptionKeyShare);
         }
         /*submit to ElectionBoard*/
         electionBoard.setEncryptionKeyShareList(encryptionKeyShareList);
     }
 
-    private EncryptionKeyShare createEncryptionKeyShare(int i) {
+    private EncryptionKeyShare createEncryptionKeyShare(int j) {
         EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
-        createTallierKeys(i);
         encryptionKeyShare.setElectionId(config.getElectionId());
-        encryptionKeyShare.setKey(keyStore.getTallierEncryptionKey(i));
+        
+        createTallierKeys(j);
+        encryptionKeyShare.setKey(keyStore.getTallierEncryptionKey(j).getY());
+        
+
+        encryptionKeyShare.setProof(new NIZKP().getEncryptionKeyShareProof(
+            electionBoard.talliers[j],
+            keyStore.getTallierDecryptionKey(j),
+            keyStore.getTallierEncryptionKey(j)));
+
+        encryptionKeyShare.setSignature(new RSASignatureGenerator().createSignature(electionBoard.talliers[j], encryptionKeyShare, keyStore.getTallierSignatureKey(j)));
 
         return encryptionKeyShare;
     }
 
-    private void createTallierKeys(int i) {
-        BigInteger keyPair[] = new ElGamal().getKeyPair(electionBoard.getEncryptionParameters());
-        keyStore.setTallierDecryptionKey(i, keyPair[0]);
-        keyStore.setTallierEncryptionKey(i, keyPair[1]);
+    private void createTallierKeys(int j) {
+        KeyPair keyPair = new ElGamal().getKeyPair(electionBoard.getEncryptionParameters());
+        
+        keyStore.setTallierDecryptionKey(j, (DSAPrivateKey) keyPair.getPrivate());
+        keyStore.setTallierEncryptionKey(j, (DSAPublicKey) keyPair.getPublic());
     }
 }
