@@ -62,7 +62,7 @@ public class VoterCertsTask {
 
     private void createVoterKeys(int i) {
         // Schnorr Keys
-        KeyPair keyPair = new Schnorr().getKeyPair(electionBoard.getSignatureParameters());
+        KeyPair keyPair = new Schnorr(config).getKeyPair(electionBoard.getSignatureParameters());
 
         keyStore.setVoterSignatureKey(i, (DSAPrivateKey) keyPair.getPrivate());
         keyStore.setVoterVerificationKey(i, (DSAPublicKey) keyPair.getPublic());

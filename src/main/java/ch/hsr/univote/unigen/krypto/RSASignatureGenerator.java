@@ -50,8 +50,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  * @author Gian & Copy From VoteVerifier
  */
 public class RSASignatureGenerator {
+
     private ConfigHelper config;
-    
+
     {
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -228,22 +229,19 @@ public class RSASignatureGenerator {
         //concatenate to (id|(v1|v2|....|vn))|timestamp
         StringConcatenator sc = new StringConcatenator();
         sc.pushLeftDelim();
-        sc.pushObjectDelimiter(decodedVotes.getElectionId(), StringConcatenator.INNER_DELIMITER);
-
+        sc.pushObjectDelimiter(config.getElectionId(), StringConcatenator.INNER_DELIMITER);
         //( ((cID|count)|(cID|count))|...|((cID|count)|(cID|count)) )
         sc.pushLeftDelim();
         for (int i = 0; i < decodedVotes.getDecodedVote().size(); i++) {
             if (i > 0) {
                 sc.pushInnerDelim();
             }
-
             DecodedVote decVote = decodedVotes.getDecodedVote().get(i);
 
             sc.pushLeftDelim();
             //(cID|count)|(cID|count)|....|(cID|count)
             for (int j = 0; j < decodedVotes.getDecodedVote().get(i).getEntry().size(); j++) {
                 DecodedVoteEntry dve = decVote.getEntry().get(j);
-
                 if (j > 0) {
                     sc.pushInnerDelim();
                 }
@@ -263,7 +261,6 @@ public class RSASignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-
         signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;
@@ -664,6 +661,30 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
+        signature.setValue(new RSA().signRSA(res, privateKey));
+
+        return signature;
+    }
+
+    public Signature createSignature(MixedVerificationKey mixedVerificationKey, RSAPrivateKey privateKey) {
+        Signature signature = new Signature();
+        signature.setSignerId(config.getElectionManagerId());
+        signature.setTimestamp(TimestampGenerator.generateTimestamp());
+
+        StringConcatenator sc = new StringConcatenator();
+
+        //concatenate to (id|voterId|key)|timestamp - ToDo look for the Voter identiy
+        sc.pushLeftDelim();
+
+        sc.pushObjectDelimiter(mixedVerificationKey.getElectionId(), StringConcatenator.INNER_DELIMITER);
+        sc.pushObject(mixedVerificationKey.getKey());
+
+        sc.pushRightDelim();
+        sc.pushInnerDelim();
+        sc.pushObject(signature.getTimestamp());
+
+        String res = sc.pullAll();
+        
         signature.setValue(new RSA().signRSA(res, privateKey));
 
         return signature;

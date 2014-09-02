@@ -5,8 +5,6 @@
  */
 package ch.hsr.univote.unigen.board;
 
-import java.math.BigInteger;
-import java.security.KeyPair;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -20,6 +18,7 @@ import java.util.List;
  */
 public class KeyStore {
     /*Variable declaration*/
+
     private static RSAPrivateKey caSignatureKey;
     private static RSAPublicKey caVerificationKey;
     private static RSAPrivateKey emSignatureKey;
@@ -32,6 +31,8 @@ public class KeyStore {
     private static List<RSAPublicKey> talliersVerificationKey = new ArrayList<>();
     private static List<DSAPrivateKey> votersSignatureKey = new ArrayList<>();
     private static List<DSAPublicKey> votersVerificationKey = new ArrayList<>();
+    private static List<DSAPrivateKey> latelyVotersSignatureKey = new ArrayList<>();
+    private static List<DSAPublicKey> latelyVotersVerificationKey = new ArrayList<>();
     private static List<DSAPrivateKey> talliersDecryptionKey = new ArrayList<>();
     private static List<DSAPublicKey> talliersEncryptionKey = new ArrayList<>();
     private static List<DSAPrivateKey> blindedGeneratorKey = new ArrayList<>();
@@ -80,23 +81,31 @@ public class KeyStore {
     public void setVoterSignatureKey(int voter, DSAPrivateKey privateKey) {
         KeyStore.votersSignatureKey.add(voter, privateKey);
     }
-    
+
     public void setVoterVerificationKey(int voter, DSAPublicKey publicKey) {
         KeyStore.votersVerificationKey.add(voter, publicKey);
     }
-    
+
+    public void setLatelyVoterSignatureKey(int voter, DSAPrivateKey privateKey) {
+        KeyStore.latelyVotersSignatureKey.add(voter, privateKey);
+    }
+
+    public void setLatelyVoterVerificationKey(int voter, DSAPublicKey publicKey) {
+        KeyStore.latelyVotersVerificationKey.add(voter, publicKey);
+    }
+
     public void setTallierDecryptionKey(int tallier, DSAPrivateKey privateKey) {
         KeyStore.talliersDecryptionKey.add(tallier, privateKey);
     }
-    
+
     public void setTallierEncryptionKey(int tallier, DSAPublicKey publicKey) {
         KeyStore.talliersEncryptionKey.add(tallier, publicKey);
     }
-    
+
     public void setBlindedGeneratorKey(int mixer, DSAPrivateKey privateKey) {
         KeyStore.blindedGeneratorKey.add(mixer, privateKey);
     }
-    
+
 
     /*accessors GET*/
     public RSAPrivateKey getCASignatureKey() {
@@ -163,6 +172,14 @@ public class KeyStore {
         return votersSignatureKey;
     }
 
+    public DSAPrivateKey getLatelyVoterSignatureKey(int latelyVoter) {
+        return latelyVotersSignatureKey.get(latelyVoter);
+    }
+
+    public List<DSAPrivateKey> getLatelyVotersSignatureKey() {
+        return latelyVotersSignatureKey;
+    }
+
     public DSAPublicKey getVoterVerificationKey(int voter) {
         return votersVerificationKey.get(voter);
     }
@@ -170,22 +187,31 @@ public class KeyStore {
     public List<DSAPublicKey> getVotersVerificationKey() {
         return votersVerificationKey;
     }
-    
+
+    public DSAPublicKey getLatelyVoterVerificationKey(int latelyVoter) {
+        return latelyVotersVerificationKey.get(latelyVoter);
+    }
+
+    public List<DSAPublicKey> getLatelyVotersVerificationKey() {
+        return latelyVotersVerificationKey;
+    }
+
     public DSAPrivateKey getTallierDecryptionKey(int tallier) {
         return talliersDecryptionKey.get(tallier);
     }
-    
-     public List<DSAPrivateKey> getTalliersDecryptionKey() {
+
+    public List<DSAPrivateKey> getTalliersDecryptionKey() {
         return talliersDecryptionKey;
     }
-    
+
     public DSAPublicKey getTallierEncryptionKey(int tallier) {
         return talliersEncryptionKey.get(tallier);
-    }   
+    }
+
     public List<DSAPublicKey> getTalliersEncryptionKey() {
         return talliersEncryptionKey;
     }
-    
+
     public DSAPrivateKey getBlindedGeneratorKey(int mixer) {
         return blindedGeneratorKey.get(mixer);
     }

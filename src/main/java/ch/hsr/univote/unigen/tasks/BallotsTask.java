@@ -19,6 +19,7 @@ import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.NIZKP;
+import ch.hsr.univote.unigen.krypto.PrimeGenerator;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import ch.hsr.univote.unigen.krypto.SchnorrSignatureGenerator;
 import java.math.BigInteger;
@@ -69,31 +70,30 @@ public class BallotsTask {
     private Ballot createBallot(int i) {
         Ballot ballot = new Ballot();
         ballot.setElectionId(config.getElectionId());
-        ballot.setVerificationKey(getAnonymousVerificationKey(i));
-        ballot.setEncryptedVote(createEncryptedVote(i));
-        ballot.setProof(new NIZKP().getBallotProof(ballot.getEncryptedVote().getFirstValue(), ballot.getVerificationKey(), electionBoard.getEncryptionParameters()));
+        BigInteger r = PrimeGenerator.getPrime(electionBoard.getEncryptionParameters().getGroupOrder().bitLength() - 1);
+        ballot.setEncryptedVote(createEncryptedVote(i, r));
+        ballot.setVerificationKey(createAnonymousVerificationKey(i));
+        ballot.setProof(new NIZKP().getBallotProof(ballot.getEncryptedVote().getFirstValue(), ballot.getVerificationKey(), r, electionBoard.getEncryptionParameters()));
         ballot.setSignature(createVoterSignature(i, ballot));
-        
+
         return ballot;
     }
 
-    private BigInteger getAnonymousVerificationKey(int i) {
-        BigInteger signatureKey = keyStore.getVoterSignatureKey(i).getX();
-        BigInteger g = electionBoard.getBlindedGenerator(electionBoard.mixers[electionBoard.mixers.length - 1]).getGenerator();
-        BigInteger verificationKey = g.modPow(signatureKey,electionBoard.getSignatureParameters().getPrime());       
-        
-        return verificationKey;
-    }
-    
-    private EncryptedVote createEncryptedVote(int i) {
+    private EncryptedVote createEncryptedVote(int i, BigInteger r) {
         EncryptedVote encryptedVote = new EncryptedVote();
-        BigInteger encodedVote = createEncodedVote(i);
-
+        BigInteger p = electionBoard.getEncryptionParameters().getPrime();
+        BigInteger q = electionBoard.getEncryptionParameters().getGroupOrder();
+        BigInteger m = createEncodedVote(i);
+        if (((m.add(BigInteger.ONE)).modPow(q, p)).equals(BigInteger.ONE)) {
+            m = m.add(BigInteger.ONE);
+        } else {
+            m = p.subtract(m.add(BigInteger.ONE));
+        }
         /*Encryption*/
-        BigInteger[] encryption = new ElGamal().getEncryption(encodedVote, electionBoard.getEncryptionKey().getKey(), electionBoard.getEncryptionParameters());
+        BigInteger[] encryption = new ElGamal().getEncryption(m, electionBoard.getEncryptionKey().getKey(), r, electionBoard.getEncryptionParameters());
         encryptedVote.setFirstValue(encryption[0]);
         encryptedVote.setSecondValue(encryption[1]);
-        
+
         return encryptedVote;
     }
 
@@ -106,12 +106,8 @@ public class BallotsTask {
         for (int c = 0; c < electionBoard.getElectionOptions().getChoice().size(); c++) {
             Choice choice = electionBoard.getElectionOptions().getChoice().get(electionBoard.getElectionOptions().getChoice().size() - c - 1);
             if (choice instanceof PoliticalList) {
-                PoliticalList politicalList = (PoliticalList) choice;
-                electionBoard.addPoliticalList(politicalList);
                 sc.pushObject(1);
             } else if (choice instanceof Candidate) {
-                Candidate candidate = (Candidate) choice;
-                electionBoard.addCandidate(candidate);
                 int ramdonCount = generator.nextInt(config.getMaxCumulation());
                 String maxBinCan = Integer.toBinaryString(config.getMaxCumulation());
                 String binChoice = Integer.toBinaryString(ramdonCount);
@@ -130,18 +126,24 @@ public class BallotsTask {
         //     C4  L2 C3 C2 C1 L1
         //
         // cId 6  5  4  3  2  1
-        System.out.println("EncodedeVote:");
-        System.out.println(encodedVote);
-        
+
         return encodedVote;
     }
 
     private VoterSignature createVoterSignature(int i, Ballot ballot) {
         VoterSignature voterSignature = new VoterSignature();
-        BigInteger[] S = new SchnorrSignatureGenerator().createSignature(ballot, keyStore.getVoterSignatureKey(i));
+        BigInteger[] S = new SchnorrSignatureGenerator().createSignature(ballot, electionBoard.getElectionGenerator().getGenerator(), keyStore.getVoterSignatureKey(i));
         voterSignature.setFirstValue(S[0]);
         voterSignature.setSecondValue(S[1]);
 
         return voterSignature;
+    }
+
+    private BigInteger createAnonymousVerificationKey(int i) {
+        BigInteger signatureKey = keyStore.getVoterSignatureKey(i).getX();
+        BigInteger g = electionBoard.getElectionGenerator().getGenerator();
+        BigInteger verificationKey = g.modPow(signatureKey, electionBoard.getSignatureParameters().getPrime());
+
+        return verificationKey;
     }
 }

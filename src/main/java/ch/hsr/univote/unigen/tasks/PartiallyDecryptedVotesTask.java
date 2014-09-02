@@ -16,7 +16,9 @@ import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -37,7 +39,7 @@ public class PartiallyDecryptedVotesTask {
     }
 
     private void run() {
-        List<PartiallyDecryptedVotes> partiallyDecryptedVotesList = new ArrayList<>();
+        Map<String,PartiallyDecryptedVotes> partiallyDecryptedVotesList = new HashMap<>();
 
         /*for each Tallier*/
         for (int j = 0; j < electionBoard.talliers.length; j++) {
@@ -45,7 +47,7 @@ public class PartiallyDecryptedVotesTask {
             PartiallyDecryptedVotes partiallyDecryptedVotes = createPartiallyDecryptedVotes(j);
 
             /*add to List*/
-            partiallyDecryptedVotesList.add(j, partiallyDecryptedVotes);
+            partiallyDecryptedVotesList.put(electionBoard.talliers[j], partiallyDecryptedVotes);
         }
         /*submit to ElectionBoard*/
         electionBoard.setPartiallyDecryptedVotesList(partiallyDecryptedVotesList);
@@ -57,7 +59,6 @@ public class PartiallyDecryptedVotesTask {
 
         EncryptedVotes encryptedVotes = electionBoard.getEncryptedVotes();
         BigInteger p = electionBoard.getEncryptionParameters().getPrime();
-
         for (EncryptedVote encryptedVote : encryptedVotes.getVote()) {
             BigInteger a_i = encryptedVote.getFirstValue();
             BigInteger a_ij = a_i.modPow(keyStore.getTallierDecryptionKey(j).getX().negate(), p);
@@ -66,8 +67,8 @@ public class PartiallyDecryptedVotesTask {
 
         partiallyDecryptedVotes.setProof(new NIZKP().getPartiallyDecryptedVotesProof(
                 electionBoard.talliers[j],
-                partiallyDecryptedVotes,
                 encryptedVotes,
+                partiallyDecryptedVotes,
                 keyStore.getTallierDecryptionKey(j),
                 keyStore.getTallierEncryptionKey(j)));
 

@@ -13,7 +13,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
@@ -83,7 +82,6 @@ public class ElGamal {
      *
      * @param m message to encrypt
      * @param y encryptin key
-     * @param r random
      * @param encryptionParameters
      * @return encrypted pair (a,b)
      */
@@ -92,6 +90,28 @@ public class ElGamal {
         BigInteger q = encryptionParameters.getGroupOrder();
         BigInteger g = encryptionParameters.getGenerator();
         BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger a = g.modPow(r, p);
+        BigInteger b = m.multiply(y.modPow(r, p)).mod(p);
+
+        BigInteger[] encrypted = new BigInteger[2];
+        encrypted[0] = a;
+        encrypted[1] = b;
+
+        return encrypted;
+    }
+    
+        /**
+     *
+     * @param m message to encrypt
+     * @param y encryptin key
+     * @param r random
+     * @param encryptionParameters
+     * @return encrypted pair (a,b)
+     */
+    public BigInteger[] getEncryption(BigInteger m, BigInteger y, BigInteger r, EncryptionParameters encryptionParameters) {
+        BigInteger p = encryptionParameters.getPrime();
+        BigInteger q = encryptionParameters.getGroupOrder();
+        BigInteger g = encryptionParameters.getGenerator();
         BigInteger a = g.modPow(r, p);
         BigInteger b = m.multiply(y.modPow(r, p)).mod(p);
 

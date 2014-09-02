@@ -19,8 +19,6 @@ import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
@@ -39,8 +37,6 @@ public class CertificateGenerator {
     private ConfigHelper config;
 
     //Adapt to config file
-    public static final String STORETYPE = "JKS";
-    public static final int KEYSIZE = 1024;
     public static final int VALIDITY = 1000; // days
 
     public CertificateGenerator() {
@@ -52,11 +48,10 @@ public class CertificateGenerator {
      keytool -exportcert -rfc -keystore config\keystore.jks -storepass %password% -alias vsuzh -file data\output\vsuzh.pem
      */
     public String getCertficate(String alias, PrivateKey privateKey, PublicKey publicKey) {
-        // 
-        CertificateGenerator ku = new CertificateGenerator();
-        X509Certificate cert = ku.createCertitificate("CN=" + config.getElectionId(), config.getSignatureAlgorithm(), privateKey, publicKey);
-        String pem = ku.x509ToBase64PEMString(cert);
-
+        //
+        X509Certificate cert = createCertitificate("CN=" + config.getElectionId(), config.getSignatureAlgorithm(), privateKey, publicKey);
+        String pem = x509ToBase64PEMString(cert);
+        
         return pem;
     }
 

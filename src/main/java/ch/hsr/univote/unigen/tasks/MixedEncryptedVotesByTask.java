@@ -15,12 +15,15 @@ import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.ElGamal;
 import ch.hsr.univote.unigen.krypto.NIZKP;
+import ch.hsr.univote.unigen.krypto.PrimeGenerator;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -43,7 +46,7 @@ public class MixedEncryptedVotesByTask {
     }
 
     private void run() {
-        List<MixedEncryptedVotes> mixedEncryptedVotesList = new ArrayList<>();
+        Map<String, MixedEncryptedVotes> mixedEncryptedVotesList = new HashMap<>();
         
         /*load the EncryptedVotes*/
         previous_encryptedVotes = getEncryptedVotes();
@@ -51,7 +54,7 @@ public class MixedEncryptedVotesByTask {
         /*for each Mixer*/
         for (int k = 0; k < electionBoard.mixers.length; k++) {
             MixedEncryptedVotes mixedEncryptedVotes = createMixedEncryptedVotes(k);
-            mixedEncryptedVotesList.add(k, mixedEncryptedVotes);
+            mixedEncryptedVotesList.put(electionBoard.mixers[k], mixedEncryptedVotes);
         }
         /*submit to ElectionBoard*/
         electionBoard.setEncryptedVotesMixedBy(mixedEncryptedVotesList);
@@ -73,6 +76,7 @@ public class MixedEncryptedVotesByTask {
         MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
         mixedEncryptedVotes.setElectionId(config.getElectionId());        
         BigInteger p = electionBoard.getEncryptionParameters().getPrime();
+        BigInteger q = electionBoard.getEncryptionParameters().getGroupOrder();
         List<EncryptedVote> new_encryptedVotes = new ArrayList<>();
         
         //Shuffle
@@ -85,12 +89,12 @@ public class MixedEncryptedVotesByTask {
             encryption[1] = encryptedVote.getSecondValue();   
             
             //ReEncryption
-            BigInteger[] reEncryption = new ElGamal().getEncryption(BigInteger.ONE, electionBoard.getEncryptionKey().getKey(), electionBoard.getEncryptionParameters());
+            BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
+            BigInteger[] reEncryption = new ElGamal().getEncryption(BigInteger.ONE, electionBoard.getEncryptionKey().getKey(),r,electionBoard.getEncryptionParameters());
 
             EncryptedVote new_encryptedVote = new EncryptedVote();
             new_encryptedVote.setFirstValue(reEncryption[0].multiply(encryption[0]).mod(p));
             new_encryptedVote.setSecondValue(reEncryption[1].multiply(encryption[1]).mod(p));
-            
             mixedEncryptedVotes.getVote().add(new_encryptedVote);
             new_encryptedVotes.add(new_encryptedVote);
         }

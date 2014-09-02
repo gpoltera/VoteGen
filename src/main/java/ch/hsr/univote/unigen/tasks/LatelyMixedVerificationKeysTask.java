@@ -6,8 +6,6 @@
 package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.MixedVerificationKey;
-import ch.bfh.univote.common.MixedVerificationKeys;
-import ch.bfh.univote.common.VerificationKeys;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
@@ -37,26 +35,19 @@ public class LatelyMixedVerificationKeysTask {
 
     private void run() {
         /*load the VerificationKey from the last mixer from the ElectionBoard*/
-        List<MixedVerificationKey> mixedVerificationKeys = new ArrayList<>();
-
-        /*sign by ElectionManager*/
-        //VerificationKey verificationKey = new VerificationKey();
-        //verificationKey.setElectionId(config.getElectionId());
-        //verificationKey.setSignature(new RSASignatureGenerator().createSignature(mixedVerificationKeys, keyStore.getEASignatureKey()));
-
+        List<MixedVerificationKey> mixedVerificationKeys = electionBoard.getVerificationKeysLatelyMixedBy(config.getMixerIds()[electionBoard.mixers.length - 1]);
+        List<MixedVerificationKey> new_MixedVerificationKeys = new ArrayList<>();
+        /*sign all VerificationKeys by ElectionManager*/
+        for (MixedVerificationKey mixedVerificationKey : mixedVerificationKeys) {
+            MixedVerificationKey new_VerificationKey = new MixedVerificationKey();
+            new_VerificationKey.setElectionId(mixedVerificationKey.getElectionId());
+            new_VerificationKey.setKey(mixedVerificationKey.getKey());
+            new_VerificationKey.setProof(mixedVerificationKey.getProof());
+            new_VerificationKey.setSignature(new RSASignatureGenerator().createSignature(mixedVerificationKey, keyStore.getEMSignatureKey()));
+            new_MixedVerificationKeys.add(new_VerificationKey);
+        }
         
         /*submit to ElectionBoard*/
-        electionBoard.setLatelyMixedVerificationKeys(mixedVerificationKeys);
-    }
-
-    private VerificationKeys createVerificationKeys(MixedVerificationKeys mixedVerificationKeys) {
-        VerificationKeys verificationKeys = new VerificationKeys();
-        verificationKeys.setElectionId(config.getElectionId());
-
-        for (BigInteger verificationKey : mixedVerificationKeys.getKey()) {
-            verificationKeys.getKey().add(verificationKey);
-        }
-
-        return verificationKeys;
-    }
+        electionBoard.setLatelyMixedVerificationKeys(new_MixedVerificationKeys);
+    }    
 }

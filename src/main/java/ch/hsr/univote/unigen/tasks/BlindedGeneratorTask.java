@@ -17,7 +17,9 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.interfaces.DSAPrivateKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -29,7 +31,7 @@ public class BlindedGeneratorTask {
     private ElectionBoard electionBoard;
     private KeyStore keyStore;
 
-    private List<BlindedGenerator> blindedGeneratorsList;
+    private Map<String,BlindedGenerator> blindedGeneratorsList;
     private BigInteger p, g_k;
 
     /*1.3.4 e) Constructing the Election Generator*/
@@ -43,7 +45,7 @@ public class BlindedGeneratorTask {
     }
 
     private void run() {
-        blindedGeneratorsList = new ArrayList<>();
+        blindedGeneratorsList = new HashMap<>();
         p = electionBoard.getSignatureParameters().getPrime();
         g_k = electionBoard.getSignatureParameters().getGenerator();
         
@@ -53,7 +55,7 @@ public class BlindedGeneratorTask {
             BlindedGenerator blindedGenerator = createBlindedGenerator(k);            
 
             /*add to list*/
-            blindedGeneratorsList.add(k, blindedGenerator);
+            blindedGeneratorsList.put(electionBoard.mixers[k], blindedGenerator);
         }
         /*submit to ElectionBoard*/
         electionBoard.setBlindedGeneratorList(blindedGeneratorsList);
@@ -79,7 +81,7 @@ public class BlindedGeneratorTask {
     }
     
     private void createMixerKeys(int k) {
-        KeyPair keyPair = new Schnorr().getKeyPair(electionBoard.getSignatureParameters());
+        KeyPair keyPair = new Schnorr(config).getKeyPair(electionBoard.getSignatureParameters());
         keyStore.setBlindedGeneratorKey(k, (DSAPrivateKey) keyPair.getPrivate());
     }
 }

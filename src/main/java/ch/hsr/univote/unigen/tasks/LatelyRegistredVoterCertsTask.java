@@ -10,6 +10,11 @@ import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.krypto.CertificateGenerator;
+import ch.hsr.univote.unigen.krypto.Schnorr;
+import java.security.KeyPair;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +38,25 @@ public class LatelyRegistredVoterCertsTask {
 
     private void run() {
         /*read VoterCertificates from ElectionBoard*/
-        List<Certificate> voterCertificates = new ArrayList<>();
+        List<Certificate> latelyVoterCertificates = new ArrayList<>();
 
         /*create certificates*/
-        //List<Certificate> listCertificate = createListCertficate();
+        for (int i = 0; i < config.getLatelyVotersNumber(); i++) {
+            createVoterKeys(i);
+            Certificate certificate = new Certificate();
+            certificate.setValue(new CertificateGenerator().getCertficate("latelyvoter" + i + 1, keyStore.getCASignatureKey(), keyStore.getLatelyVoterVerificationKey(i)).getBytes());
+            latelyVoterCertificates.add(certificate);
+        }
+        
         /*submit to ElectionBoard*/
-        electionBoard.setLatelyRegisteredVoterCertificates(voterCertificates);
+        electionBoard.setLatelyRegisteredVoterCertificates(latelyVoterCertificates);
+    }
+
+    private void createVoterKeys(int i) {
+        // Schnorr Keys
+        KeyPair keyPair = new Schnorr(config).getKeyPair(electionBoard.getSignatureParameters());
+
+        keyStore.setLatelyVoterSignatureKey(i, (DSAPrivateKey) keyPair.getPrivate());
+        keyStore.setLatelyVoterVerificationKey(i, (DSAPublicKey) keyPair.getPublic());
     }
 }

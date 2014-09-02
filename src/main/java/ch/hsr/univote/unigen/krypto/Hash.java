@@ -35,16 +35,4 @@ public class Hash {
         }
         return new BigInteger(1, md.digest());
     }
-    
-    public BigInteger getHash(byte[] value, String hashAlgorithm) {
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance(hashAlgorithm);
-            md.reset();
-            md.update(value);        
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Hash.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return new BigInteger(1, md.digest());
-    }
 }

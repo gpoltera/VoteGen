@@ -12,12 +12,13 @@ import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
-import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.security.interfaces.DSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -40,7 +41,7 @@ public class MixedVerificationKeysByTask {
 
     private void run() {
 
-        List<MixedVerificationKeys> listMixedVerificationKeys = new ArrayList<>();
+        Map<String,MixedVerificationKeys> listMixedVerificationKeys = new HashMap<>();
 
         /*load the verification keys*/
         verificationKeys = keyStore.getVotersVerificationKey();
@@ -51,7 +52,7 @@ public class MixedVerificationKeysByTask {
             MixedVerificationKeys mixedVerificationKeys = createMixedVerificationKeys(k);
 
             /*add to list*/
-            listMixedVerificationKeys.add(mixedVerificationKeys);
+            listMixedVerificationKeys.put(electionBoard.mixers[k],mixedVerificationKeys);
         }
         /*submit to ElectionBoard*/
         electionBoard.setVerificationKeysMixedBy(listMixedVerificationKeys);
@@ -60,7 +61,6 @@ public class MixedVerificationKeysByTask {
     private MixedVerificationKeys createMixedVerificationKeys(int k) {
         MixedVerificationKeys mixedVerificationKeys = new MixedVerificationKeys();
         mixedVerificationKeys.setElectionId(config.getElectionId());
-        List<DSAPublicKey> previous_verificationKeys = verificationKeys;
         //Shuffle
         Collections.shuffle(verificationKeys, new SecureRandom());
         for (DSAPublicKey verificationKey : verificationKeys) {

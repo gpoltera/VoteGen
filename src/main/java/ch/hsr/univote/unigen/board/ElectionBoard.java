@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.board;
 import ch.bfh.univote.common.Ballot;
 import ch.bfh.univote.common.Ballots;
 import ch.bfh.univote.common.BlindedGenerator;
-import ch.bfh.univote.common.Candidate;
 import ch.bfh.univote.common.Certificate;
 import ch.bfh.univote.common.DecodedVotes;
 import ch.bfh.univote.common.DecryptedVotes;
@@ -18,7 +17,6 @@ import ch.bfh.univote.common.ElectionGenerator;
 import ch.bfh.univote.common.ElectionOptions;
 import ch.bfh.univote.common.ElectionSystemInfo;
 import ch.bfh.univote.common.ElectoralRoll;
-import ch.bfh.univote.common.EncryptedVote;
 import ch.bfh.univote.common.EncryptedVotes;
 import ch.bfh.univote.common.EncryptionKey;
 import ch.bfh.univote.common.EncryptionKeyShare;
@@ -28,19 +26,16 @@ import ch.bfh.univote.common.MixedEncryptedVotes;
 import ch.bfh.univote.common.MixedVerificationKey;
 import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.PartiallyDecryptedVotes;
-import ch.bfh.univote.common.PoliticalList;
-import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SignatureParameters;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DB4O;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -55,7 +50,6 @@ public class ElectionBoard {
 
     /*variables initialisation*/
     private static Ballots ballots;
-    private static BlindedGenerator blindedGenerator = new BlindedGenerator();
     private static Certificate certificate = new Certificate();
     private static DecodedVotes decodedVotes = new DecodedVotes();
     private static DecryptedVotes decryptedVotes = new DecryptedVotes();
@@ -67,25 +61,16 @@ public class ElectionBoard {
     private static ElectoralRoll electoralRoll = new ElectoralRoll();
     private static EncryptedVotes encryptedVotes = new EncryptedVotes();
     private static EncryptionParameters encryptionParameters = new EncryptionParameters();
-    private static EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
     private static EncryptionKey encryptionKey = new EncryptionKey();
-    private static EncryptedVote encryptedVote = new EncryptedVote();
     private static KnownElectionIds knownElectionIds = new KnownElectionIds();
-    private static List<Certificate> listCertificate = new ArrayList<>();
-    private static List<PoliticalList> politicalLists = new ArrayList<>();
-    private static List<Candidate> candidateList = new ArrayList<>();
-    private static List<MixedVerificationKey> listMixedVerificationKey = new ArrayList<>();
-    private static List<MixedVerificationKeys> listMixedVerificationKeys = new ArrayList<>();
+    private static Map<String, MixedVerificationKeys> listMixedVerificationKeys = new HashMap<>();
     private static List<MixedVerificationKey> listLatelyMixedVerificationKey = new ArrayList<>();
-    private static List<MixedVerificationKeys> listLatelyMixedVerificationKeys = new ArrayList<>();
+    private static Map<String, List> listLatelyMixedVerificationKeys = new HashMap<>();
     private static List<Certificate> listLatelyCertificate = new ArrayList<>();
-    private static List<EncryptionKeyShare> encryptionKeyShareList = new ArrayList<>();
-    private static List<MixedEncryptedVotes> mixedEncryptedVotesList = new ArrayList<>();
-    private static List<PartiallyDecryptedVotes> partiallyDecryptedVotesList = new ArrayList<>();
-    private static List<BlindedGenerator> blindedGeneratorsList = new ArrayList<>();
-    private static MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
-    private static PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
-    private static Signature signatures = new Signature();
+    private static Map<String, EncryptionKeyShare> encryptionKeyShareList = new HashMap<>();
+    private static Map<String, MixedEncryptedVotes> mixedEncryptedVotesList = new HashMap<>();
+    private static Map<String, PartiallyDecryptedVotes> partiallyDecryptedVotesList = new HashMap<>();
+    private static Map<String, BlindedGenerator> blindedGeneratorsList = new HashMap<>();
     private static SignatureParameters signatureParameters = new SignatureParameters();
     private static VoterCertificates voterCertificates = new VoterCertificates();
     private static VerificationKeys verificationKeys = new VerificationKeys();
@@ -98,17 +83,14 @@ public class ElectionBoard {
         mixers = config.getMixerIds();
     }
 
-    //OK
     public void setSignatureParameters(SignatureParameters signatureParameters) {
         ElectionBoard.signatureParameters = signatureParameters;
     }
 
-    //OK
     public SignatureParameters getSignatureParameters() {
         return ElectionBoard.signatureParameters;
     }
-
-    //Wird momentan nicht gesetzt!!!
+    
     public void setRootCertificate(Certificate certificate) {
         ElectionBoard.certificate = certificate;
     }
@@ -117,7 +99,6 @@ public class ElectionBoard {
         return ElectionBoard.certificate;
     }
 
-    //OK
     public void setKnownElectionIds(KnownElectionIds knownElectionIds) {
         ElectionBoard.knownElectionIds = knownElectionIds;
     }
@@ -126,7 +107,6 @@ public class ElectionBoard {
         return ElectionBoard.knownElectionIds;
     }
 
-    //OK
     public void setElectionSystemInfo(ElectionSystemInfo electionSystemInfo) {
         ElectionBoard.electionSystemInfo = electionSystemInfo;
     }
@@ -135,7 +115,6 @@ public class ElectionBoard {
         return ElectionBoard.electionSystemInfo;
     }
 
-    //OK
     public void setElectionDefinition(ElectionDefinition electionDefinition) {
         ElectionBoard.electionDefinition = electionDefinition;
     }
@@ -144,7 +123,6 @@ public class ElectionBoard {
         return ElectionBoard.electionDefinition;
     }
 
-    //OK
     public void setEncryptionParameters(EncryptionParameters encryptionParameters) {
         ElectionBoard.encryptionParameters = encryptionParameters;
     }
@@ -153,23 +131,14 @@ public class ElectionBoard {
         return ElectionBoard.encryptionParameters;
     }
 
-    //OK evtl noch anpassen
-    public void setEncryptionKeyShareList(List<EncryptionKeyShare> encryptionKeyShareList) {
+    public void setEncryptionKeyShareList(Map<String, EncryptionKeyShare> encryptionKeyShareList) {
         ElectionBoard.encryptionKeyShareList = encryptionKeyShareList;
     }
 
     public EncryptionKeyShare getEncryptionKeyShare(String tallierId) {
-        EncryptionKeyShare encryptionKeyShare = new EncryptionKeyShare();
-        for (int i = 0; i < talliers.length; i++) {
-            if (talliers[i].equals(tallierId)) {
-                encryptionKeyShare = this.encryptionKeyShareList.get(i);
-            }
-        }
-
-        return encryptionKeyShare;
+        return ElectionBoard.encryptionKeyShareList.get(tallierId);
     }
 
-    //OK
     public void setEncryptionKey(EncryptionKey encryptionKey) {
         ElectionBoard.encryptionKey = encryptionKey;
     }
@@ -178,23 +147,14 @@ public class ElectionBoard {
         return ElectionBoard.encryptionKey;
     }
 
-    //OK evtl noch anpassen
-    public void setBlindedGeneratorList(List<BlindedGenerator> blindedGeneratorsList) {
+    public void setBlindedGeneratorList(Map<String, BlindedGenerator> blindedGeneratorsList) {
         ElectionBoard.blindedGeneratorsList = blindedGeneratorsList;
     }
 
     public BlindedGenerator getBlindedGenerator(String mixerId) {
-        BlindedGenerator blindedGenerator = new BlindedGenerator();
-        for (int i = 0; i < mixers.length; i++) {
-            if (mixers[i].equals(mixerId)) {
-                blindedGenerator = this.blindedGeneratorsList.get(i);
-            }
-        }
-
-        return blindedGenerator;
+        return  ElectionBoard.blindedGeneratorsList.get(mixerId);
     }
 
-    //OK
     public void setElectionGenerator(ElectionGenerator electionGenerator) {
         ElectionBoard.electionGenerator = electionGenerator;
     }
@@ -203,7 +163,6 @@ public class ElectionBoard {
         return ElectionBoard.electionGenerator;
     }
 
-    //OK
     public void setElectionOptions(ElectionOptions electionOptions) {
         ElectionBoard.electionOptions = electionOptions;
     }
@@ -212,7 +171,6 @@ public class ElectionBoard {
         return ElectionBoard.electionOptions;
     }
 
-    //OK
     public void setElectionData(ElectionData electionData) {
         ElectionBoard.electionData = electionData;
     }
@@ -221,7 +179,6 @@ public class ElectionBoard {
         return ElectionBoard.electionData;
     }
 
-    //OK
     public void setElectoralRoll(ElectoralRoll electoralRoll) {
         ElectionBoard.electoralRoll = electoralRoll;
     }
@@ -230,7 +187,6 @@ public class ElectionBoard {
         return ElectionBoard.electoralRoll;
     }
 
-    //OK
     public void setVoterCertificates(VoterCertificates voterCertificates) {
         ElectionBoard.voterCertificates = voterCertificates;
     }
@@ -239,25 +195,14 @@ public class ElectionBoard {
         return ElectionBoard.voterCertificates;
     }
 
-    //OK evtl. noch anpassen -> Noch verwechslungen drin
-    public void setVerificationKeysMixedBy(List<MixedVerificationKeys> listMixedVerificationKeys) {
+    public void setVerificationKeysMixedBy(Map<String, MixedVerificationKeys> listMixedVerificationKeys) {
         ElectionBoard.listMixedVerificationKeys = listMixedVerificationKeys;
     }
 
     public MixedVerificationKeys getVerificationKeysMixedBy(String mixerId) {
-        MixedVerificationKeys mixedVerificationKeys = new MixedVerificationKeys();
-
-        for (int i = 0; i < mixers.length; i++) {
-            if (mixers[i].equals(mixerId)) {
-                mixedVerificationKeys = this.listMixedVerificationKeys.get(i);
-                break;
-            }
-        }
-
-        return mixedVerificationKeys;
+        return ElectionBoard.listMixedVerificationKeys.get(mixerId);
     }
 
-    // OK
     public void setMixedVerificationKeys(VerificationKeys verificationKeys) {
         ElectionBoard.verificationKeys = verificationKeys;
     }
@@ -266,7 +211,6 @@ public class ElectionBoard {
         return ElectionBoard.verificationKeys;
     }
 
-    //OK
     public void setLatelyRegisteredVoterCertificates(List<Certificate> listCertificate) {
         ElectionBoard.listLatelyCertificate = listCertificate;
     }
@@ -275,24 +219,14 @@ public class ElectionBoard {
         return ElectionBoard.listLatelyCertificate;
     }
 
-    public void setVerificationKeysLatelyMixedBy(List<MixedVerificationKeys> listMixedVerificationKeys) {
+    public void setVerificationKeysLatelyMixedBy(Map<String, List> listMixedVerificationKeys) {
         ElectionBoard.listLatelyMixedVerificationKeys = listMixedVerificationKeys;
     }
 
     public List<MixedVerificationKey> getVerificationKeysLatelyMixedBy(String mixerId) {
-        List<MixedVerificationKey> mixedVerificationKeys = new ArrayList<MixedVerificationKey>();
-
-        for (int i = 0; i < mixers.length; i++) {
-            if (mixers[i].equals(mixerId)) {
-                mixedVerificationKeys.add(this.listLatelyMixedVerificationKey.get(i));
-                break;
-            }
-        }
-
-        return mixedVerificationKeys;
+        return ElectionBoard.listLatelyMixedVerificationKeys.get(mixerId);
     }
 
-    // OK
     public void setLatelyMixedVerificationKeys(List<MixedVerificationKey> mixedVerificationKeys) {
         ElectionBoard.listLatelyMixedVerificationKey = mixedVerificationKeys;
     }
@@ -301,9 +235,6 @@ public class ElectionBoard {
         return ElectionBoard.listLatelyMixedVerificationKey;
     }
 
-
-
-    //OK
     public void setBallots(Ballots ballots) {
         ElectionBoard.ballots = ballots;
     }
@@ -312,7 +243,6 @@ public class ElectionBoard {
         return ElectionBoard.ballots;
     }
 
-    //OK
     public Ballot getBallot(BigInteger verificationKey) {
         Ballot vkballot = null;
         for (Ballot ballot : getBallots().getBallot()) {
@@ -325,23 +255,14 @@ public class ElectionBoard {
         return vkballot;
     }
 
-    //OK
-    public void setEncryptedVotesMixedBy(List<MixedEncryptedVotes> mixedEncryptedVotesList) {
+    public void setEncryptedVotesMixedBy(Map<String, MixedEncryptedVotes> mixedEncryptedVotesList) {
         ElectionBoard.mixedEncryptedVotesList = mixedEncryptedVotesList;
     }
 
     public MixedEncryptedVotes getEncryptedVotesMixedBy(String mixerId) {
-        MixedEncryptedVotes mixedEncryptedVotes = new MixedEncryptedVotes();
-        for (int i = 0; i < mixers.length; i++) {
-            if (mixers[i].equals(mixerId)) {
-                mixedEncryptedVotes = ElectionBoard.mixedEncryptedVotesList.get(i);
-            }
-        }
-
-        return mixedEncryptedVotes;
+        return ElectionBoard.mixedEncryptedVotesList.get(mixerId);
     }
 
-    // OK
     public void setEncryptedVotes(EncryptedVotes encryptedVotes) {
         ElectionBoard.encryptedVotes = encryptedVotes;
     }
@@ -350,23 +271,14 @@ public class ElectionBoard {
         return ElectionBoard.encryptedVotes;
     }
 
-    // OK
-    public void setPartiallyDecryptedVotesList(List<PartiallyDecryptedVotes> partiallyDecryptedVotesList) {
+    public void setPartiallyDecryptedVotesList(Map<String, PartiallyDecryptedVotes> partiallyDecryptedVotesList) {
         ElectionBoard.partiallyDecryptedVotesList = partiallyDecryptedVotesList;
     }
 
     public PartiallyDecryptedVotes getPartiallyDecryptedVotes(String tallierId) {
-        PartiallyDecryptedVotes partiallyDecryptedVotes = new PartiallyDecryptedVotes();
-        for (int i = 0; i < talliers.length; i++) {
-            if (talliers[i].equals(tallierId)) {
-                partiallyDecryptedVotes = ElectionBoard.partiallyDecryptedVotesList.get(i);
-            }
-        }
-
-        return partiallyDecryptedVotes;
+        return ElectionBoard.partiallyDecryptedVotesList.get(tallierId);
     }
 
-    // OK
     public void setDecryptedVotes(DecryptedVotes decryptedVotes) {
         ElectionBoard.decryptedVotes = decryptedVotes;
     }
@@ -375,20 +287,11 @@ public class ElectionBoard {
         return ElectionBoard.decryptedVotes;
     }
 
-    // OK
     public void setDecodedVotes(DecodedVotes decodedVotes) {
         ElectionBoard.decodedVotes = decodedVotes;
     }
 
     public DecodedVotes getDecodedVotes() {
         return ElectionBoard.decodedVotes;
-    }
-
-    public void addPoliticalList(PoliticalList politicalList) {
-        ElectionBoard.politicalLists.add(politicalList);
-    }
-
-    public void addCandidate(Candidate candidate) {
-        ElectionBoard.candidateList.add(candidate);
     }
 }

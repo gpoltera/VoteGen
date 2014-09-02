@@ -17,7 +17,9 @@ import java.security.KeyPair;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,7 +41,7 @@ public class EncryptionKeyShareTask {
 
     /*1.3.4 d) Distributed Key Generation*/
     private void run() {
-        List<EncryptionKeyShare> encryptionKeyShareList = new ArrayList<>();
+        Map<String,EncryptionKeyShare> encryptionKeyShareList = new HashMap<>();
 
         /*for each tallier*/
         for (int j = 0; j < electionBoard.talliers.length; j++) {
@@ -48,7 +50,7 @@ public class EncryptionKeyShareTask {
             EncryptionKeyShare encryptionKeyShare = createEncryptionKeyShare(j);
 
             /*add to list*/
-            encryptionKeyShareList.add(j, encryptionKeyShare);
+            encryptionKeyShareList.put(electionBoard.talliers[j], encryptionKeyShare);
         }
         /*submit to ElectionBoard*/
         electionBoard.setEncryptionKeyShareList(encryptionKeyShareList);

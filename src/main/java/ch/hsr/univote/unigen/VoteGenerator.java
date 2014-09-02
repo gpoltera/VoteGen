@@ -15,7 +15,6 @@ import ch.hsr.univote.unigen.tasks.DecodedVotesTask;
 import ch.hsr.univote.unigen.tasks.DecryptedVotesTask;
 import ch.hsr.univote.unigen.tasks.ElectionDataTask;
 import ch.hsr.univote.unigen.tasks.ElectionGeneratorTask;
-import ch.hsr.univote.unigen.tasks.ElectionResultsTask;
 import ch.hsr.univote.unigen.tasks.ElectionSystemInfoTask;
 import ch.hsr.univote.unigen.tasks.ElectoralRollTask;
 import ch.hsr.univote.unigen.tasks.EncryptionKeyTask;
@@ -220,7 +219,7 @@ public class VoteGenerator {
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
-        } //NOT YET IMPLEMENTED
+        }
     }
 
     /* 1.3.6 Election Period */
@@ -230,9 +229,9 @@ public class VoteGenerator {
         //a) Late Registration
         voteGenerationPanel.appendText(" a) Late Registration");
         try {
-            new LatelyRegistredVoterCertsTask(); //Add the Certificates of the voters to the list -> OK
-            new LatelyMixedVerificationKeysByTask(); //NOT YET IMPLEMENTED
-            new LatelyMixedVerificationKeysTask(); //NOT YET IMPLEMENTED
+            new LatelyRegistredVoterCertsTask();
+            new LatelyMixedVerificationKeysByTask();
+            new LatelyMixedVerificationKeysTask();
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
@@ -268,13 +267,6 @@ public class VoteGenerator {
             new PartiallyDecryptedVotesTask();
             new DecryptedVotesTask();
             new DecodedVotesTask();
-            voteGenerationPanel.appendSuccess();
-        } catch (Exception e) {
-            voteGenerationPanel.appendFailure(e.getMessage().toString());
-        }
-
-        try {
-            //new ElectionResultsTask(); //Performing the election results 
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());

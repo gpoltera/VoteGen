@@ -11,7 +11,6 @@ import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.ElGamal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,14 +84,12 @@ public class DecryptedVotesTask {
 
             BigInteger m = b.get(i).multiply(a.get(i)).mod(p);
             if (m.compareTo(q) < 1) {
-                m.subtract(BigInteger.ONE);
+                m = m.subtract(BigInteger.ONE);
             } else {
-                p.subtract(m).subtract(BigInteger.ONE);
+                m = (p.subtract(m)).subtract(BigInteger.ONE);
             }
 
             decryptedVotes.getVote().add(m);
-            System.out.println("DecryptedVotes:");
-            System.out.println(m);
         }
 
         return decryptedVotes;

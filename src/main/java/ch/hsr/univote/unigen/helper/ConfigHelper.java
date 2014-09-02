@@ -42,7 +42,7 @@ public class ConfigHelper {
     public ConfigHelper() {
         properties = new Properties();
         loadProperties(CONFIG_FILE);
-        System.out.println("geht rein in die Config");
+        System.out.println("Load the Config from Config-File");
     }
 
     public String getCertificateAuthorityId() {
@@ -229,6 +229,10 @@ public class ConfigHelper {
 
     public int getVotersNumber() {
         return getIntProperty("Voters", "Anzahl der Waehlenden");
+    }
+
+    public int getLatelyVotersNumber() {
+        return getIntProperty("LatelyVoters", "Anzahl der Waehlenden die sich erst waehrend der Wahl registrieren");
     }
 
     public int getCandidatesNumber() {

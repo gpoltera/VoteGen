@@ -50,6 +50,7 @@ public class InitialConfigurationPanel extends JPanel {
         labels.add("electionId");
         labels.add("electionTitle");
         labels.add("Voters");
+        labels.add("LatelyVoters");
         labels.add("Mixers");
         labels.add("Talliers");
         labels.add("candidates");

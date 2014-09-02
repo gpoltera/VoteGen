@@ -5,15 +5,23 @@
  */
 package ch.hsr.univote.unigen.tasks;
 
+import ch.bfh.univote.common.MixedVerificationKey;
 import ch.bfh.univote.common.MixedVerificationKeys;
 import ch.bfh.univote.common.Proof;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.krypto.NIZKP;
 import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.security.interfaces.DSAPublicKey;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -24,6 +32,8 @@ public class LatelyMixedVerificationKeysByTask {
     private ConfigHelper config;
     private ElectionBoard electionBoard;
     private KeyStore keyStore;
+    private List<DSAPublicKey> verificationKeys;
+    private List<BigInteger> previous_VerificationKeys;
 
     public LatelyMixedVerificationKeysByTask() {
         this.config = VoteGenerator.config;
@@ -34,28 +44,65 @@ public class LatelyMixedVerificationKeysByTask {
     }
 
     private void run() {
-        List<MixedVerificationKeys> listMixedVerificationKeys = new ArrayList<>();
-        
+        Map<String, List> listMixedVerificationKeys = new HashMap<>();
+
         /*load the verification keys*/
-        //List<SchnorrVerificationKey> verificationKeys = keyStore.getVotersVerificationKey();
+        verificationKeys = keyStore.getLatelyVotersVerificationKey();
+        previous_VerificationKeys = new ArrayList<>();
 
         /*for each mixer*/
-        //for (int i = 0; i < electionBoard.mixers.length; i++) {
+        for (int k = 0; k < electionBoard.mixers.length; k++) {
             /*create MixedVerificationKeys*/
-            //MixedVerificationKeys mixedVerificationKeys = createMixedVerificationKeys(verificationKeys);
-
-            // NOT YET IMPLEMENTED
-            /*set proof*/
-            //Proof proof = new Proof();
-            //mixedVerificationKeys.setProof(proof);
-
-            /*sign by mixer*/
-            //mixedVerificationKeys.setSignature(new RSASignatureGenerator().createSignature(electionBoard.mixers[i], mixedVerificationKeys, keyStore.getMixerSignatureKey(i)));
+            List<MixedVerificationKey> mixedVerificationKey = createMixedVerificationKeys(k);
 
             /*add to list*/
-            //listMixedVerificationKeys.add(mixedVerificationKeys);
-        //}
+            listMixedVerificationKeys.put(electionBoard.mixers[k], mixedVerificationKey);
+        }
         /*submit to ElectionBoard*/
         electionBoard.setVerificationKeysLatelyMixedBy(listMixedVerificationKeys);
+    }
+
+    private List<MixedVerificationKey> createMixedVerificationKeys(int k) {
+        List<MixedVerificationKey> mixedVerificationKeys = new ArrayList<>();
+        List<BigInteger> new_VerificationKeys = new ArrayList<>();
+
+        if (previous_VerificationKeys.isEmpty()) {
+            for (DSAPublicKey verificationKey : verificationKeys) {
+                previous_VerificationKeys.add(verificationKey.getY());
+            }
+        }
+
+        for (BigInteger verificationKey : previous_VerificationKeys) {
+            MixedVerificationKey mixedVerificationKey = createMixedVerificationKey(k, verificationKey);
+            new_VerificationKeys.add(mixedVerificationKey.getKey());
+            mixedVerificationKeys.add(mixedVerificationKey);
+        }
+        
+        previous_VerificationKeys = new_VerificationKeys;
+
+        return mixedVerificationKeys;
+    }
+
+    private MixedVerificationKey createMixedVerificationKey(int k, BigInteger verificationKey) {
+        MixedVerificationKey mixedVerificationKey = new MixedVerificationKey();
+        mixedVerificationKey.setElectionId(config.getElectionId());
+        BigInteger vk_ik = verificationKey.modPow(keyStore.getBlindedGeneratorKey(k).getX(), keyStore.getBlindedGeneratorKey(k).getParams().getP());
+        mixedVerificationKey.setKey(vk_ik);
+        BigInteger previous_g;
+        if (k == 0) {
+            previous_g = electionBoard.getSignatureParameters().getGenerator();
+        } else {
+            previous_g = electionBoard.getBlindedGenerator(electionBoard.mixers[k - 1]).getGenerator();
+        }
+        mixedVerificationKey.setProof(new NIZKP().getLatelyMixedVerificationKeysProof(
+                electionBoard.mixers[k],
+                verificationKey,
+                vk_ik,
+                previous_g,
+                keyStore.getBlindedGeneratorKey(k),
+                electionBoard.getSignatureParameters()));
+        mixedVerificationKey.setSignature(new RSASignatureGenerator().createSignature(electionBoard.mixers[k], mixedVerificationKey, keyStore.getMixerSignatureKey(k)));
+
+        return mixedVerificationKey;
     }
 }

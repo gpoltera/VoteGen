@@ -6,8 +6,8 @@
 package ch.hsr.univote.unigen.krypto;
 
 import ch.bfh.univote.common.SignatureParameters;
-import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.helper.StringConcatenator;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -21,7 +21,6 @@ import java.security.spec.DSAPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 
 /**
  *
@@ -31,8 +30,8 @@ public class Schnorr {
 
     private ConfigHelper config;
 
-    public Schnorr() {
-        this.config = VoteGenerator.config;
+    public Schnorr(ConfigHelper config) {
+        this.config = config;
     }
 
     /**
@@ -66,10 +65,11 @@ public class Schnorr {
     /**
      *
      * @param m Message to sign
+     * @param electionGenerator
      * @param privateKey Schnorr PrivateKey
      * @return Signature (b,a)
      */
-    public BigInteger[] signSchnorr(String m, DSAPrivateKey privateKey) {
+    public BigInteger[] signSchnorr(String m, BigInteger electionGenerator, DSAPrivateKey privateKey) {
 
         BigInteger p = privateKey.getParams().getP();
         BigInteger q = privateKey.getParams().getQ();
@@ -78,14 +78,19 @@ public class Schnorr {
         BigInteger[] s = new BigInteger[2];
 
         BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
-        BigInteger gr = g.modPow(r, p);
-        byte[] mgr = ByteUtils.concatenate(m.getBytes(), gr.toByteArray());
+        BigInteger gr = electionGenerator.modPow(r, p);
+        
+        StringConcatenator sc = new StringConcatenator();
+        sc.pushObjectDelimiter(m, StringConcatenator.INNER_DELIMITER);
+        sc.pushObject(gr);
+        
+        String concat = sc.pullAll();
 
-        BigInteger a = new Hash().getHash(mgr, config.getHashAlgorithm());
+        BigInteger a = new Hash().getHash(concat, config.getHashAlgorithm(), config.getCharEncoding());
         BigInteger b = r.subtract(x.multiply(a)).mod(q);
 
-        s[0] = b;
-        s[1] = a;
+        s[0] = a;
+        s[1] = b;
 
         return s;
     }
@@ -94,23 +99,29 @@ public class Schnorr {
      *
      * @param m Message to verify
      * @param s Signature (b,a)
+     * @param electionGenerator
      * @param publicKey Schnorr PublicKey
      * @return boolean match true/false
      */
-    public boolean verifySchnorr(String m, BigInteger[] s, DSAPublicKey publicKey) {
+    public boolean verifySchnorr(String m, BigInteger[] s, BigInteger electionGenerator, DSAPublicKey publicKey) {
 
-        BigInteger b = s[0];
-        BigInteger a = s[1];
+        BigInteger a = s[0];
+        BigInteger b = s[1];
 
         BigInteger p = publicKey.getParams().getP();
         BigInteger q = publicKey.getParams().getQ();
         BigInteger g = publicKey.getParams().getG();
         BigInteger y = publicKey.getY();
 
-        BigInteger rv = g.modPow(b, p).multiply(y.modPow(a, p)).mod(p);
-        byte[] mrv = ByteUtils.concatenate(m.getBytes(), rv.toByteArray());
+        BigInteger rv = electionGenerator.modPow(b, p).multiply(y.modPow(a, p)).mod(p);
+        
+        StringConcatenator sc = new StringConcatenator();
+        sc.pushObjectDelimiter(m, StringConcatenator.INNER_DELIMITER);
+        sc.pushObject(rv);
+        
+        String concat = sc.pullAll();
 
-        BigInteger av = new Hash().getHash(mrv, config.getHashAlgorithm());
+        BigInteger av = new Hash().getHash(concat, config.getHashAlgorithm(), config.getCharEncoding());
 
         if (av.equals(a)) {
             return true;

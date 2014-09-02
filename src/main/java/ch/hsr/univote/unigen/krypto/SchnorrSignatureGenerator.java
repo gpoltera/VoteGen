@@ -6,6 +6,8 @@
 package ch.hsr.univote.unigen.krypto;
 
 import ch.bfh.univote.common.Ballot;
+import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
 import java.math.BigInteger;
 import java.security.interfaces.DSAPrivateKey;
@@ -15,8 +17,13 @@ import java.security.interfaces.DSAPrivateKey;
  * @author Gian Poltéra
  */
 public class SchnorrSignatureGenerator {
+    private ConfigHelper config;
+    
+    public SchnorrSignatureGenerator() {
+        this.config = VoteGenerator.config;
+    }
 
-    public BigInteger[] createSignature(Ballot ballot, DSAPrivateKey privateKey) {
+    public BigInteger[] createSignature(Ballot ballot, BigInteger electionGenerator, DSAPrivateKey privateKey) {
         //concatenate to ( id | (firstValue|secondValue) | ((t)|(s)) )
         StringConcatenator sc = new StringConcatenator();
         sc.pushLeftDelim();
@@ -31,11 +38,11 @@ public class SchnorrSignatureGenerator {
         //proof
         sc.pushLeftDelim();
         sc.pushLeftDelim();
-        sc.pushObject(ballot.getProof().getCommitment());
+        sc.pushObject(ballot.getProof().getCommitment().get(0));
         sc.pushRightDelim();
         sc.pushInnerDelim();
         sc.pushLeftDelim();
-        sc.pushObject(ballot.getProof().getResponse());
+        sc.pushObject(ballot.getProof().getResponse().get(0));
         sc.pushRightDelim();
         sc.pushRightDelim();
         //right parenthesis
@@ -43,6 +50,6 @@ public class SchnorrSignatureGenerator {
 
         String res = sc.pullAll();
         
-        return new Schnorr().signSchnorr(res, privateKey);
+        return new Schnorr(config).signSchnorr(res, electionGenerator, privateKey);
     }
 }
