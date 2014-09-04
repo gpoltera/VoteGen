@@ -5,7 +5,6 @@
  */
 package ch.hsr.univote.unigen.db;
 
-import ch.bfh.univote.common.SignatureParameters;
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -17,8 +16,8 @@ import java.sql.Timestamp;
  */
 public class DB4O {
 
-    public static void storeDB(Object object, String electionId, String filename) {
-        ObjectContainer db = Db4o.openFile("db/" + filename + "_" + electionId + ".db");
+    public static void storeDB(Object object, String filename) {
+        ObjectContainer db = Db4o.openFile("db/" + filename + ".db");
         try {
             db.store(object);
             db.commit();
@@ -27,8 +26,8 @@ public class DB4O {
         }
     }
 
-    public static Object readDB(Object object, String electionid, String filename) {
-        ObjectContainer db = Db4o.openFile("db/" + filename + "_" + electionid + ".db");
+    public static Object readDB(Object object, String filename) {
+        ObjectContainer db = Db4o.openFile("db/" + filename);
         Object robject = new Object();
         try {
             

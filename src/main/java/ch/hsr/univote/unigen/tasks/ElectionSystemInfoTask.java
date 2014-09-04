@@ -106,14 +106,12 @@ public class ElectionSystemInfoTask {
     }
 
     private void createMixerKeys(int i) {
-        //RSA Keys
         KeyPair keyPair = new RSA().getKeyPair();
         keyStore.setMixerSignatureKey(i, (RSAPrivateKey) keyPair.getPrivate());
         keyStore.setMixerVerificationKey(i, (RSAPublicKey) keyPair.getPublic());
     }
 
     private void createTallierKeys(int i) {
-        //RSA Keys
         KeyPair keyPair = new RSA().getKeyPair();
         keyStore.setTallierSignatureKey(i, (RSAPrivateKey) keyPair.getPrivate());
         keyStore.setTallierVerificationKey(i, (RSAPublicKey) keyPair.getPublic());

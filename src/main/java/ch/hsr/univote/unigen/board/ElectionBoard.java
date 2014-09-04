@@ -49,7 +49,7 @@ public class ElectionBoard {
     public static String[] talliers;
 
     /*variables initialisation*/
-    private static Ballots ballots;
+    private static Ballots ballots = new Ballots();
     private static Certificate certificate = new Certificate();
     private static DecodedVotes decodedVotes = new DecodedVotes();
     private static DecryptedVotes decryptedVotes = new DecryptedVotes();
@@ -76,8 +76,8 @@ public class ElectionBoard {
     private static VerificationKeys verificationKeys = new VerificationKeys();
 
     /*constructor*/
-    public ElectionBoard() {
-        this.config = VoteGenerator.config;
+    public ElectionBoard(ConfigHelper config) {
+        this.config = config;
         electionId = config.getElectionId();
         talliers = config.getTallierIds();
         mixers = config.getMixerIds();
@@ -90,7 +90,7 @@ public class ElectionBoard {
     public SignatureParameters getSignatureParameters() {
         return ElectionBoard.signatureParameters;
     }
-    
+
     public void setRootCertificate(Certificate certificate) {
         ElectionBoard.certificate = certificate;
     }
@@ -135,6 +135,10 @@ public class ElectionBoard {
         ElectionBoard.encryptionKeyShareList = encryptionKeyShareList;
     }
 
+    public Map<String, EncryptionKeyShare> getEncryptionKeyShareList() {
+        return ElectionBoard.encryptionKeyShareList;
+    }
+
     public EncryptionKeyShare getEncryptionKeyShare(String tallierId) {
         return ElectionBoard.encryptionKeyShareList.get(tallierId);
     }
@@ -151,8 +155,12 @@ public class ElectionBoard {
         ElectionBoard.blindedGeneratorsList = blindedGeneratorsList;
     }
 
+    public Map<String, BlindedGenerator> getBlindedGeneratorList() {
+        return ElectionBoard.blindedGeneratorsList;
+    }
+
     public BlindedGenerator getBlindedGenerator(String mixerId) {
-        return  ElectionBoard.blindedGeneratorsList.get(mixerId);
+        return ElectionBoard.blindedGeneratorsList.get(mixerId);
     }
 
     public void setElectionGenerator(ElectionGenerator electionGenerator) {
@@ -199,6 +207,10 @@ public class ElectionBoard {
         ElectionBoard.listMixedVerificationKeys = listMixedVerificationKeys;
     }
 
+    public Map<String, MixedVerificationKeys> getVerificationKeysMixedBy() {
+        return ElectionBoard.listMixedVerificationKeys;
+    }
+
     public MixedVerificationKeys getVerificationKeysMixedBy(String mixerId) {
         return ElectionBoard.listMixedVerificationKeys.get(mixerId);
     }
@@ -223,6 +235,10 @@ public class ElectionBoard {
         ElectionBoard.listLatelyMixedVerificationKeys = listMixedVerificationKeys;
     }
 
+    public Map<String, List> getVerificationKeysLatelyMixedBy() {
+        return ElectionBoard.listLatelyMixedVerificationKeys;
+    }
+
     public List<MixedVerificationKey> getVerificationKeysLatelyMixedBy(String mixerId) {
         return ElectionBoard.listLatelyMixedVerificationKeys.get(mixerId);
     }
@@ -230,7 +246,7 @@ public class ElectionBoard {
     public void setLatelyMixedVerificationKeys(List<MixedVerificationKey> mixedVerificationKeys) {
         ElectionBoard.listLatelyMixedVerificationKey = mixedVerificationKeys;
     }
-        
+
     public List<MixedVerificationKey> getLatelyMixedVerificationKeys() {
         return ElectionBoard.listLatelyMixedVerificationKey;
     }
@@ -259,6 +275,10 @@ public class ElectionBoard {
         ElectionBoard.mixedEncryptedVotesList = mixedEncryptedVotesList;
     }
 
+    public Map<String, MixedEncryptedVotes> getEncryptedVotesMixedBy() {
+        return ElectionBoard.mixedEncryptedVotesList;
+    }
+
     public MixedEncryptedVotes getEncryptedVotesMixedBy(String mixerId) {
         return ElectionBoard.mixedEncryptedVotesList.get(mixerId);
     }
@@ -273,6 +293,10 @@ public class ElectionBoard {
 
     public void setPartiallyDecryptedVotesList(Map<String, PartiallyDecryptedVotes> partiallyDecryptedVotesList) {
         ElectionBoard.partiallyDecryptedVotesList = partiallyDecryptedVotesList;
+    }
+
+    public Map<String, PartiallyDecryptedVotes> getPartiallyDecryptedVotesList() {
+        return ElectionBoard.partiallyDecryptedVotesList;
     }
 
     public PartiallyDecryptedVotes getPartiallyDecryptedVotes(String tallierId) {

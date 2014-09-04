@@ -8,7 +8,6 @@ package ch.hsr.univote.unigen.db;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import java.security.KeyPair;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 

@@ -6,7 +6,7 @@ import ch.hsr.univote.unigen.tasks.ElectionOptionsTask;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.board.Publisher;
-import ch.hsr.univote.unigen.db.DBKeyStoreManager;
+import ch.hsr.univote.unigen.db.DBElectionBoardManager;
 import ch.hsr.univote.unigen.gui.votegeneration.VoteGenerationPanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.tasks.BallotsTask;
@@ -23,7 +23,6 @@ import ch.hsr.univote.unigen.tasks.MixedVerificationKeysByTask;
 import ch.hsr.univote.unigen.tasks.MixedVerificationKeysTask;
 import ch.hsr.univote.unigen.tasks.PartiallyDecryptedVotesTask;
 import ch.hsr.univote.unigen.tasks.SignatureParametersTask;
-import ch.hsr.univote.unigen.tasks.SingleBallotTask;
 import ch.hsr.univote.unigen.tasks.VoterCertsTask;
 import ch.hsr.univote.unigen.tasks.EncryptedVotesTask;
 import ch.hsr.univote.unigen.tasks.EncryptionKeyShareTask;
@@ -46,7 +45,7 @@ public class VoteGenerator {
 
     public VoteGenerator(VoteGenerationPanel voteGenerationPanel) {
         config = new ConfigHelper();
-        electionBoard = new ElectionBoard();
+        electionBoard = new ElectionBoard(config);
         keyStore = new KeyStore();
         this.voteGenerationPanel = voteGenerationPanel;
         electionSequence();
@@ -154,11 +153,11 @@ public class VoteGenerator {
         //c) Parameter Generation
         voteGenerationPanel.appendText(" c) Parameter Generation");
         try {
-            new EncryptionParametersTask();
+            new EncryptionParametersTask(); //Set the ElGamal Parameters
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
-        } //Set the ElGamal Parameters -> OK
+        }
 
         //d) Distributed Key Generation
         voteGenerationPanel.appendText(" d) Distributed Key Generation");
@@ -168,7 +167,7 @@ public class VoteGenerator {
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
-        } // OK
+        }
 
         //e) Constructing the Election Generator
         voteGenerationPanel.appendText(" e) Constructing the Election Generator");
@@ -178,7 +177,7 @@ public class VoteGenerator {
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
-        } // OK
+        }
     }
 
     /* 1.3.5 Election Preparation */
@@ -187,29 +186,29 @@ public class VoteGenerator {
         //a) Definition of Election Options
         voteGenerationPanel.appendText(" a) Definition of Election Options");
         try {
-            new ElectionOptionsTask();
+            new ElectionOptionsTask(); //Set the ElectionOptions
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
-        } //Set the ElectionOptions -> OK
+        }
 
         //b) Publication of Election Data
         voteGenerationPanel.appendText(" b) Publication of Election Data");
         try {
-            new ElectionDataTask();
+            new ElectionDataTask(); //Add the results to the electionData
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
-        } //Add the results to the electionData -> OK
+        }
 
         //c) Electoral Roll Preparation 
         voteGenerationPanel.appendText(" c) Electoral Roll Preparation ");
         try {
-            new ElectoralRollTask(); //??????
+            new ElectoralRollTask(); //Lists the votersid
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
-        } //Lists the votersid -> OK
+        }
 
         //d) Mixing the Public Verification Keys
         voteGenerationPanel.appendText(" d) Mixing the Public Verification Keys");
@@ -291,7 +290,8 @@ public class VoteGenerator {
     private void phaseStore() {
         voteGenerationPanel.appendText("Store the Keys in the DB");
         try {
-            new DBKeyStoreManager().saveInDB(config.getElectionId());
+            new DBElectionBoardManager().saveElectionBoard(electionBoard);
+            
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());

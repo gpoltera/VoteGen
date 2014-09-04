@@ -6,6 +6,7 @@
 package ch.hsr.univote.unigen.gui;
 
 import ch.hsr.univote.unigen.VoteGenerator;
+import ch.hsr.univote.unigen.gui.generatedvotes.GeneratedVotesListerPanel;
 import ch.hsr.univote.unigen.gui.votegeneration.VoteGenerationPanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.awt.BorderLayout;
@@ -67,15 +68,25 @@ public class MiddlePanel extends JPanel {
 
     private void createStartpagePanel() {
         startpage = new JPanel();
-        JButton button = new JButton();
-        button.setText("Starte die Konfiguration");
-        button.addActionListener(new ActionListener() {
+        JButton button1 = new JButton();
+        button1.setText("Starte die Konfiguration");
+        button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 createConfigurationPanel();
             }
         });
-        startpage.add(button);
+        startpage.add(button1);
+        
+        JButton button2 = new JButton();
+        button2.setText("Lade eine bereits generierteWahl");
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                createGeneratedVotesPanel();
+            }
+        });
+        startpage.add(button2);
 
         panel.add(startpage);
     }
@@ -84,6 +95,13 @@ public class MiddlePanel extends JPanel {
         panel.remove(startpage);
         createConfigurationStatusBarPanel();
         nextPanel();
+    }
+    
+    private void createGeneratedVotesPanel() {
+        panel.remove(startpage);
+        panel.add(new GeneratedVotesListerPanel());
+        validate();
+        repaint();
     }
 
     private void createVoteGenerationPanel() {

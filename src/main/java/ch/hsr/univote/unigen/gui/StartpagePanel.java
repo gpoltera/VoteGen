@@ -22,7 +22,7 @@ public class StartpagePanel extends JPanel {
 
     private ResourceBundle bundle;
     private JPanel panel;
-    private JButton button;
+    private JButton button1, button2;
 
     public StartpagePanel() {
         bundle = ResourceBundle.getBundle("Bundle");
@@ -36,13 +36,22 @@ public class StartpagePanel extends JPanel {
         panel.setLayout(new GridBagLayout());
         panel.setBorder(new EtchedBorder());
 
-        button = new JButton();
-        button.setText(bundle.getString("newelection"));
-        button.addActionListener(new ActionListener() {
+        button1 = new JButton();
+        button1.setText(bundle.getString("newelection"));
+        button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
             }
         });
-        panel.add(button);
+        panel.add(button1);
+        
+        button2 = new JButton();
+        button2.setText(bundle.getString("newelection"));
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+            }
+        });
+        panel.add(button2);
     }
 }
