@@ -6,7 +6,6 @@
 package ch.hsr.univote.unigen.gui.generatedvotes;
 
 import ch.hsr.univote.unigen.board.ElectionBoard;
-import ch.hsr.univote.unigen.board.Publisher;
 import ch.hsr.univote.unigen.db.DBElectionBoardManager;
 import ch.hsr.univote.unigen.helper.FileHandler;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -64,7 +63,7 @@ public class GeneratedVotesListerPanel extends JPanel {
         y++;
         builder.appendRow("center:pref");
         builder.addSeparator("", cellConstraints.xyw(1, y, 5));
-        
+
         for (int i = 0; i < dbs.length; i++) {
             y++;
             builder.appendRow("center:pref");
@@ -73,7 +72,7 @@ public class GeneratedVotesListerPanel extends JPanel {
             builder.addLabel(dbs[i][1], cellConstraints.xy(3, y)); //Anpassen
             builder.add(button, cellConstraints.xy(5, y));
         }
-        
+
         panel.add(builder.getPanel());
     }
 
@@ -83,12 +82,17 @@ public class GeneratedVotesListerPanel extends JPanel {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                ElectionBoard electionBoard = new DBElectionBoardManager().loadElectionBoard(db);
-                Publisher publisher = new Publisher(electionBoard);
-                publisher.startWebSrv();
+                loadGeneratedVotePublishPanel(new DBElectionBoardManager().loadElectionBoard(db));
             }
         });
 
         return button;
+    }
+
+    private void loadGeneratedVotePublishPanel(ElectionBoard electionBoard) {
+        this.remove(panel);
+        this.add(new GeneratedVotePublishPanel(electionBoard));
+        validate();
+        repaint();
     }
 }

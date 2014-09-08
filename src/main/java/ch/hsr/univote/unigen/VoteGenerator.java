@@ -5,9 +5,8 @@ import ch.hsr.univote.unigen.tasks.ElectionDefinitionTask;
 import ch.hsr.univote.unigen.tasks.ElectionOptionsTask;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
-import ch.hsr.univote.unigen.board.Publisher;
 import ch.hsr.univote.unigen.db.DBElectionBoardManager;
-import ch.hsr.univote.unigen.gui.votegeneration.VoteGenerationPanel;
+import ch.hsr.univote.unigen.gui.generatedvotes.VoteGenerationPanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.tasks.BallotsTask;
 import ch.hsr.univote.unigen.tasks.BlindedGeneratorTask;
@@ -92,8 +91,8 @@ public class VoteGenerator {
         phaseStore();
         voteGenerationPanel.appendText("----------------------------------");
         
-        Publisher publisher = new Publisher(electionBoard);
-        publisher.startWebSrv();
+        //VoteGenerationSuccessfully!
+        voteGenerationPanel.appendText("VoteGeneration finish");
     }
 
     /* 1.3.1 Public Parameters */

@@ -5,9 +5,13 @@
  */
 package ch.hsr.univote.unigen.board;
 
+import ch.hsr.univote.unigen.gui.MiddlePanel;
+import ch.hsr.univote.unigen.gui.generatedvotes.GeneratedVotePublishPanel;
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ResourceBundle;
 import javax.xml.ws.Endpoint;
 
 /**
@@ -16,41 +20,53 @@ import javax.xml.ws.Endpoint;
  */
 public class Publisher {
 
+    private ConfigHelper config;
+    private ResourceBundle bundle;
     private ElectionBoard electionBoard;
     private Endpoint endpoint;
+    private GeneratedVotePublishPanel generatedVotePublishPanel;
+    private String hostname;
+    private int port;
 
-    private final static String IP = "localhost";
-    private final static int PORT = 8080;
-
-    public Publisher(ElectionBoard electionBoard) {
+    public Publisher(ElectionBoard electionBoard, GeneratedVotePublishPanel generatedVotePublishPanel) {
+        this.bundle = ResourceBundle.getBundle("Bundle");
+        this.config = MiddlePanel.config;
         this.electionBoard = electionBoard;
+        this.generatedVotePublishPanel = generatedVotePublishPanel;
+        this.hostname = config.getProperty("hostname");
+        this.port = Integer.parseInt(config.getProperty("port"));
     }
 
     public void startWebSrv() {
         endpoint = Endpoint.create(new ElectionBoardWebService(this.electionBoard));
-
         if (checkPort()) {
-            //appendFailure("Port " + PORT + " wird bereits verwendet");
+            generatedVotePublishPanel.appendFailure(bundle.getString("port") + " " + port + " " + bundle.getString("alreadyinuse"));
+            generatedVotePublishPanel.webserviceIsStopped();
         } else {
-            endpoint.publish("http://" + IP + ":" + PORT + "/ElectionBoardService/ElectionBoardServiceImpl");
-            //updateProgress();
-            System.out.println("Webservice start");
-            //appendText("Webservice gestartet");
+            String address = "http://" + hostname + ":" + port + "/ElectionBoardService/ElectionBoardServiceImpl";
+            endpoint.publish(address);
+            if (endpoint.isPublished()) {
+                generatedVotePublishPanel.appendText(bundle.getString("webservicestarted"));
+                //generatedVotePublishPanel.appendText(bundle.getString("address") + ": " + address);
+                generatedVotePublishPanel.webserviceIsStarted();
+            }   
         }
     }
 
     public void stopWebSrv() {
-        //appendText("Webservice wird beendet");
-        endpoint.stop();
-        System.out.println("Webservice stop");
+        if (endpoint.isPublished()) {
+            endpoint.stop();
+            generatedVotePublishPanel.appendText(bundle.getString("webservicestopped"));
+            generatedVotePublishPanel.webserviceIsStopped();
+        }     
     }
 
     private boolean checkPort() {
         Boolean result = false;
 
         try {
-            InetAddress ia = InetAddress.getByName(IP);
-            Socket s = new Socket(ia, PORT);
+            InetAddress ia = InetAddress.getByName(hostname);
+            Socket s = new Socket(ia, port);
             result = true;
             s.close();
         } catch (IOException ex) {

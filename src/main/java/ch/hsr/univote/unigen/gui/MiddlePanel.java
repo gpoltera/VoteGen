@@ -8,7 +8,7 @@ package ch.hsr.univote.unigen.gui;
 import ch.hsr.univote.unigen.gui.configuration.ConfigurationPanelManager;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.gui.generatedvotes.GeneratedVotesListerPanel;
-import ch.hsr.univote.unigen.gui.votegeneration.VoteGenerationPanel;
+import ch.hsr.univote.unigen.gui.generatedvotes.VoteGenerationPanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -117,7 +117,6 @@ public class MiddlePanel extends JPanel {
                 new VoteGenerator(voteGeneration);
             }
         }.start();
-        //new VoteGenerator(voteGeneration);
 
         panel.add(voteGeneration);
         validate();

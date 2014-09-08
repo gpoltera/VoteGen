@@ -5,6 +5,7 @@
  */
 package ch.hsr.univote.unigen.gui;
 
+import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.FileHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,6 +57,7 @@ public class MenuBar extends JMenuBar {
                 if (state == JFileChooser.APPROVE_OPTION) {
                     File file = filechooser.getSelectedFile();
                     new FileHandler().loadFromExternalFile(file);
+                    MiddlePanel.config = new ConfigHelper();
                 }
             }
         });
