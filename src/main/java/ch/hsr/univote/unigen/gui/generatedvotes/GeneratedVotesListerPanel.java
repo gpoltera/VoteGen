@@ -8,14 +8,12 @@ package ch.hsr.univote.unigen.gui.generatedvotes;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.Publisher;
 import ch.hsr.univote.unigen.db.DBElectionBoardManager;
+import ch.hsr.univote.unigen.helper.FileHandler;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -30,14 +28,12 @@ public class GeneratedVotesListerPanel extends JPanel {
 
     private ResourceBundle bundle;
     private JPanel panel;
-    private File file;
-    private List<String> dbs;
+    private String[][] dbs;
 
     public GeneratedVotesListerPanel() {
         bundle = ResourceBundle.getBundle("Bundle");
         panel = new JPanel();
-        file = new File("db/");
-        dbs = getFiles(file);
+        dbs = new FileHandler().getElectionDBFileList();
 
         createGeneratedVotesListerPanel();
 
@@ -69,19 +65,19 @@ public class GeneratedVotesListerPanel extends JPanel {
         builder.appendRow("center:pref");
         builder.addSeparator("", cellConstraints.xyw(1, y, 5));
         
-        for (String db : dbs) {
+        for (int i = 0; i < dbs.length; i++) {
             y++;
             builder.appendRow("center:pref");
-            JButton button = createLoadButton(db);
-            builder.addLabel(db, cellConstraints.xy(1, y));
-            builder.addLabel((int) (Math.random() * (200 - 10) + 10) + " MB", cellConstraints.xy(3, y)); //Anpassen
+            JButton button = createLoadButton(dbs[i][0]);
+            builder.addLabel(dbs[i][0], cellConstraints.xy(1, y));
+            builder.addLabel(dbs[i][1], cellConstraints.xy(3, y)); //Anpassen
             builder.add(button, cellConstraints.xy(5, y));
         }
         
         panel.add(builder.getPanel());
     }
 
-    private JButton createLoadButton(String db) {
+    private JButton createLoadButton(final String db) {
         JButton button = new JButton();
         button.setText(bundle.getString("load"));
         button.addActionListener(new ActionListener() {
@@ -94,20 +90,5 @@ public class GeneratedVotesListerPanel extends JPanel {
         });
 
         return button;
-    }
-
-    private List<String> getFiles(File dir) {
-        List<String> filelist = new ArrayList<>();
-        File[] files = dir.listFiles();
-        if (files != null) { // Permissions are available
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isFile()) {
-                    if (files[i].getName().endsWith("db") && !files[i].getName().startsWith("config")) {
-                        filelist.add(files[i].getName());
-                    }
-                }
-            }
-        }
-        return filelist;
     }
 }

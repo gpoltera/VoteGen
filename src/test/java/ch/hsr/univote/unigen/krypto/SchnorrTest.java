@@ -5,6 +5,7 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
+import ch.hsr.univote.unigen.crypto.Schnorr;
 import ch.bfh.univote.common.SignatureParameters;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
@@ -19,20 +20,20 @@ import junit.framework.TestSuite;
  *
  * @author Gian Poltéra
  */
-public class SchnorrSignatureTest extends TestCase {
+public class SchnorrTest extends TestCase {
 
-    public SchnorrSignatureTest(String testName) {
+    public SchnorrTest(String testName) {
         super(testName);
     }
 
     public static Test suite() {
-        return new TestSuite(SchnorrSignatureTest.class);
+        return new TestSuite(SchnorrTest.class);
     }
 
     /**
-     * Test of SchnorrSignature class.
+     * Test of Schnorr class.
      */
-    public void testSchnorrSignature() {
+    public void testSchnorr() {
         ConfigHelper config = new ConfigHelper();
         String m = "This is a test of the Schnorr Signature";
         System.out.println("Schnorr Signature of: " + m);

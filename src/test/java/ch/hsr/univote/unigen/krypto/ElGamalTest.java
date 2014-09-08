@@ -5,6 +5,7 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
+import ch.hsr.univote.unigen.crypto.ElGamal;
 import ch.bfh.univote.common.EncryptionParameters;
 import java.math.BigInteger;
 import java.security.KeyPair;

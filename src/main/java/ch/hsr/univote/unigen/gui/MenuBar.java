@@ -3,49 +3,60 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ch.hsr.univote.unigen.gui;
 
+import ch.hsr.univote.unigen.helper.FileHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.Box;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author Gian
  */
 public class MenuBar extends JMenuBar {
+
     private ResourceBundle resourceBundle;
     private MainGUI mainGUI;
-    
+
     public MenuBar(MainGUI mainGUI) {
         resourceBundle = ResourceBundle.getBundle("Bundle");
         createFileMenu();
         createLanguageMenu();
         createHelpMenu();
-        
+
         this.add(Box.createHorizontalGlue());
         this.mainGUI = mainGUI;
     }
-    
+
     private void createFileMenu() {
         JMenu menu = new JMenu(resourceBundle.getString("file"));
-        
+
         //OpenItem
         JMenuItem openItem = new JMenuItem(resourceBundle.getString("open"));
         openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
         openItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                //HIER OEFFNE WAS!!!
+                JFileChooser filechooser = new JFileChooser();
+                filechooser.setFileFilter(new FileNameExtensionFilter("VoteGenerator Config", "vgc"));
+                int state = filechooser.showOpenDialog(null);
+                if (state == JFileChooser.APPROVE_OPTION) {
+                    File file = filechooser.getSelectedFile();
+                    new FileHandler().loadFromExternalFile(file);
+                }
             }
         });
         menu.add(openItem);
@@ -56,28 +67,38 @@ public class MenuBar extends JMenuBar {
         saveItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                //HIER SAVE!!!
+                JFileChooser filechooser = new JFileChooser();
+                filechooser.setFileFilter(new FileNameExtensionFilter("VoteGenerator Config", "vgc"));
+                int state = filechooser.showSaveDialog(null);
+                if (state == JFileChooser.APPROVE_OPTION) {
+                    File file = filechooser.getSelectedFile();
+                    new FileHandler().saveInExternalFile(file);
+                }
             }
         });
         menu.add(saveItem);
 
         //ExitItem
         JMenuItem exitItem = new JMenuItem(resourceBundle.getString("exit"));
+
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
-        exitItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                System.exit(0);
-            }
-        });
+        exitItem.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent evt
+                    ) {
+                        System.exit(0);
+                    }
+                }
+        );
         menu.add(exitItem);
-        
+
         this.add(menu);
     }
-    
+
     private void createLanguageMenu() {
         JMenu menu = new JMenu(resourceBundle.getString("language"));
-        
+
         //GermanItem
         JMenuItem germanItem = new JMenuItem(resourceBundle.getString("german"));
         germanItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
@@ -91,7 +112,7 @@ public class MenuBar extends JMenuBar {
             }
         });
         menu.add(germanItem);
-        
+
         //EnglishItem
         JMenuItem englishItem = new JMenuItem(resourceBundle.getString("english"));
         englishItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
@@ -105,13 +126,13 @@ public class MenuBar extends JMenuBar {
             }
         });
         menu.add(englishItem);
-        
+
         this.add(menu);
-    }   
-    
+    }
+
     private void createHelpMenu() {
         JMenu menu = new JMenu(resourceBundle.getString("help"));
-        
+
         //DocumentationItem
         JMenuItem documentationItem = new JMenuItem(resourceBundle.getString("documentation"));
         documentationItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
@@ -128,11 +149,14 @@ public class MenuBar extends JMenuBar {
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                //Load about
+                JOptionPane.showMessageDialog(null,
+                        "Copyright:\nGian Poltéra 2013-2014\n\nVersion 0.9",
+                        "About",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
         menu.add(aboutItem);
-        
+
         this.add(menu);
     }
 }

@@ -1,9 +1,0 @@
-#CryptoConfigFile
-#Mon Aug 04 17:51:33 CEST 2014
-signatureKeyType=RSA
-charEncoding=UTF-8
-hashAlgorithm=SHA-256
-encryptionAlgorithm=ElGamal
-signatureAlgorithm=SHA256withRSA
-encryptionKeyLength=512
-signatureKeyLength=512

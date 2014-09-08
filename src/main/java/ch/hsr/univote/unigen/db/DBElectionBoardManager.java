@@ -81,7 +81,7 @@ public class DBElectionBoardManager {
     public void saveElectionBoard(ElectionBoard electionBoard) {
         String electionId = electionBoard.getElectionData().getElectionId();
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_mm_dd_HH_mm_ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
         String new_date = sdf.format(date);
         String filename = electionId + new_date;
 

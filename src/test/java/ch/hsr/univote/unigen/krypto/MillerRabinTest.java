@@ -5,7 +5,7 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
-import static ch.hsr.univote.unigen.krypto.MillerRabin.millerRabinTest;
+import static ch.hsr.univote.unigen.crypto.MillerRabin.millerRabinTest;
 import java.math.BigInteger;
 import junit.framework.Test;
 import junit.framework.TestCase;
