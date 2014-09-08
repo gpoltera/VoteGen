@@ -67,14 +67,6 @@ public class InitialConfigurationPanel extends JPanel {
 
         int y = 0;
 
-        //Title
-        y++;
-        builder.appendRow("top:pref");
-        builder.addTitle("TEST", cellConstraints.xyw(1, y, 2));
-        y++;
-        builder.appendRow("top:pref");
-        builder.addSeparator("", cellConstraints.xyw(1, y, 2));
-
         //Text
         for (int i = 0; i < 2; i++) {
             y++;
@@ -103,7 +95,7 @@ public class InitialConfigurationPanel extends JPanel {
             
             builder.appendRow("top:pref");
             builder.addLabel(bundle.getString(key) + ": ", cellConstraints.xy(1, y));
-            JSpinner spinner = new JSpinner(new SpinnerNumberModel(value, 1, 1000, 1));
+            JSpinner spinner = new JSpinner(new SpinnerNumberModel(value, 1, 100000, 1));
             spinner.setName(key);
             spinner.addChangeListener(new SpinnerChangeListener(spinner));
             builder.add(spinner, cellConstraints.xy(2, y));

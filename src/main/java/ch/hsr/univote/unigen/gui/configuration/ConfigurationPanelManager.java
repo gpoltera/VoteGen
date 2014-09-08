@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.univote.unigen.gui;
+package ch.hsr.univote.unigen.gui.configuration;
 
 import ch.hsr.univote.unigen.gui.configuration.AdminsConfigurationPanel;
 import ch.hsr.univote.unigen.gui.configuration.CandidatesConfigurationPanel;

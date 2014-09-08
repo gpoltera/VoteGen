@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package ch.hsr.univote.unigen.krypto;
+package ch.hsr.univote.unigen.crypto;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;

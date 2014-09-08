@@ -5,7 +5,7 @@ import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
+import ch.hsr.univote.unigen.crypto.RSASignatureGenerator;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;

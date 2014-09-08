@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.univote.unigen.krypto;
+package ch.hsr.univote.unigen.crypto;
 
 import ch.bfh.univote.common.EncryptedVote;
 import ch.bfh.univote.common.EncryptedVotes;
@@ -32,7 +32,7 @@ public class NIZKP {
         this.config = VoteGenerator.config;
     }
 
-    /*1.4.2 ElectionGenerator*/
+    /*1.4.2 LatelyMixedVerificationKeys*/
     public Proof getLatelyMixedVerificationKeysProof(String mixer, BigInteger previous_VerificationKey, BigInteger new_VerificationKey, BigInteger previous_g, DSAPrivateKey privateKey, SignatureParameters signatureParameters) {        
         BigInteger p = signatureParameters.getPrime();
         BigInteger q = signatureParameters.getGroupOrder();
@@ -44,7 +44,7 @@ public class NIZKP {
         Proof proof = new Proof();
 
         // 1. Choose w E q randomly
-        // 2. Compute t = (t1,t2) = (g_k-1^w mod p, vk_i-k1^w mod p
+        // 2. Compute t = (t1,t2) = (g_k-1^w mod p, vk_ik-1^w mod p
         // 3. Compute c = H(g_k,vk_ik,t,M) mod q
         // 4. Compute s = w + c * a mod q
         BigInteger w = PrimeGenerator.getPrime(q.bitLength() - 1);
@@ -199,7 +199,7 @@ public class NIZKP {
         BigInteger w = PrimeGenerator.getPrime(q.bitLength() - 1);
 
         StringConcatenator sc = new StringConcatenator();
-        sc.pushObject(y); //ok
+        sc.pushObject(y);
 
         for (BigInteger aj : partiallyDecryptedVotes.getVote()) {
             sc.pushObject(aj);

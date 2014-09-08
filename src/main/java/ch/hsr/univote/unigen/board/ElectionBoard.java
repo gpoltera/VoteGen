@@ -29,7 +29,6 @@ import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.bfh.univote.common.SignatureParameters;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
-import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.math.BigInteger;
 import java.util.ArrayList;

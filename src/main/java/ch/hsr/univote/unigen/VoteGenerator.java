@@ -52,6 +52,7 @@ public class VoteGenerator {
     }
 
     private void electionSequence() {
+        long before = System.nanoTime();
         phase1();
         //updateProgress();
         voteGenerationPanel.appendText("----------------------------------");
@@ -79,6 +80,10 @@ public class VoteGenerator {
         phase7();
         //updateProgress();
         voteGenerationPanel.appendText("----------------------------------");
+        
+        long after = System.nanoTime();
+        long runningTimeS = (after - before) / 1000000000;
+        System.out.println(runningTimeS);
 
         phase8();
         //updateProgress();

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.univote.unigen.krypto;
+package ch.hsr.univote.unigen.crypto;
 
 import ch.bfh.univote.common.Ballot;
 import ch.bfh.univote.common.Ballots;
@@ -83,7 +83,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -193,7 +193,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -216,7 +216,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -261,7 +261,7 @@ public class RSASignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -287,7 +287,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -416,7 +416,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -478,7 +478,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -497,7 +497,7 @@ public class RSASignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -520,7 +520,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -557,7 +557,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -577,7 +577,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -606,7 +606,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -627,7 +627,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -661,7 +661,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -685,7 +685,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
         
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -716,7 +716,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -747,7 +747,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
         return signature;
     }
 
@@ -775,7 +775,7 @@ public class RSASignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -820,7 +820,7 @@ public class RSASignatureGenerator {
         sc.pushObject(signature.getTimestamp());
 
         String res = sc.pullAll();
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }
@@ -851,7 +851,7 @@ public class RSASignatureGenerator {
 
         String res = sc.pullAll();
 
-        signature.setValue(new RSA().signRSA(res, privateKey));
+        signature.setValue(new RSA(config).signRSA(res, privateKey));
 
         return signature;
     }

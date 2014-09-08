@@ -5,6 +5,7 @@
  */
 package ch.hsr.univote.unigen.gui;
 
+import ch.hsr.univote.unigen.gui.configuration.ConfigurationPanelManager;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.gui.generatedvotes.GeneratedVotesListerPanel;
 import ch.hsr.univote.unigen.gui.votegeneration.VoteGenerationPanel;
@@ -51,10 +52,9 @@ public class MiddlePanel extends JPanel {
 
     private void createTitleBarPanel() {
         titleBar = new JPanel();
-        titleBar.setBorder(new EtchedBorder());
 
         title = new JLabel();
-        title.setText("TITLE");
+        title.setText(bundle.getString("title"));
         title.setFont(new Font("Tahoma", 1, 24));
         title.setHorizontalAlignment(SwingConstants.CENTER);
         titleBar.add(title);
@@ -100,6 +100,7 @@ public class MiddlePanel extends JPanel {
     private void createGeneratedVotesPanel() {
         panel.remove(startpage);
         panel.add(new GeneratedVotesListerPanel());
+        title.setText(bundle.getString("loadgenerateelection"));
         validate();
         repaint();
     }

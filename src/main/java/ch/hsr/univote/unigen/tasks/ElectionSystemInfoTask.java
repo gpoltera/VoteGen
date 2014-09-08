@@ -11,9 +11,9 @@ import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.CertificateGenerator;
-import ch.hsr.univote.unigen.krypto.RSA;
-import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
+import ch.hsr.univote.unigen.crypto.CertificateGenerator;
+import ch.hsr.univote.unigen.crypto.RSA;
+import ch.hsr.univote.unigen.crypto.RSASignatureGenerator;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -23,6 +23,7 @@ import java.security.interfaces.RSAPublicKey;
  * @author Gian Poltéra
  */
 public class ElectionSystemInfoTask {
+
     private ConfigHelper config;
     private ElectionBoard electionBoard;
     private KeyStore keyStore;
@@ -31,10 +32,10 @@ public class ElectionSystemInfoTask {
         this.config = VoteGenerator.config;
         this.electionBoard = VoteGenerator.electionBoard;
         this.keyStore = VoteGenerator.keyStore;
-        
+
         run();
     }
-    
+
     public void run() {
         /*create ElectionSystemInfo*/
         ElectionSystemInfo electionSystemInfo = createElectionSystemInfo();
@@ -50,12 +51,18 @@ public class ElectionSystemInfoTask {
         ElectionSystemInfo electionSystemInfo = new ElectionSystemInfo();
         /*set election id*/
         electionSystemInfo.setElectionId(config.getElectionId());
+
+        /*RootCertificateAuthority*/
+        createRAKeys();
+        Certificate raCertificate = new Certificate();
+        raCertificate.setValue(new CertificateGenerator().getCertficate("RA", keyStore.getRASignatureKey(), keyStore.getRAVerificationKey()).getBytes());
+
         /*CertificateAuthority*/
         createCAKeys();
         Certificate caCertificate = new Certificate();
         caCertificate.setValue(new CertificateGenerator().getCertficate(config.getCertificateAuthorityId(), keyStore.getCASignatureKey(), keyStore.getCAVerificationKey()).getBytes());
         electionSystemInfo.setCertificateAuthority(caCertificate);
-        
+
         /*ElectionManager*/
         createEMKeys();
         Certificate emCertificate = new Certificate();
@@ -87,32 +94,38 @@ public class ElectionSystemInfoTask {
         return electionSystemInfo;
     }
 
+    private void createRAKeys() {
+        KeyPair raKeyPair = new RSA(config).getKeyPair();
+        keyStore.setRASignatureKey((RSAPrivateKey) raKeyPair.getPrivate());
+        keyStore.setRAVerificationKey((RSAPublicKey) raKeyPair.getPublic());
+    }
+
     private void createCAKeys() {
-        KeyPair caKeyPair = new RSA().getKeyPair();
+        KeyPair caKeyPair = new RSA(config).getKeyPair();
         keyStore.setCASignatureKey((RSAPrivateKey) caKeyPair.getPrivate());
         keyStore.setCAVerificationKey((RSAPublicKey) caKeyPair.getPublic());
     }
 
     private void createEMKeys() {
-        KeyPair emKeyPair = new RSA().getKeyPair();
+        KeyPair emKeyPair = new RSA(config).getKeyPair();
         keyStore.setEMSignatureKey((RSAPrivateKey) emKeyPair.getPrivate());
         keyStore.setEMVerificationKey((RSAPublicKey) emKeyPair.getPublic());
     }
 
     private void createEAKeys() {
-        KeyPair eaKeyPair = new RSA().getKeyPair();
+        KeyPair eaKeyPair = new RSA(config).getKeyPair();
         keyStore.setEASignatureKey((RSAPrivateKey) eaKeyPair.getPrivate());
         keyStore.setEAVerificationKey((RSAPublicKey) eaKeyPair.getPublic());
     }
 
     private void createMixerKeys(int i) {
-        KeyPair keyPair = new RSA().getKeyPair();
+        KeyPair keyPair = new RSA(config).getKeyPair();
         keyStore.setMixerSignatureKey(i, (RSAPrivateKey) keyPair.getPrivate());
         keyStore.setMixerVerificationKey(i, (RSAPublicKey) keyPair.getPublic());
     }
 
     private void createTallierKeys(int i) {
-        KeyPair keyPair = new RSA().getKeyPair();
+        KeyPair keyPair = new RSA(config).getKeyPair();
         keyStore.setTallierSignatureKey(i, (RSAPrivateKey) keyPair.getPrivate());
         keyStore.setTallierVerificationKey(i, (RSAPublicKey) keyPair.getPublic());
     }

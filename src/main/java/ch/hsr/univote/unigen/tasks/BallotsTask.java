@@ -17,11 +17,11 @@ import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.helper.StringConcatenator;
-import ch.hsr.univote.unigen.krypto.ElGamal;
-import ch.hsr.univote.unigen.krypto.NIZKP;
-import ch.hsr.univote.unigen.krypto.PrimeGenerator;
-import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
-import ch.hsr.univote.unigen.krypto.SchnorrSignatureGenerator;
+import ch.hsr.univote.unigen.crypto.ElGamal;
+import ch.hsr.univote.unigen.crypto.NIZKP;
+import ch.hsr.univote.unigen.crypto.PrimeGenerator;
+import ch.hsr.univote.unigen.crypto.RSASignatureGenerator;
+import ch.hsr.univote.unigen.crypto.SchnorrSignatureGenerator;
 import java.math.BigInteger;
 import java.util.Random;
 

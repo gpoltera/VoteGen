@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.hsr.univote.unigen.krypto;
+package ch.hsr.univote.unigen.crypto;
 
 import ch.bfh.univote.common.SignatureParameters;
 import ch.hsr.univote.unigen.helper.ConfigHelper;

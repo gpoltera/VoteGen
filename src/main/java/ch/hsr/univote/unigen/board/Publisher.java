@@ -5,9 +5,6 @@
  */
 package ch.hsr.univote.unigen.board;
 
-import static ch.hsr.univote.unigen.gui.VoteGeneration.appendFailure;
-import static ch.hsr.univote.unigen.gui.VoteGeneration.appendText;
-import static ch.hsr.univote.unigen.gui.VoteGeneration.updateProgress;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -33,7 +30,7 @@ public class Publisher {
         endpoint = Endpoint.create(new ElectionBoardWebService(this.electionBoard));
 
         if (checkPort()) {
-            appendFailure("Port " + PORT + " wird bereits verwendet");
+            //appendFailure("Port " + PORT + " wird bereits verwendet");
         } else {
             endpoint.publish("http://" + IP + ":" + PORT + "/ElectionBoardService/ElectionBoardServiceImpl");
             //updateProgress();

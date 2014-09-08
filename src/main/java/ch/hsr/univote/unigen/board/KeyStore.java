@@ -19,6 +19,8 @@ import java.util.List;
 public class KeyStore {
     /*Variable declaration*/
 
+    private static RSAPrivateKey raSignatureKey;
+    private static RSAPublicKey raVerificationKey;
     private static RSAPrivateKey caSignatureKey;
     private static RSAPublicKey caVerificationKey;
     private static RSAPrivateKey emSignatureKey;
@@ -38,6 +40,14 @@ public class KeyStore {
     private static List<DSAPrivateKey> blindedGeneratorKey = new ArrayList<>();
 
     /*accessors SET*/
+    public void setRASignatureKey(RSAPrivateKey privateKey) {
+        KeyStore.raSignatureKey = privateKey;
+    }
+
+    public void setRAVerificationKey(RSAPublicKey publicKey) {
+        KeyStore.raVerificationKey = publicKey;
+    }
+
     public void setCASignatureKey(RSAPrivateKey privateKey) {
         KeyStore.caSignatureKey = privateKey;
     }
@@ -108,6 +118,14 @@ public class KeyStore {
 
 
     /*accessors GET*/
+    public RSAPrivateKey getRASignatureKey() {
+        return raSignatureKey;
+    }
+
+    public RSAPublicKey getRAVerificationKey() {
+        return raVerificationKey;
+    }
+
     public RSAPrivateKey getCASignatureKey() {
         return caSignatureKey;
     }

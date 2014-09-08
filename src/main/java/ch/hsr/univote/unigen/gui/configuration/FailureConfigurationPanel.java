@@ -57,7 +57,7 @@ public class FailureConfigurationPanel extends JPanel {
             "faultElGamalPIsprime",
             "faultElGamalPIssafeprime",
             "faultElGamalQIsprime",
-            "faultElGamalGIsprime",
+            "faultElGamalGIsgenerator",
             "faultElGamalParameterLength",
             //Certificates
             "faultCaCertificate",
@@ -73,20 +73,25 @@ public class FailureConfigurationPanel extends JPanel {
             "faultEncryptionKey",
             "faultElectionGenerator",
             "faultVerificationKeys",
+            "faultBallots",
             //Signatures
             "faultEaCertificateSignature",
             "faultElGamalParameterSignature",
-            "faultTallierNIZKPSignature",
             "faultEncryptionKeysSignature",
             "faultTallierMixerCertificateSignature",
             "faultElectionBasicParametersSignature",
             "faultElectionGeneratorSignature",
             "faultElectionOptionsSignature",
             "faultElectionDataSignature",
+            "faultTallierNIZKPSignature",
+            "faultTallierNIZKPSignature-Tallier",
             "faultMixersNIZKPBlindedGeneratorSignature",
+            "faultMixersNIZKPBlindedGeneratorSignature-Mixer",
             //NIZKP    
             "faultMixerNIZKPBlindedGenerator",
-            "faultTallierNIZKPEncryptionKeyShare"
+            "faultMixerNIZKPBlindedGenerator-Mixer",
+            "faultTallierNIZKPEncryptionKeyShare",
+            "faultTallierNIZKPEncryptionKeyShare-Tallier"
         };
 
         builder = new PanelBuilder(new FormLayout(""));
@@ -130,22 +135,29 @@ public class FailureConfigurationPanel extends JPanel {
 
         //Basics
         createTitle("basics", x);
-        for (int i = 19; i < 22; i++) {
+        for (int i = 19; i < 23; i++) {
             createCheckBox(labels[i], x);
         }
         createSeparator(x);
 
         //Signatures
         createTitle("signatures", x);
-        for (int i = 22; i < 32; i++) {
+        for (int i = 23; i < 31; i++) {
             createCheckBox(labels[i], x);
+        }
+        for (int i = 31; i < 35; i++) {
+            createCheckBox(labels[i], x);
+            i++;
+            createComboBox(labels[i], x);
         }
         createSeparator(x);
 
         //NIZKP
         createTitle("nizkp", x);
-        for (int i = 32; i < 34; i++) {
+        for (int i = 35; i < 39; i++) {
             createCheckBox(labels[i], x);
+            i++;
+            createComboBox(labels[i], x);
         }
 
         panel.add(builder.getPanel());
@@ -179,9 +191,9 @@ public class FailureConfigurationPanel extends JPanel {
 
     private void createComboBox(String key, int x) {
         JComboBox comboBox = new JComboBox();
-        
+
         String type = key.split("-")[1];
-        
+
         for (int i = 0; i < Integer.parseInt(config.getProperty(type + "s")); i++) {
             if (config.existProperty(type + (i + 1) + "Id")) {
                 comboBox.addItem(config.getProperty(type + (i + 1) + "Id"));
@@ -192,6 +204,6 @@ public class FailureConfigurationPanel extends JPanel {
         comboBox.setPreferredSize(new Dimension(100, 20));
         comboBox.setName(key);
         comboBox.addItemListener(new ComboBoxChangeListener(comboBox));
-        builder.add(comboBox, cellConstraints.xy(x, y, "c, t"));
+        builder.add(comboBox, cellConstraints.xy(x, y, "r, t"));
     }
 }

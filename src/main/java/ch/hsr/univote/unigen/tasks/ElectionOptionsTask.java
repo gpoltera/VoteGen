@@ -24,7 +24,7 @@ import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import ch.hsr.univote.unigen.krypto.RSASignatureGenerator;
+import ch.hsr.univote.unigen.crypto.RSASignatureGenerator;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -12,7 +12,7 @@ import java.util.Locale;
  *
  * @author Gian
  */
-public class start {
+public class StartVoteGenerator {
     /**
      *
      * @param args To tell the command line verifier what to do and where to get
@@ -24,7 +24,7 @@ public class start {
      * \"election id\"\tVerify an an entire election.
      */
     public static void main(String[] args) {
-        start runner = new start(args);
+        StartVoteGenerator runner = new StartVoteGenerator(args);
     }
 
     /**
@@ -32,7 +32,7 @@ public class start {
      *
      * @param args
      */
-    public start(String[] args) {
+    public StartVoteGenerator(String[] args) {
             Locale locale = new Locale("en", "EN");
             Locale.setDefault(locale);
             MainGUI gui = new MainGUI();
