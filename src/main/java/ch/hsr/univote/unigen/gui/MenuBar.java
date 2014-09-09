@@ -178,7 +178,7 @@ public class MenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 JOptionPane.showMessageDialog(null,
-                        "Copyright:\nGian Poltéra 2013-2014\n\nVersion 0.9",
+                        "Copyright:\nGian Poltéra 2013-2014\n\nVersion 1.0",
                         "About",
                         JOptionPane.INFORMATION_MESSAGE);
             }

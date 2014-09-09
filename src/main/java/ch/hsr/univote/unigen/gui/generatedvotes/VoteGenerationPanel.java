@@ -6,7 +6,6 @@
 package ch.hsr.univote.unigen.gui.generatedvotes;
 
 import ch.hsr.univote.unigen.VoteGenerator;
-import ch.hsr.univote.unigen.db.DBElectionBoardManager;
 import ch.hsr.univote.unigen.gui.MiddlePanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.awt.BorderLayout;
@@ -14,8 +13,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -39,6 +41,7 @@ public class VoteGenerationPanel extends JPanel {
     private JTextPane textPane;
     private JButton startButton, stopButton, webserviceButton;
     private Thread voteGeneratorThread;
+    private static int popup = 0;
 
     public VoteGenerationPanel() {
         bundle = ResourceBundle.getBundle("Bundle");
@@ -95,24 +98,44 @@ public class VoteGenerationPanel extends JPanel {
                 loadGeneratedVotePublishPanel();
             }
         });
-
-        //Stop VoteGeneration Button
-        stopButton = new JButton();
-        stopButton.setText(bundle.getString("stopgeneration"));
-        stopButton.setEnabled(false);
-        stopButton.addActionListener(new ActionListener() {
+        webserviceButton.addPropertyChangeListener("enabled", new PropertyChangeListener() {
             @Override
-            public void actionPerformed(ActionEvent evt) {
-                appendText(bundle.getString("votewillbestopped"));
-                stopButton.setEnabled(false);
-                webserviceButton.setEnabled(false);
-                voteGeneratorThread.stop();
-                startButton.setEnabled(true);
+            public void propertyChange(PropertyChangeEvent evt) {
+                popup++;
+                if (popup < 2) {
+                    JOptionPane.showMessageDialog(null,
+                            "ElectionId: " + voteGenerator.getElectionBoard().getElectionSystemInfo().getElectionId() + "\n"
+                            + bundle.getString("votegeneratedcomplete"),
+                            "VoteGenerator",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
 
+        //Stop VoteGeneration Button
+        stopButton = new JButton();
+
+        stopButton.setText(bundle.getString("stopgeneration"));
+        stopButton.setEnabled(
+                false);
+        stopButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent evt
+                    ) {
+                        appendText(bundle.getString("votewillbestopped"));
+                        stopButton.setEnabled(false);
+                        webserviceButton.setEnabled(false);
+                        voteGeneratorThread.stop();
+                        startButton.setEnabled(true);
+                    }
+                }
+        );
+
         buttonsPanel.add(startButton);
+
         buttonsPanel.add(webserviceButton);
+
         buttonsPanel.add(stopButton);
 
         return buttonsPanel;
@@ -122,9 +145,9 @@ public class VoteGenerationPanel extends JPanel {
         this.remove(panel);
         this.add(new GeneratedVotePublishPanel(voteGenerator.getElectionBoard()));
         validate();
-        repaint();        
+        repaint();
     }
-    
+
     private void startGenerationThread() {
         voteGenerator = new VoteGenerator(this);
         voteGeneratorThread = new Thread() {

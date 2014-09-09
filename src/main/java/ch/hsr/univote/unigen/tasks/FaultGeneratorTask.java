@@ -7,12 +7,16 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.Ballot;
 import ch.bfh.univote.common.Ballots;
+import ch.bfh.univote.common.BlindedGenerator;
 import ch.bfh.univote.common.Certificate;
+import ch.bfh.univote.common.ElectionData;
+import ch.bfh.univote.common.ElectionDefinition;
 import ch.bfh.univote.common.ElectionGenerator;
+import ch.bfh.univote.common.ElectionOptions;
 import ch.bfh.univote.common.ElectionSystemInfo;
 import ch.bfh.univote.common.EncryptionKey;
+import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.bfh.univote.common.EncryptionParameters;
-import ch.bfh.univote.common.Signature;
 import ch.bfh.univote.common.SignatureParameters;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
@@ -21,9 +25,10 @@ import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.crypto.CertificateGenerator;
-import ch.hsr.univote.unigen.crypto.NIZKP;
 import ch.hsr.univote.unigen.crypto.PrimeGenerator;
+import ch.hsr.univote.unigen.crypto.RSASignatureGenerator;
 import java.math.BigInteger;
+import java.util.Map;
 
 /**
  *
@@ -93,33 +98,44 @@ public class FaultGeneratorTask {
         }
 
         //VerificationKeys
-        //VerificationKeys verificationKeys = electionBoard.getV
+        VerificationKeys verificationKeys = electionBoard.getMixedVerificationKeys();
+        if (config.getFault("faultVerificationKeys")) {
+            verificationKeys.getKey().add(verificationKeys.getKey().get(0).add(BigInteger.ONE));
+        }
+
+        //Ballots
+        Ballots ballots = electionBoard.getBallots();
+        if (config.getFault("faultBallots")) {
+            Ballot ballot = ballots.getBallot().get(0);
+            ballots.getBallot().add(ballot);
+        }
+
         if (config.getFault("faultVerificationKeys")) {
             electionGenerator.setGenerator(electionBoard.getBlindedGenerator(electionBoard.mixers[0]).getGenerator());
         }
 
         //Certificates
         ElectionSystemInfo electionSystemInfo = electionBoard.getElectionSystemInfo();
-        if (config.getFault("faultCaCertificate")) {
+        if (config.getFault("faultCertificateCA")) {
             Certificate caCertificate = new Certificate();
             caCertificate.setValue(new CertificateGenerator().getCertficate(config.getCertificateAuthorityId(), keyStore.getEMSignatureKey(), keyStore.getCAVerificationKey()).getBytes());
             electionSystemInfo.setCertificateAuthority(caCertificate);
         }
 
-        if (config.getFault("faultEmCertificate")) {
+        if (config.getFault("faultCertificateEM")) {
             Certificate emCertificate = new Certificate();
             emCertificate.setValue(new CertificateGenerator().getCertficate(config.getElectionManagerId(), keyStore.getEASignatureKey(), keyStore.getEMVerificationKey()).getBytes());
             electionSystemInfo.setElectionManager(emCertificate);
         }
 
-        if (config.getFault("faultEaCertificate")) {
+        if (config.getFault("faultCertificateEA")) {
             Certificate eaCertificate = new Certificate();
             eaCertificate.setValue(new CertificateGenerator().getCertficate(config.getElectionAdministratorId(), keyStore.getEMSignatureKey(), keyStore.getEAVerificationKey()).getBytes());
             electionSystemInfo.setElectionAdministration(eaCertificate);
         }
 
-        if (config.getFault("faultMixerCertificate")) {
-            String mixerid_fault = config.getProperty("faultMixerCertificate-Mixer");
+        if (config.getFault("faultCertificateMixer")) {
+            String mixerid_fault = config.getProperty("faultCertificateMixer-Mixer");
             int mixer = 0;
             for (int i = 0; i < electionBoard.mixers.length; i++) {
                 if (electionBoard.mixers[i].equals(mixerid_fault)) {
@@ -132,8 +148,8 @@ public class FaultGeneratorTask {
             electionSystemInfo.getMixer().set(mixer, certificate);
         }
 
-        if (config.getFault("faultTallierCertificate")) {
-            String tallierid_fault = config.getProperty("faultTallierCertificate-Tallier");
+        if (config.getFault("faultCertificateTallier")) {
+            String tallierid_fault = config.getProperty("faultCertificateTallier-Tallier");
             int tallier = 0;
             for (int i = 0; i < electionBoard.talliers.length; i++) {
                 if (electionBoard.talliers[i].equals(tallierid_fault)) {
@@ -147,8 +163,8 @@ public class FaultGeneratorTask {
         }
 
         VoterCertificates voterCertificates = electionBoard.getVoterCertificates();
-        if (config.getFault("faultVoterCertificate")) {
-            String voterid_fault = config.getProperty("faultVoterCertificate-Voter");
+        if (config.getFault("faultCertificateVoter")) {
+            String voterid_fault = config.getProperty("faultCertificateVoter-Voter");
             int voter = 0;
             for (int i = 1; i <= config.getVotersNumber(); i++) {
                 String voterid = "Voter" + i;
@@ -162,92 +178,134 @@ public class FaultGeneratorTask {
             voterCertificates.getCertificate().set(voter, certificate);
         }
 
-        //Reingeschoben
-        Ballots ballots = electionBoard.getBallots();
-        if (config.getFault("faultBallots")) {
-            Ballot ballot = ballots.getBallot().get(0);
-            ballots.getBallot().add(ballot);
+        //Signatures
+        if (config.getFault("faultSignatureEACertificate")) {
+            electionSystemInfo.setSignature(new RSASignatureGenerator().createSignature(electionSystemInfo, keyStore.getRASignatureKey()));
+        }
+
+        ElectionDefinition electionDefinition = electionBoard.getElectionDefinition();
+        if (config.getFault("faultSignatureElectionBasicParameters")) {
+            electionDefinition.setSignature(new RSASignatureGenerator().createSignature(electionDefinition, keyStore.getEMSignatureKey()));
+        }
+
+        if (config.getFault("faultSignatureTallierMixerCertificates")) {
+            electionSystemInfo.setSignature(new RSASignatureGenerator().createSignature(electionSystemInfo, keyStore.getRASignatureKey()));
+        }
+
+        if (config.getFault("faultSignatureElGamalParameter")) {
+            encryptionParameters.setSignature(new RSASignatureGenerator().createSignature(encryptionParameters, keyStore.getEASignatureKey()));
+        }
+
+        Map<String, EncryptionKeyShare> encryptionKeyShareList = electionBoard.getEncryptionKeyShareList();
+        if (config.getFault("faultSignatureEncryptionKeyShare")) {
+            String tallierid_fault = config.getProperty("faultSignatureEncryptionKeyShare-Tallier");
+            int tallier = 0;
+            for (int i = 0; i < electionBoard.talliers.length; i++) {
+                if (electionBoard.talliers[i].equals(tallierid_fault)) {
+                    tallier = i;
+                    break;
+                }
+            }
+            int replaceTallier = 0;
+            if (tallier == 0) {
+                replaceTallier = 1;
+            }
+            EncryptionKeyShare encryptionKeyShare = encryptionKeyShareList.get(electionBoard.talliers[tallier]);
+            encryptionKeyShare.setSignature(encryptionKeyShareList.get(electionBoard.talliers[replaceTallier]).getSignature());
+            encryptionKeyShareList.remove(electionBoard.talliers[tallier]);
+            encryptionKeyShareList.put(electionBoard.talliers[tallier], encryptionKeyShare);
+        }
+
+        if (config.getFault("faultSignatureEncryptionKeys")) {
+            encryptionKey.setSignature(new RSASignatureGenerator().createSignature(encryptionKey, keyStore.getEASignatureKey()));
+        }
+
+        Map<String, BlindedGenerator> blindedGeneratorList = electionBoard.getBlindedGeneratorList();
+        if (config.getFault("faultSignatureBlindedGenerator")) {
+            String mixerid_fault = config.getProperty("faultSignatureBlindedGenerator-Mixer");
+            int mixer = 0;
+            for (int i = 0; i < electionBoard.mixers.length; i++) {
+                if (electionBoard.mixers[i].equals(mixerid_fault)) {
+                    mixer = i;
+                    break;
+                }
+            }
+            int replaceMixer = 0;
+            if (mixer == 0) {
+                replaceMixer = 1;
+            }
+            BlindedGenerator blindedGenerator = blindedGeneratorList.get(electionBoard.mixers[mixer]);
+            blindedGenerator.setSignature(blindedGeneratorList.get(electionBoard.mixers[replaceMixer]).getSignature());
+            blindedGeneratorList.remove(electionBoard.mixers[mixer]);
+            blindedGeneratorList.put(electionBoard.mixers[mixer], blindedGenerator);
+        }
+
+        if (config.getFault("faultSignatureElectionGenerator")) {
+            electionGenerator.setSignature(new RSASignatureGenerator().createSignature(electionGenerator, keyStore.getEASignatureKey()));
+        }
+
+        ElectionOptions electionOptions = electionBoard.getElectionOptions();
+        if (config.getFault("faultSignatureElectionOptions")) {
+            electionOptions.setSignature(new RSASignatureGenerator().createSignature(electionOptions, keyStore.getEMSignatureKey()));
+        }
+
+        ElectionData electionData = electionBoard.getElectionData();
+        if (config.getFault("faultSignatureElectionData")) {
+            electionData.setSignature(new RSASignatureGenerator().createSignature(electionData, keyStore.getEASignatureKey()));
+        }
+
+        //NIZKP
+        if (config.getFault("faultNIZKPBlindedGenerator")) {
+            String mixerid_fault = config.getProperty("faultNIZKPBlindedGenerator-Mixer");
+            int mixer = 0;
+            for (int i = 0; i < electionBoard.mixers.length; i++) {
+                if (electionBoard.mixers[i].equals(mixerid_fault)) {
+                    mixer = i;
+                    break;
+                }
+            }
+            int replaceMixer = 0;
+            if (mixer == 0) {
+                replaceMixer = 1;
+            }
+            BlindedGenerator blindedGenerator = blindedGeneratorList.get(electionBoard.mixers[mixer]);
+            blindedGenerator.setProof(blindedGeneratorList.get(electionBoard.mixers[replaceMixer]).getProof());
+            blindedGeneratorList.remove(electionBoard.mixers[mixer]);
+            blindedGeneratorList.put(electionBoard.mixers[mixer], blindedGenerator);
+        }
+
+        if (config.getFault("faultNIZKPEncryptionKeyShare")) {
+            String tallierid_fault = config.getProperty("faultNIZKPEncryptionKeyShare-Tallier");
+            int tallier = 0;
+            for (int i = 0; i < electionBoard.talliers.length; i++) {
+                if (electionBoard.talliers[i].equals(tallierid_fault)) {
+                    tallier = i;
+                    break;
+                }
+            }
+            int replaceTallier = 0;
+            if (tallier == 0) {
+                replaceTallier = 1;
+            }
+            EncryptionKeyShare encryptionKeyShare = encryptionKeyShareList.get(electionBoard.talliers[tallier]);
+            encryptionKeyShare.setProof(encryptionKeyShareList.get(electionBoard.talliers[replaceTallier]).getProof());
+            encryptionKeyShareList.remove(electionBoard.talliers[tallier]);
+            encryptionKeyShareList.put(electionBoard.talliers[tallier], encryptionKeyShare);
         }
 
         //Transmit the changes to the ElectionBoard
-                electionBoard
-        .setSignatureParameters(signatureParameters);
+        electionBoard.setSignatureParameters(signatureParameters);
         electionBoard.setEncryptionParameters(encryptionParameters);
         electionBoard.setEncryptionKey(encryptionKey);
         electionBoard.setElectionGenerator(electionGenerator);
-        //electionBoard.;
+        electionBoard.setMixedVerificationKeys(verificationKeys);
+        electionBoard.setBallots(ballots);
         electionBoard.setElectionSystemInfo(electionSystemInfo);
         electionBoard.setVoterCertificates(voterCertificates);
-        electionBoard.setBallots(ballots);
-
-//       
-//        if (!faults[12]) {
-//            verificationKeys.getKey().remove(verificationKeys.getKey().size() - 1);
-//        }
-//        //EACertificateSignature
-//        if (!faults[19]) {
-//            //Not yet implemented
-//        }
-//        if (!faults[20]) {
-//            Signature signature = electionDefinition.getSignature();
-//            signature.setValue(signature.getValue().add(BigInteger.ONE));
-//            electionDefinition.setSignature(signature);
-//        }
-//        if (!faults[21]) {
-//            //Not yet implemented
-//        }
-//        if (!faults[22]) {
-//            Signature signature = encryptionParameters.getSignature();
-//            signature.setValue(signature.getValue().add(BigInteger.ONE));
-//            encryptionParameters.setSignature(signature);
-//        }
-//        if (!faults[23]) {
-//            Signature signature = encryptionKeyShareList[0].getSignature();
-//            signature.setValue(signature.getValue().add(BigInteger.ONE));
-//            encryptionKeyShareList[0].setSignature(signature);
-//        }
-//        if (!faults[24]) {
-//            Signature signature = encryptionKey.getSignature();
-//            signature.setValue(signature.getValue().add(BigInteger.ONE));
-//            encryptionKey.setSignature(signature);
-//        }
-//        if (!faults[25]) {
-//            Signature signature = blindedGeneratorsList[0].getSignature();
-//            signature.setValue(signature.getValue().add(BigInteger.ONE));
-//            blindedGeneratorsList[0].setSignature(signature);
-//        }
-//        if (!faults[26]) {
-//            Signature signature = electionGenerator.getSignature();
-//            signature.setValue(signature.getValue().add(BigInteger.ONE));
-//            electionGenerator.setSignature(signature);
-//        }
-//        if (!faults[27]) {
-//            Signature signature = electionOptions.getSignature();
-//            signature.setValue(signature.getValue().add(BigInteger.ONE));
-//            electionOptions.setSignature(signature);
-//        }
-//        if (!faults[28]) {
-//            Signature signature = electionData.getSignature();
-//            signature.setValue(signature.getValue().add(BigInteger.ONE));
-//            electionData.setSignature(signature);
-//        }
-//        if (!faults[29]) {
-//            encryptionKeyShareList[0].setProof(NIZKP.getProof(
-//                    "fake",
-//                    keyStore.talliersDecryptionKey[1],
-//                    keyStore.talliersEncryptionKey[1],
-//                    ElectionBoard.encryptionParameters.getPrime(),
-//                    ElectionBoard.encryptionParameters.getGroupOrder(),
-//                    ElectionBoard.encryptionParameters.getGenerator()));
-//        }
-//        if (!faults[30]) {
-//            blindedGeneratorsList[0].setProof(NIZKP.getProof(
-//                    "fake",
-//                    keyStore.talliersDecryptionKey[1],
-//                    keyStore.talliersEncryptionKey[1],
-//                    ElectionBoard.encryptionParameters.getPrime(),
-//                    ElectionBoard.encryptionParameters.getGroupOrder(),
-//                    ElectionBoard.encryptionParameters.getGenerator()));
-//        }
+        electionBoard.setElectionDefinition(electionDefinition);
+        electionBoard.setEncryptionKeyShareList(encryptionKeyShareList);
+        electionBoard.setBlindedGeneratorList(blindedGeneratorList);
+        electionBoard.setElectionOptions(electionOptions);
+        electionBoard.setElectionData(electionData);
     }
 }
