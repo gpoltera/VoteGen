@@ -53,6 +53,8 @@ public class GeneratedVotePublishPanel extends JPanel {
         panel = new JPanel();
         createGeneratedVotePublishPanel();
 
+        MiddlePanel.title.setText(bundle.getString("publishingelection"));
+        
         this.add(panel);
         this.setName(bundle.getString("publishingelection"));
     }

@@ -47,8 +47,12 @@ public class VoteGenerator {
         config = new ConfigHelper();
         electionBoard = new ElectionBoard(config);
         keyStore = new KeyStore();
-        this.voteGenerationPanel = voteGenerationPanel;
+        this.voteGenerationPanel = voteGenerationPanel;  
+    }
+    
+    public void run() {
         electionSequence();
+        voteGenerationPanel.generationIsComplite();
     }
 
     private void electionSequence() {
@@ -301,5 +305,10 @@ public class VoteGenerator {
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());
         }
+    }
+    
+    /* Gives the electionBoard*/
+    public ElectionBoard getElectionBoard() { 
+        return this.electionBoard;
     }
 }

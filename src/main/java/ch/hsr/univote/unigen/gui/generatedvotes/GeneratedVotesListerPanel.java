@@ -7,6 +7,7 @@ package ch.hsr.univote.unigen.gui.generatedvotes;
 
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.db.DBElectionBoardManager;
+import ch.hsr.univote.unigen.gui.MiddlePanel;
 import ch.hsr.univote.unigen.helper.FileHandler;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -35,7 +36,8 @@ public class GeneratedVotesListerPanel extends JPanel {
         dbs = new FileHandler().getElectionDBFileList();
 
         createGeneratedVotesListerPanel();
-
+        MiddlePanel.title.setText(bundle.getString("loadgenerateelection"));
+        
         this.add(panel);
         this.setName(bundle.getString("loadgenerateelection"));
     }

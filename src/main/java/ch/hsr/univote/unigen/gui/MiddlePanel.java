@@ -11,10 +11,14 @@ import ch.hsr.univote.unigen.gui.generatedvotes.GeneratedVotesListerPanel;
 import ch.hsr.univote.unigen.gui.generatedvotes.VoteGenerationPanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ResourceBundle;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,7 +36,7 @@ public class MiddlePanel extends JPanel {
     private JPanel panel, startpage, statusBar, titleBar;
     private VoteGenerationPanel voteGeneration;
     private JButton prevButton, nextButton, saveButton, generateButton;
-    private JLabel title;
+    public static JLabel title;
     private JProgressBar progressBar;
     private ConfigurationPanelManager panelManager;
     public static ConfigHelper config;
@@ -68,25 +72,41 @@ public class MiddlePanel extends JPanel {
 
     private void createStartpagePanel() {
         startpage = new JPanel();
+        startpage.setLayout(new BorderLayout());
+        startpage.setBackground(Color.white);
+
+        JLabel imgLabel = new JLabel();
+        URL img = getClass().getClassLoader().getResource("images/iconVoteGenerator.jpg");
+        if (img != null) {
+            ImageIcon logo = new ImageIcon(img);
+            imgLabel = new JLabel(logo);
+//            imgLabel.setMaximumSize(new Dimension(300, 114));
+            imgLabel.setAlignmentX(Component.LEFT_ALIGNMENT);          
+        }
+        startpage.add(imgLabel, BorderLayout.CENTER);
+
+        JPanel buttons = new JPanel();
         JButton button1 = new JButton();
-        button1.setText("Starte die Konfiguration");
+        button1.setText(bundle.getString("startconfiguration"));
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 createConfigurationPanel();
             }
         });
-        startpage.add(button1);
-        
+        buttons.add(button1);
+
         JButton button2 = new JButton();
-        button2.setText("Lade eine bereits generierteWahl");
+        button2.setText(bundle.getString("loadgeneratedelection"));
         button2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 createGeneratedVotesPanel();
             }
         });
-        startpage.add(button2);
+        buttons.add(button2);
+        
+        startpage.add(buttons, BorderLayout.SOUTH);
 
         panel.add(startpage);
     }
@@ -96,7 +116,7 @@ public class MiddlePanel extends JPanel {
         createConfigurationStatusBarPanel();
         nextPanel();
     }
-    
+
     private void createGeneratedVotesPanel() {
         panel.remove(startpage);
         panel.add(new GeneratedVotesListerPanel());
@@ -111,12 +131,6 @@ public class MiddlePanel extends JPanel {
         voteGeneration = new VoteGenerationPanel();
 
         voteGeneration.setName(bundle.getString("generatevote"));
-
-        new Thread() {
-            public void run() {
-                new VoteGenerator(voteGeneration);
-            }
-        }.start();
 
         panel.add(voteGeneration);
         validate();
