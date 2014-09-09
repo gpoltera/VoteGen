@@ -38,6 +38,8 @@ public class FileHandler {
     private final static String CONFIG_FILE = "config.properties";
     private final static String VV_FOLDER = "voteverifier";
     private final static String VV_FILE = "VoteVerifier.jar";
+    private final static String DOCU_FOLDER = "documentation";
+    private final static String DOCU_FILE = "VoteGeneratorDocumentation.pdf";
     private final static String EXTERNAL_FILE = "vgc";
     private final static String MB_TEXT = "MB";
     private final static String KB_TEXT = "KB";
@@ -45,6 +47,7 @@ public class FileHandler {
     private String userConfigFilePath;
     public String userDBFolderPath;
     public String voteVerifierJARPath;
+    public String documentationPDFPath;
 
     public FileHandler() {
         this.userDirectoryPath = System.getProperty("user.home");
@@ -217,9 +220,15 @@ public class FileHandler {
             if (!dir.exists()) {
                 dir.mkdir();
             }
-            
+
             //VoteVerifier Folder
             dir = new File(userDirectoryPath + "/" + APP_FOLDER + "/" + VV_FOLDER);
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+
+            //Documentation Folder
+            dir = new File(userDirectoryPath + "/" + APP_FOLDER + "/" + DOCU_FOLDER);
             if (!dir.exists()) {
                 dir.mkdir();
             }
@@ -228,6 +237,7 @@ public class FileHandler {
             userConfigFilePath = userDirectoryPath + "/" + APP_FOLDER + "/" + CONFIG_FOLDER + "/" + CONFIG_FILE;
             userDBFolderPath = userDirectoryPath + "/" + APP_FOLDER + "/" + DB_FOLDER + "/";
             voteVerifierJARPath = userDirectoryPath + "/" + APP_FOLDER + "/" + VV_FOLDER + "/" + VV_FILE;
+            documentationPDFPath = userDirectoryPath + "/" + APP_FOLDER + "/" + DOCU_FOLDER + "/" + DOCU_FILE;
 
             //Load the standard properties
             File configFile = new File(userConfigFilePath);
@@ -242,7 +252,7 @@ public class FileHandler {
                     outputStream.close();
                 }
             }
-            
+
             //Copy the VoteVerifier
             File vvFile = new File(voteVerifierJARPath);
             if (!vvFile.exists()) {
@@ -250,14 +260,31 @@ public class FileHandler {
                 if (!(inputStream == null)) {
                     int readBytes;
                     byte[] buffer = new byte[4096];
-                    OutputStream outputStream = new FileOutputStream(new File(voteVerifierJARPath));                    
+                    OutputStream outputStream = new FileOutputStream(new File(voteVerifierJARPath));
                     while ((readBytes = inputStream.read(buffer)) > 0) {
                         outputStream.write(buffer, 0, readBytes);
                     }
                     inputStream.close();
                     outputStream.close();
-                }       
+                }
             }
+
+            //Copy the Documentation
+            File docuFile = new File(documentationPDFPath);
+            if (!docuFile.exists()) {
+                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(DOCU_FOLDER + "/" + DOCU_FILE);
+                if (!(inputStream == null)) {
+                    int readBytes;
+                    byte[] buffer = new byte[4096];
+                    OutputStream outputStream = new FileOutputStream(new File(documentationPDFPath));
+                    while ((readBytes = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, readBytes);
+                    }
+                    inputStream.close();
+                    outputStream.close();
+                }
+            }
+            
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FileHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

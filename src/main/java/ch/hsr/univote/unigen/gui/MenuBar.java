@@ -11,8 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import static java.awt.event.KeyEvent.VK_ESCAPE;
 import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.Box;
@@ -31,10 +31,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class MenuBar extends JMenuBar {
 
     private ResourceBundle resourceBundle;
+    private FileHandler fileHandler;
     private MainGUI mainGUI;
 
     public MenuBar(MainGUI mainGUI) {
         resourceBundle = ResourceBundle.getBundle("Bundle");
+        this.fileHandler = new FileHandler();
+
         createFileMenu();
         createNavigateMenu();
         createLanguageMenu();
@@ -159,7 +162,12 @@ public class MenuBar extends JMenuBar {
         documentationItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                //Load docu
+                try {
+                    String exec = "rundll32 url.dll,FileProtocolHandler \"" + fileHandler.documentationPDFPath + "\"";
+                    Process pc = Runtime.getRuntime().exec(exec);
+                } catch (IOException ex) {
+                    System.out.println("NO WINDOWS, OR NO PDF READER");
+                }
             }
         });
         menu.add(documentationItem);
