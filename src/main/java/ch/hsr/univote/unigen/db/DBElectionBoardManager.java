@@ -18,157 +18,165 @@ import ch.bfh.univote.common.ElectionSystemInfo;
 import ch.bfh.univote.common.ElectoralRoll;
 import ch.bfh.univote.common.EncryptedVotes;
 import ch.bfh.univote.common.EncryptionKey;
-import ch.bfh.univote.common.EncryptionKeyShare;
 import ch.bfh.univote.common.EncryptionParameters;
 import ch.bfh.univote.common.KnownElectionIds;
-import ch.bfh.univote.common.MixedEncryptedVotes;
-import ch.bfh.univote.common.MixedVerificationKey;
-import ch.bfh.univote.common.MixedVerificationKeys;
-import ch.bfh.univote.common.PartiallyDecryptedVotes;
 import ch.bfh.univote.common.SignatureParameters;
 import ch.bfh.univote.common.VerificationKeys;
 import ch.bfh.univote.common.VoterCertificates;
 import ch.hsr.univote.unigen.board.ElectionBoard;
+import ch.hsr.univote.unigen.common.BlindedGeneratorsList;
+import ch.hsr.univote.unigen.common.EncryptionKeyShareList;
+import ch.hsr.univote.unigen.common.LatelyCertificateList;
+import ch.hsr.univote.unigen.common.LatelyMixedVerificationKeyList;
+import ch.hsr.univote.unigen.common.LatelyMixedVerificationKeysList;
+import ch.hsr.univote.unigen.common.MixedEncryptedVotesList;
+import ch.hsr.univote.unigen.common.MixedVerificationKeysList;
+import ch.hsr.univote.unigen.common.PartiallyDecryptedVotesList;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Gian Poltéra
  */
 public class DBElectionBoardManager {
-
+    private ConfigHelper config;
+    
     Ballots ballots = new Ballots();
+    BlindedGeneratorsList blindedGeneratorsList = new BlindedGeneratorsList();
     Certificate certificate = new Certificate();
     DecodedVotes decodedVotes = new DecodedVotes();
     DecryptedVotes decryptedVotes = new DecryptedVotes();
-    ElectionSystemInfo electionSystemInfo = new ElectionSystemInfo();
+    ElectionData electionData = new ElectionData();
     ElectionDefinition electionDefinition = new ElectionDefinition();
     ElectionGenerator electionGenerator = new ElectionGenerator();
     ElectionOptions electionOptions = new ElectionOptions();
-    ElectionData electionData = new ElectionData();
+    ElectionSystemInfo electionSystemInfo = new ElectionSystemInfo();
     ElectoralRoll electoralRoll = new ElectoralRoll();
     EncryptedVotes encryptedVotes = new EncryptedVotes();
-    EncryptionParameters encryptionParameters = new EncryptionParameters();
     EncryptionKey encryptionKey = new EncryptionKey();
+    EncryptionKeyShareList encryptionKeyShareList = new EncryptionKeyShareList();
+    EncryptionParameters encryptionParameters = new EncryptionParameters();
     KnownElectionIds knownElectionIds = new KnownElectionIds();
-    Map<String, MixedVerificationKeys> listMixedVerificationKeys = new ListMixedVerificationKeys<String, MixedVerificationKeys>();
-    List<MixedVerificationKey> listLatelyMixedVerificationKey = new ListLatelyMixedVerificationKey<MixedVerificationKey>();
-    Map<String, List> listLatelyMixedVerificationKeys = new ListLatelyMixedVerificationKeys<String, List>();
-    List<Certificate> listLatelyCertificate = new ListLatelyCertificate<Certificate>();
-    Map<String, EncryptionKeyShare> encryptionKeyShareList = new EncryptionKeyShareList<String, EncryptionKeyShare>();
-    Map<String, MixedEncryptedVotes> mixedEncryptedVotesList = new MixedEncryptedVotesList<String, MixedEncryptedVotes>();
-    Map<String, PartiallyDecryptedVotes> partiallyDecryptedVotesList = new PartiallyDecryptedVotesList<String, PartiallyDecryptedVotes>();
-    Map<String, BlindedGenerator> blindedGeneratorsList = new BlindedGeneratorsList<String, BlindedGenerator>();
+    LatelyCertificateList latelyCertificateList = new LatelyCertificateList();
+    LatelyMixedVerificationKeyList latelyMixedVerificationKeyList = new LatelyMixedVerificationKeyList();
+    LatelyMixedVerificationKeysList latelyMixedVerificationKeysList = new LatelyMixedVerificationKeysList();
+    MixedEncryptedVotesList mixedEncryptedVotesList = new MixedEncryptedVotesList();
+    MixedVerificationKeysList mixedVerificationKeysList = new MixedVerificationKeysList();
+    PartiallyDecryptedVotesList partiallyDecryptedVotesList = new PartiallyDecryptedVotesList();
     SignatureParameters signatureParameters = new SignatureParameters();
-    VoterCertificates voterCertificates = new VoterCertificates();
     VerificationKeys verificationKeys = new VerificationKeys();
-
-    private ConfigHelper config;
+    VoterCertificates voterCertificates = new VoterCertificates();
 
     public DBElectionBoardManager() {
         this.config = new ConfigHelper();
     }
 
     public void saveElectionBoard(ElectionBoard electionBoard) {
+        
         String electionId = electionBoard.getElectionData().getElectionId();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
         String new_date = sdf.format(date);
-        String filename = electionId + new_date;
-
+        String filename = electionId + new_date + ".db";
+        
         ballots = electionBoard.getBallots();
+        blindedGeneratorsList.setBlindedGeneratorList(electionBoard.getBlindedGeneratorList());
         certificate = electionBoard.getRootCertificate();
         decodedVotes = electionBoard.getDecodedVotes();
         decryptedVotes = electionBoard.getDecryptedVotes();
-        electionSystemInfo = electionBoard.getElectionSystemInfo();
+        electionData = electionBoard.getElectionData();
         electionDefinition = electionBoard.getElectionDefinition();
         electionGenerator = electionBoard.getElectionGenerator();
         electionOptions = electionBoard.getElectionOptions();
-        electionData = electionBoard.getElectionData();
+        electionSystemInfo = electionBoard.getElectionSystemInfo();
         electoralRoll = electionBoard.getElectoralRoll();
         encryptedVotes = electionBoard.getEncryptedVotes();
-        encryptionParameters = electionBoard.getEncryptionParameters();
         encryptionKey = electionBoard.getEncryptionKey();
+        encryptionKeyShareList.setEncryptionKeyShareList(electionBoard.getEncryptionKeyShareList());
+        encryptionParameters = electionBoard.getEncryptionParameters();
         knownElectionIds = electionBoard.getKnownElectionIds();
-        listMixedVerificationKeys = electionBoard.getVerificationKeysMixedBy();
-        listLatelyMixedVerificationKey = electionBoard.getLatelyMixedVerificationKeys();
-        listLatelyMixedVerificationKeys = electionBoard.getVerificationKeysLatelyMixedBy();
-        listLatelyCertificate = electionBoard.getLatelyRegisteredVoterCertificates();
-        encryptionKeyShareList = electionBoard.getEncryptionKeyShareList();
-        mixedEncryptedVotesList = electionBoard.getEncryptedVotesMixedBy();
-        partiallyDecryptedVotesList = electionBoard.getPartiallyDecryptedVotesList();
-        blindedGeneratorsList = electionBoard.getBlindedGeneratorList();
+        latelyCertificateList.setLatelyCertificateList(electionBoard.getLatelyRegisteredVoterCertificates());
+        latelyMixedVerificationKeyList.setLatelyMixedVerificationKeyList(electionBoard.getLatelyMixedVerificationKeys());
+        latelyMixedVerificationKeysList.setLatelyMixedVerificationKeysList(electionBoard.getVerificationKeysLatelyMixedBy());
+        mixedEncryptedVotesList.setMixedEncryptedVotesList(electionBoard.getEncryptedVotesMixedBy());
+        mixedVerificationKeysList.setListMixedVerificationKeys(electionBoard.getVerificationKeysMixedBy());
+        partiallyDecryptedVotesList.setPartiallyDecryptedVotesList(electionBoard.getPartiallyDecryptedVotesList());
         signatureParameters = electionBoard.getSignatureParameters();
-        voterCertificates = electionBoard.getVoterCertificates();
         verificationKeys = electionBoard.getMixedVerificationKeys();
+        voterCertificates = electionBoard.getVoterCertificates();
 
-        DB4O.storeDB(ballots, filename);
-        DB4O.storeDB(blindedGeneratorsList, filename);
-        DB4O.storeDB(decodedVotes, filename);
-        DB4O.storeDB(decryptedVotes, filename);
-        DB4O.storeDB(electionData, filename);
-        DB4O.storeDB(electionDefinition, filename);
-        DB4O.storeDB(electionGenerator, filename);
-        DB4O.storeDB(electionOptions, filename);
-        DB4O.storeDB(electionSystemInfo, filename);
-        DB4O.storeDB(electoralRoll, filename);
-        DB4O.storeDB(encryptedVotes, filename);
-        DB4O.storeDB(mixedEncryptedVotesList, filename);
-        DB4O.storeDB(encryptionKey, filename);
-        DB4O.storeDB(encryptionKeyShareList, filename);
-        DB4O.storeDB(encryptionParameters, filename);
-        DB4O.storeDB(knownElectionIds, filename);
-        DB4O.storeDB(listLatelyMixedVerificationKey, filename);
-        DB4O.storeDB(listLatelyCertificate, filename);
-        DB4O.storeDB(verificationKeys, filename);
-        DB4O.storeDB(partiallyDecryptedVotesList, filename);
-        DB4O.storeDB(certificate, filename);
-        DB4O.storeDB(signatureParameters, filename);
-        DB4O.storeDB(listLatelyMixedVerificationKeys, filename);
-        DB4O.storeDB(listMixedVerificationKeys, filename);
-        DB4O.storeDB(voterCertificates, filename);
+        for (BlindedGenerator bg : blindedGeneratorsList.getBlindedGeneratorsList().values()) {
+            System.out.println(bg.getElectionId());
+            System.out.println(bg.getGenerator());
+            System.out.println(bg.getSignature().getSignerId());
+            System.out.println(bg.getProof().getResponse().get(0));
+        }
+        
+        DB4O db = new DB4O(filename);
+        
+        db.storeDB(ballots);
+        db.storeDB(blindedGeneratorsList);
+        db.storeDB(certificate);
+        db.storeDB(decodedVotes);
+        db.storeDB(decryptedVotes);
+        db.storeDB(electionData);
+        db.storeDB(electionDefinition);
+        db.storeDB(electionGenerator);
+        db.storeDB(electionOptions);
+        db.storeDB(electionSystemInfo);
+        db.storeDB(electoralRoll);
+        db.storeDB(encryptedVotes);
+        db.storeDB(encryptionKey);
+        db.storeDB(encryptionKeyShareList);
+        db.storeDB(encryptionParameters);
+        db.storeDB(knownElectionIds);
+        db.storeDB(latelyCertificateList);
+        db.storeDB(latelyMixedVerificationKeyList);
+        db.storeDB(latelyMixedVerificationKeysList);
+        db.storeDB(mixedEncryptedVotesList);
+        db.storeDB(mixedVerificationKeysList);
+        db.storeDB(partiallyDecryptedVotesList);
+        db.storeDB(signatureParameters);
+        db.storeDB(verificationKeys);
+        db.storeDB(voterCertificates);
     }
 
     public ElectionBoard loadElectionBoard(String filename) {
         ElectionBoard electionBoard = new ElectionBoard(config);
+        
+        DB4O db = new DB4O(filename);
 
-        ballots = (Ballots) DB4O.readDB(ballots, filename);
-        certificate = (Certificate) DB4O.readDB(certificate, filename);
-        decodedVotes = (DecodedVotes) DB4O.readDB(decodedVotes, filename);
-        decryptedVotes = (DecryptedVotes) DB4O.readDB(decryptedVotes, filename);
-        electionSystemInfo = (ElectionSystemInfo) DB4O.readDB(electionSystemInfo, filename);
-        electionDefinition = (ElectionDefinition) DB4O.readDB(electionDefinition, filename);
-        electionGenerator = (ElectionGenerator) DB4O.readDB(electionGenerator, filename);
-        electionOptions = (ElectionOptions) DB4O.readDB(electionOptions, filename);
-        electionData = (ElectionData) DB4O.readDB(electionData, filename);
-        electoralRoll = (ElectoralRoll) DB4O.readDB(electoralRoll, filename);
-        encryptedVotes = (EncryptedVotes) DB4O.readDB(encryptedVotes, filename);
-        encryptionParameters = (EncryptionParameters) DB4O.readDB(encryptionParameters, filename);
-        encryptionKey = (EncryptionKey) DB4O.readDB(encryptionKey, filename);
-        knownElectionIds = (KnownElectionIds) DB4O.readDB(knownElectionIds, filename);
-        listMixedVerificationKeys = (HashMap) getMap((DB4O.readDB(listMixedVerificationKeys, filename)));
-        listLatelyMixedVerificationKey = (ArrayList) getList(DB4O.readDB(listLatelyMixedVerificationKey, filename));
-        listLatelyMixedVerificationKeys = (HashMap) getMap(DB4O.readDB(listLatelyMixedVerificationKeys, filename));
-        listLatelyCertificate = (ArrayList) getList(DB4O.readDB(listLatelyCertificate, filename));
-        encryptionKeyShareList = getMapEKS(DB4O.readDB(encryptionKeyShareList, filename));
-        mixedEncryptedVotesList = (HashMap) getMap(DB4O.readDB(mixedEncryptedVotesList, filename));
-        partiallyDecryptedVotesList = (HashMap) getMap(DB4O.readDB(partiallyDecryptedVotesList, filename));
-        blindedGeneratorsList = (HashMap) getMap(DB4O.readDB(blindedGeneratorsList, filename));
-        signatureParameters = (SignatureParameters) DB4O.readDB(signatureParameters, filename);
-        voterCertificates = (VoterCertificates) DB4O.readDB(voterCertificates, filename);
-        verificationKeys = (VerificationKeys) DB4O.readDB(verificationKeys, filename);
+        ballots = (Ballots) db.readDB(ballots);
+        blindedGeneratorsList = (BlindedGeneratorsList) db.readDB(blindedGeneratorsList);
+        certificate = (Certificate) db.readDB(certificate);
+        decodedVotes = (DecodedVotes) db.readDB(decodedVotes);
+        decryptedVotes = (DecryptedVotes) db.readDB(decryptedVotes);
+        electionData = (ElectionData) db.readDB(electionData);
+        electionDefinition = (ElectionDefinition) db.readDB(electionDefinition);
+        electionGenerator = (ElectionGenerator) db.readDB(electionGenerator);
+        electionOptions = (ElectionOptions) db.readDB(electionOptions);
+        electionSystemInfo = (ElectionSystemInfo) db.readDB(electionSystemInfo);
+        electoralRoll = (ElectoralRoll) db.readDB(electoralRoll);
+        encryptedVotes = (EncryptedVotes) db.readDB(encryptedVotes);
+        encryptionKey = (EncryptionKey) db.readDB(encryptionKey);
+        encryptionKeyShareList = (EncryptionKeyShareList) db.readDB(encryptionKeyShareList);
+        encryptionParameters = (EncryptionParameters) db.readDB(encryptionParameters);
+        knownElectionIds = (KnownElectionIds) db.readDB(knownElectionIds);
+        latelyCertificateList = (LatelyCertificateList) db.readDB(latelyCertificateList);
+        latelyMixedVerificationKeyList = (LatelyMixedVerificationKeyList) db.readDB(latelyMixedVerificationKeyList);
+        latelyMixedVerificationKeysList = (LatelyMixedVerificationKeysList) db.readDB(latelyMixedVerificationKeysList);
+        mixedEncryptedVotesList = (MixedEncryptedVotesList) db.readDB(mixedEncryptedVotesList);
+        mixedVerificationKeysList = (MixedVerificationKeysList) (db.readDB(mixedVerificationKeysList));
+        partiallyDecryptedVotesList = (PartiallyDecryptedVotesList) db.readDB(partiallyDecryptedVotesList);
+        signatureParameters = (SignatureParameters) db.readDB(signatureParameters);
+        verificationKeys = (VerificationKeys) db.readDB(verificationKeys);
+        voterCertificates = (VoterCertificates) db.readDB(voterCertificates);
 
         electionBoard.setBallots(ballots);
-        electionBoard.setBlindedGeneratorList(blindedGeneratorsList);
+        electionBoard.setBlindedGeneratorList(blindedGeneratorsList.getBlindedGeneratorsList());
+        electionBoard.setRootCertificate(certificate);
         electionBoard.setDecodedVotes(decodedVotes);
         electionBoard.setDecryptedVotes(decryptedVotes);
         electionBoard.setElectionData(electionData);
@@ -178,85 +186,27 @@ public class DBElectionBoardManager {
         electionBoard.setElectionSystemInfo(electionSystemInfo);
         electionBoard.setElectoralRoll(electoralRoll);
         electionBoard.setEncryptedVotes(encryptedVotes);
-        electionBoard.setEncryptedVotesMixedBy(mixedEncryptedVotesList);
         electionBoard.setEncryptionKey(encryptionKey);
-        electionBoard.setEncryptionKeyShareList(encryptionKeyShareList);
+        electionBoard.setEncryptionKeyShareList(encryptionKeyShareList.getEncryptionKeyShareList());
         electionBoard.setEncryptionParameters(encryptionParameters);
         electionBoard.setKnownElectionIds(knownElectionIds);
-        electionBoard.setLatelyMixedVerificationKeys(listLatelyMixedVerificationKey);
-        electionBoard.setLatelyRegisteredVoterCertificates(listLatelyCertificate);
-        electionBoard.setMixedVerificationKeys(verificationKeys);
-        electionBoard.setPartiallyDecryptedVotesList(partiallyDecryptedVotesList);
-        electionBoard.setRootCertificate(certificate);
+        electionBoard.setLatelyRegisteredVoterCertificates(latelyCertificateList.getLatelyCertificateList());
+        electionBoard.setLatelyMixedVerificationKeys(latelyMixedVerificationKeyList.getLatelyMixedVerificationKeyList());
+        electionBoard.setVerificationKeysLatelyMixedBy(latelyMixedVerificationKeysList.getLatelyMixedVerificationKeysList());
+        electionBoard.setEncryptedVotesMixedBy(mixedEncryptedVotesList.getMixedEncryptedVotesList());
+        electionBoard.setVerificationKeysMixedBy(mixedVerificationKeysList.getListMixedVerificationKeys());
+        electionBoard.setPartiallyDecryptedVotesList(partiallyDecryptedVotesList.getPartiallyDecryptedVotesList());
         electionBoard.setSignatureParameters(signatureParameters);
-        electionBoard.setVerificationKeysLatelyMixedBy(listLatelyMixedVerificationKeys);
-        electionBoard.setVerificationKeysMixedBy(listMixedVerificationKeys);
+        electionBoard.setMixedVerificationKeys(verificationKeys);
         electionBoard.setVoterCertificates(voterCertificates);
+
+        for (BlindedGenerator bg : blindedGeneratorsList.getBlindedGeneratorsList().values()) {
+            System.out.println(bg.getElectionId());
+            System.out.println(bg.getGenerator());
+            System.out.println(bg.getSignature().getSignerId());
+            System.out.println(bg.getProof().getResponse().get(0));
+        }
 
         return electionBoard;
     }
-
-    public Map<String, EncryptionKeyShare> getMapEKS(Object o) {
-        Map<String, EncryptionKeyShare> result = new EncryptionKeyShareList<String, EncryptionKeyShare>();
-        Field[] declaredFields = o.getClass().getDeclaredFields();
-        for (Field field : declaredFields) {
-            try {
-                result.put(field.getName(), (EncryptionKeyShare) field.get(o));
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(DBElectionBoardManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        return result;
-    }
-
-    public Map<String, Object> getMap(Object o) {
-        Map<String, Object> result = new HashMap<>();
-        Field[] declaredFields = o.getClass().getDeclaredFields();
-        for (Field field : declaredFields) {
-            try {
-                result.put(field.getName(), field.get(o));
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(DBElectionBoardManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return result;
-    }
-
-    public List<Object> getList(Object o) {
-        List<Object> result = new ArrayList<>();
-        Field[] declaredFields = o.getClass().getDeclaredFields();
-        for (Field field : declaredFields) {
-            try {
-                result.add(field.get(o));
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(DBElectionBoardManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return result;
-    }
-}
-
-class ListMixedVerificationKeys<K, V> extends HashMap {
-}
-
-class ListLatelyMixedVerificationKey<E> extends ArrayList {
-}
-
-class ListLatelyMixedVerificationKeys<K, V> extends HashMap {
-}
-
-class ListLatelyCertificate<E> extends ArrayList {
-}
-
-class EncryptionKeyShareList<K, V> extends HashMap {
-}
-
-class MixedEncryptedVotesList<K, V> extends HashMap {
-}
-
-class PartiallyDecryptedVotesList<K, V> extends HashMap {
-}
-
-class BlindedGeneratorsList<K, V> extends HashMap {
 }

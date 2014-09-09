@@ -56,7 +56,8 @@ public class ElectionSystemInfoTask {
         createRAKeys();
         Certificate raCertificate = new Certificate();
         raCertificate.setValue(new CertificateGenerator().getCertficate("RA", keyStore.getRASignatureKey(), keyStore.getRAVerificationKey()).getBytes());
-
+        electionBoard.setRootCertificate(raCertificate);
+        
         /*CertificateAuthority*/
         createCAKeys();
         Certificate caCertificate = new Certificate();
