@@ -106,13 +106,6 @@ public class DBElectionBoardManager {
         signatureParameters = electionBoard.getSignatureParameters();
         verificationKeys = electionBoard.getMixedVerificationKeys();
         voterCertificates = electionBoard.getVoterCertificates();
-
-        for (BlindedGenerator bg : blindedGeneratorsList.getBlindedGeneratorsList().values()) {
-            System.out.println(bg.getElectionId());
-            System.out.println(bg.getGenerator());
-            System.out.println(bg.getSignature().getSignerId());
-            System.out.println(bg.getProof().getResponse().get(0));
-        }
         
         DB4O db = new DB4O(filename);
         
@@ -199,13 +192,6 @@ public class DBElectionBoardManager {
         electionBoard.setSignatureParameters(signatureParameters);
         electionBoard.setMixedVerificationKeys(verificationKeys);
         electionBoard.setVoterCertificates(voterCertificates);
-
-        for (BlindedGenerator bg : blindedGeneratorsList.getBlindedGeneratorsList().values()) {
-            System.out.println(bg.getElectionId());
-            System.out.println(bg.getGenerator());
-            System.out.println(bg.getSignature().getSignerId());
-            System.out.println(bg.getProof().getResponse().get(0));
-        }
 
         return electionBoard;
     }

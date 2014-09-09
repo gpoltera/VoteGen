@@ -9,6 +9,7 @@ import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.Publisher;
 import ch.hsr.univote.unigen.gui.MiddlePanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
+import ch.hsr.univote.unigen.helper.FileHandler;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,9 +34,9 @@ import javax.swing.text.StyledDocument;
  */
 public class GeneratedVotePublishPanel extends JPanel {
 
-    private static final String VOTEVERIFIER = "voteverifier/VoteVerifier.jar";
     private ConfigHelper config;
     private ResourceBundle bundle;
+    private FileHandler fileHandler;
     private ElectionBoard electionBoard;
     private Publisher publisher;
     private JPanel panel;
@@ -47,6 +48,7 @@ public class GeneratedVotePublishPanel extends JPanel {
         this.bundle = ResourceBundle.getBundle("Bundle");
         this.config = MiddlePanel.config;
         this.electionBoard = electionBoard;
+        this.fileHandler = new FileHandler();
 
         panel = new JPanel();
         createGeneratedVotePublishPanel();
@@ -120,10 +122,9 @@ public class GeneratedVotePublishPanel extends JPanel {
         return buttonsPanel;
     }
 
-    private void startVoteVerifier() {        
-        try {
-            File voteVerififierFile = new File(VOTEVERIFIER);
-            String exec = "java -jar \"" + voteVerififierFile.getAbsolutePath() + "\"";
+    private void startVoteVerifier() {    
+        try {            
+            String exec = "java -jar \"" + fileHandler.voteVerifierJARPath + "\"";
             Process pc = Runtime.getRuntime().exec(exec);
         } catch (IOException ex) {
             appendFailure(ex.toString());

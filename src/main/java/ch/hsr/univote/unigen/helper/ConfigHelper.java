@@ -11,20 +11,12 @@
  */
 package ch.hsr.univote.unigen.helper;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -34,15 +26,14 @@ import javax.swing.JOptionPane;
  */
 public class ConfigHelper {
 
-    public final String CONFIG_FILE = "config";
     private Scanner scanner = new Scanner(System.in);
     private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     private Properties properties;
+    private FileHandler fileHandler;
 
     public ConfigHelper() {
-        properties = new Properties();
-        loadProperties(CONFIG_FILE);
-        System.out.println("Load the Config from Config-File");
+        fileHandler = new FileHandler();
+        properties = fileHandler.getConfigProperties();
     }
 
     public String getCertificateAuthorityId() {
@@ -334,32 +325,8 @@ public class ConfigHelper {
     public void setProperty(String key, String value) {
         properties.put(key, value);
     }
-
-    public void saveProperties(String filename) {
-        try {
-            BufferedOutputStream streamout = new BufferedOutputStream(new FileOutputStream("properties/" + filename + ".properties"));
-            properties.store(streamout, filename);
-            streamout.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ConfigHelper.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    //Load the Properties from the ConfigFile
-    public void loadProperties(String filename) {
-        properties = new Properties();
-        try {
-            File file = new File("properties/" + filename + ".properties");
-            if (file.exists()) {
-                properties.load(new FileInputStream(file));
-            } else {
-                saveProperties(filename);
-            }
-        } catch (IOException e) {
-            throw new ConfigException("Die Konfigurationsdatei " + filename + ".properties konnte nicht gelesen werden", e);
-        }
+    
+    public void saveProperties() {
+        fileHandler.saveConfigProperties(properties);
     }
 }

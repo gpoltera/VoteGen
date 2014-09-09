@@ -144,7 +144,7 @@ public class MiddlePanel extends JPanel {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                config.saveProperties(config.CONFIG_FILE);
+                config.saveProperties();
             }
         });
         statusBar.add(saveButton, BorderLayout.CENTER);
@@ -154,7 +154,7 @@ public class MiddlePanel extends JPanel {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                config.saveProperties(config.CONFIG_FILE);
+                config.saveProperties();
                 removeConfigurationStatusBarPanel();
                 createVoteGenerationPanel();
             }

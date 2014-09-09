@@ -5,6 +5,7 @@
  */
 package ch.hsr.univote.unigen.db;
 
+import ch.hsr.univote.unigen.helper.FileHandler;
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -19,15 +20,17 @@ public class DB4O {
     private EmbeddedConfiguration configEmbedded;
     private ObjectContainer container;
     private String filename;
+    private FileHandler fileHandler;
 
     public DB4O(String filename) {
         this.filename = filename;
+        this.fileHandler = new FileHandler();
     }
 
     public void storeDB(Object object) {
         configEmbedded = Db4oEmbedded.newConfiguration();
         configEmbedded.common().activationDepth(10);
-        container = Db4oEmbedded.openFile(configEmbedded, "db/" + filename);
+        container = Db4oEmbedded.openFile(configEmbedded, fileHandler.userDBFolderPath + filename);
         try {
             container.store(object);
             container.commit();
@@ -39,7 +42,7 @@ public class DB4O {
     public Object readDB(Object object) {
         configEmbedded = Db4oEmbedded.newConfiguration();
         configEmbedded.common().activationDepth(10);
-        container = Db4oEmbedded.openFile(configEmbedded, "db/" + filename);
+        container = Db4oEmbedded.openFile(configEmbedded, fileHandler.userDBFolderPath + filename);
         Object robject = new Object();
         try {
             ObjectSet result = container.queryByExample(object);

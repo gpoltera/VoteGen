@@ -55,7 +55,7 @@ public class MainGUI extends JFrame {
         initResources();
         setLookAndFeel();
 
-        URL imgURL = getClass().getClassLoader().getResource("iconVoteGenerator.jpg");
+        URL imgURL = getClass().getClassLoader().getResource("images/iconVoteGenerator.jpg");
         ImageIcon img = new ImageIcon(imgURL);
         this.setIconImage(img.getImage()); //GUI Icon
         this.setVisible(true);
@@ -136,7 +136,7 @@ public class MainGUI extends JFrame {
      */
     private JLabel getSplashImage() {
         JLabel imgLabel = new JLabel();
-        java.net.URL img = getClass().getClassLoader().getResource("iconVoteGenerator.jpg");
+        java.net.URL img = getClass().getClassLoader().getResource("images/iconVoteGenerator.jpg");
         if (img != null) {
             ImageIcon logo = new ImageIcon(img);
             imgLabel = new JLabel(logo);
