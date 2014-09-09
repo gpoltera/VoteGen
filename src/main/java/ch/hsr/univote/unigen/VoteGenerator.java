@@ -6,6 +6,7 @@ import ch.hsr.univote.unigen.tasks.ElectionOptionsTask;
 import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.db.DBElectionBoardManager;
+import ch.hsr.univote.unigen.db.DBKeyStoreManager;
 import ch.hsr.univote.unigen.gui.generatedvotes.VoteGenerationPanel;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.tasks.BallotsTask;
@@ -295,7 +296,7 @@ public class VoteGenerator {
         voteGenerationPanel.appendText("Store the Keys in the DB");
         try {
             new DBElectionBoardManager().saveElectionBoard(electionBoard);
-            
+            new DBKeyStoreManager().saveKeyStore(config.getElectionId(), keyStore);
             voteGenerationPanel.appendSuccess();
         } catch (Exception e) {
             voteGenerationPanel.appendFailure(e.getMessage().toString());

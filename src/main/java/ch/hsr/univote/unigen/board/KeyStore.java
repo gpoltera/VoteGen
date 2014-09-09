@@ -24,18 +24,18 @@ public class KeyStore {
     private static RSAPrivateKey caSignatureKey;
     private static RSAPublicKey caVerificationKey;
     private static RSAPrivateKey emSignatureKey;
-    private static RSAPublicKey emVerificationKey;
-    private static RSAPrivateKey eaSignatureKey;
+    private static RSAPublicKey emVerificationKey; 
+    private static RSAPrivateKey eaSignatureKey; 
     private static RSAPublicKey eaVerificationKey;
     private static List<RSAPrivateKey> mixersSignatureKey = new ArrayList<>();
-    private static List<RSAPublicKey> mixersVerificationKey = new ArrayList<>();
+    private static List<RSAPublicKey> mixersVerificationKey = new ArrayList<>();  
     private static List<RSAPrivateKey> talliersSignatureKey = new ArrayList<>();
     private static List<RSAPublicKey> talliersVerificationKey = new ArrayList<>();
     private static List<DSAPrivateKey> votersSignatureKey = new ArrayList<>();
     private static List<DSAPublicKey> votersVerificationKey = new ArrayList<>();
     private static List<DSAPrivateKey> latelyVotersSignatureKey = new ArrayList<>();
     private static List<DSAPublicKey> latelyVotersVerificationKey = new ArrayList<>();
-    private static List<DSAPrivateKey> talliersDecryptionKey = new ArrayList<>();
+    private static List<DSAPrivateKey> talliersDecryptionKey = new ArrayList<>();  
     private static List<DSAPublicKey> talliersEncryptionKey = new ArrayList<>();
     private static List<DSAPrivateKey> blindedGeneratorKey = new ArrayList<>();
 
@@ -232,5 +232,9 @@ public class KeyStore {
 
     public DSAPrivateKey getBlindedGeneratorKey(int mixer) {
         return blindedGeneratorKey.get(mixer);
+    }
+    
+    public List<DSAPrivateKey> getBlindedGeneratorsKey() {
+        return blindedGeneratorKey;
     }
 }

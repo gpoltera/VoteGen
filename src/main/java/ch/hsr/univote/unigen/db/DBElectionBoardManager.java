@@ -6,7 +6,6 @@
 package ch.hsr.univote.unigen.db;
 
 import ch.bfh.univote.common.Ballots;
-import ch.bfh.univote.common.BlindedGenerator;
 import ch.bfh.univote.common.Certificate;
 import ch.bfh.univote.common.DecodedVotes;
 import ch.bfh.univote.common.DecryptedVotes;
