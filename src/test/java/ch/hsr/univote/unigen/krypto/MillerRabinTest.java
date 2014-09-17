@@ -5,7 +5,7 @@
  */
 package ch.hsr.univote.unigen.krypto;
 
-import static ch.hsr.univote.unigen.crypto.MillerRabin.millerRabinTest;
+import ch.hsr.univote.unigen.crypto.MillerRabin;
 import java.math.BigInteger;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -53,7 +53,7 @@ public class MillerRabinTest extends TestCase {
         int r = 0;
         long before1 = System.nanoTime();
         for (int i = 0; i < t; i++) {
-            if (millerRabinTest(BigInteger.valueOf(i), s)) {
+            if (new MillerRabin().millerRabinTest(BigInteger.valueOf(i), s)) {
                 r++;
             }
         }
@@ -76,7 +76,7 @@ public class MillerRabinTest extends TestCase {
         int r = 0;
         long before2 = System.nanoTime();
         while (startValue.compareTo(endValue) < 0) {
-            if (millerRabinTest(startValue, s)) {
+            if (new MillerRabin().millerRabinTest(startValue, s)) {
                 r++;
             }
             startValue = startValue.add(BigInteger.ONE);
@@ -100,7 +100,7 @@ public class MillerRabinTest extends TestCase {
         int r4 = 0;
         long before4 = System.nanoTime();
         while (startValue.compareTo(endValue) < 0) {
-            if (millerRabinTest(startValue, s)) {
+            if (new MillerRabin().millerRabinTest(startValue, s)) {
                 r4++;
                 System.out.println(startValue);
             }

@@ -47,7 +47,7 @@ public class NIZKP {
         // 2. Compute t = (t1,t2) = (g_k-1^w mod p, vk_ik-1^w mod p
         // 3. Compute c = H(g_k,vk_ik,t,M) mod q
         // 4. Compute s = w + c * a mod q
-        BigInteger w = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger w = new PrimeGenerator().getPrime(q.bitLength() - 1);
         BigInteger t1 = previous_g.modPow(w, p);
         BigInteger t2 = previous_VerificationKey.modPow(w, p);
         
@@ -83,7 +83,7 @@ public class NIZKP {
         // 2. Compute t = g^w mod p
         // 3. Compute c = H(y_j,t,T_j) mod q
         // 4. Compute s = w + c * x_j mod q
-        BigInteger w = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger w = new PrimeGenerator().getPrime(q.bitLength() - 1);
         BigInteger t = g.modPow(w, p);
 
         StringConcatenator sc = new StringConcatenator();
@@ -113,7 +113,7 @@ public class NIZKP {
         // 2. Compute t = (g_k-1)^w mod p
         // 3. Compute c = H(g_k,t,M_k) mod q
         // 4. Compute s = w + c * a_k mod q
-        BigInteger w = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger w = new PrimeGenerator().getPrime(q.bitLength() - 1);
         BigInteger t = previous_g_k.modPow(w, p);
 
         StringConcatenator sc = new StringConcatenator();
@@ -152,7 +152,7 @@ public class NIZKP {
         // 2. Compute t = g^w mod p
         // 3. Compute c = H(a,t,vk'_j) mod q
         // 4. Compute s = w + c * r_i mod q
-        BigInteger w = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger w = new PrimeGenerator().getPrime(q.bitLength() - 1);
         BigInteger t = g.modPow(w, p);
 
         StringConcatenator sc = new StringConcatenator();
@@ -196,7 +196,7 @@ public class NIZKP {
         // 2. Compute t = g^w mod p, a1^-w mod p ,...
         // 3. Compute c = H(y,aj,t,T) mod q
         // 4. Compute s = w + c * x mod q
-        BigInteger w = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger w = new PrimeGenerator().getPrime(q.bitLength() - 1);
 
         StringConcatenator sc = new StringConcatenator();
         sc.pushObject(y);

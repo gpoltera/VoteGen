@@ -34,8 +34,8 @@ public class ElGamal {
     public EncryptionParameters getPublicParameters(int keyLength) {
         EncryptionParameters encryptionParameters = new EncryptionParameters();
 
-        BigInteger q = PrimeGenerator.getSafePrime(keyLength - 1);
-        BigInteger p = q.multiply(new BigInteger("2")).add(BigInteger.ONE);
+        BigInteger p = new PrimeGenerator().getSafePrime(keyLength);
+        BigInteger q = (p.subtract(BigInteger.ONE)).divide(BigInteger.valueOf(2));
         BigInteger g = new BigInteger("2");
 
         //while group order g^q mod p = 1
@@ -62,7 +62,7 @@ public class ElGamal {
             BigInteger q = encryptionParameters.getGroupOrder();
             BigInteger g = encryptionParameters.getGenerator();
 
-            BigInteger x = PrimeGenerator.getPrime(q.bitLength() - 1);
+            BigInteger x = new PrimeGenerator().getPrime(q.bitLength() - 1);
             BigInteger y = g.modPow(x, p);
             
             KeyFactory keyFactory = KeyFactory.getInstance("DSA");
@@ -89,7 +89,7 @@ public class ElGamal {
         BigInteger p = encryptionParameters.getPrime();
         BigInteger q = encryptionParameters.getGroupOrder();
         BigInteger g = encryptionParameters.getGenerator();
-        BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger r = new PrimeGenerator().getPrime(q.bitLength() - 1);
         BigInteger a = g.modPow(r, p);
         BigInteger b = m.multiply(y.modPow(r, p)).mod(p);
 

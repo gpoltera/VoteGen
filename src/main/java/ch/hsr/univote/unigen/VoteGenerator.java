@@ -87,7 +87,7 @@ public class VoteGenerator {
         
         long after = System.nanoTime();
         long runningTimeS = (after - before) / 1000000000;
-        System.out.println(runningTimeS);
+        System.out.println("Election Generation time: " + runningTimeS + " seconds");
 
         phase8();
         //updateProgress();

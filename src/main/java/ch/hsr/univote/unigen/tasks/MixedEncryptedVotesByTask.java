@@ -7,7 +7,6 @@ package ch.hsr.univote.unigen.tasks;
 
 import ch.bfh.univote.common.Ballot;
 import ch.bfh.univote.common.EncryptedVote;
-import ch.bfh.univote.common.EncryptedVotes;
 import ch.bfh.univote.common.MixedEncryptedVotes;
 import ch.hsr.univote.unigen.VoteGenerator;
 import ch.hsr.univote.unigen.board.ElectionBoard;
@@ -89,7 +88,7 @@ public class MixedEncryptedVotesByTask {
             encryption[1] = encryptedVote.getSecondValue();   
             
             //ReEncryption
-            BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
+            BigInteger r = new PrimeGenerator().getPrime(q.bitLength() - 1);
             BigInteger[] reEncryption = new ElGamal().getEncryption(BigInteger.ONE, electionBoard.getEncryptionKey().getKey(),r,electionBoard.getEncryptionParameters());
 
             EncryptedVote new_encryptedVote = new EncryptedVote();

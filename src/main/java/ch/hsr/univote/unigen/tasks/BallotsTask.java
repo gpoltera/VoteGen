@@ -70,7 +70,7 @@ public class BallotsTask {
     private Ballot createBallot(int i) {
         Ballot ballot = new Ballot();
         ballot.setElectionId(config.getElectionId());
-        BigInteger r = PrimeGenerator.getPrime(electionBoard.getEncryptionParameters().getGroupOrder().bitLength() - 1);
+        BigInteger r = new PrimeGenerator().getPrime(electionBoard.getEncryptionParameters().getGroupOrder().bitLength() - 1);
         ballot.setEncryptedVote(createEncryptedVote(i, r));
         ballot.setVerificationKey(createAnonymousVerificationKey(i));
         ballot.setProof(new NIZKP().getBallotProof(ballot.getEncryptedVote().getFirstValue(), ballot.getVerificationKey(), r, electionBoard.getEncryptionParameters()));

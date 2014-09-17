@@ -46,7 +46,7 @@ public class Schnorr {
             BigInteger q = signatureParameters.getGroupOrder();
             BigInteger g = signatureParameters.getGenerator();
 
-            BigInteger x = PrimeGenerator.getPrime(q.bitLength() - 1);
+            BigInteger x = new PrimeGenerator().getPrime(q.bitLength() - 1);
             BigInteger y = g.modPow(x, p);
 
             KeyFactory keyFactory = KeyFactory.getInstance("DSA");
@@ -77,7 +77,7 @@ public class Schnorr {
         BigInteger x = privateKey.getX();
         BigInteger[] s = new BigInteger[2];
 
-        BigInteger r = PrimeGenerator.getPrime(q.bitLength() - 1);
+        BigInteger r = new PrimeGenerator().getPrime(q.bitLength() - 1);
         BigInteger gr = electionGenerator.modPow(r, p);
         
         StringConcatenator sc = new StringConcatenator();

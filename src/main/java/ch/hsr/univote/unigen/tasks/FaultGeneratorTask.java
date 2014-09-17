@@ -25,6 +25,7 @@ import ch.hsr.univote.unigen.board.ElectionBoard;
 import ch.hsr.univote.unigen.board.KeyStore;
 import ch.hsr.univote.unigen.helper.ConfigHelper;
 import ch.hsr.univote.unigen.crypto.CertificateGenerator;
+import ch.hsr.univote.unigen.crypto.MillerRabin;
 import ch.hsr.univote.unigen.crypto.PrimeGenerator;
 import ch.hsr.univote.unigen.crypto.RSASignatureGenerator;
 import java.math.BigInteger;
@@ -39,11 +40,14 @@ public class FaultGeneratorTask {
     private ConfigHelper config;
     private ElectionBoard electionBoard;
     private KeyStore keyStore;
+    private MillerRabin millerRabin;
+    private static final BigInteger CARMICHAEL = new BigInteger("150072942313711726419611093291136461209589841374912263192588672364045533714475472880428921681485954606900505706637414832726311249722303819379311839871619880796422840865280625779651454821157280363383950559363430925216324864997036024537873365154857677326735235832200487007600596016657849128676760803747531146521");
 
     public FaultGeneratorTask() {
         this.config = VoteGenerator.config;
         this.electionBoard = VoteGenerator.electionBoard;
         this.keyStore = VoteGenerator.keyStore;
+        this.millerRabin = new MillerRabin();
 
         run();
     }
@@ -52,16 +56,28 @@ public class FaultGeneratorTask {
         //Schnorr Parameters
         SignatureParameters signatureParameters = electionBoard.getSignatureParameters();
         if (config.getFault("faultSchnorrPIsprime")) {
-            signatureParameters.setPrime(signatureParameters.getPrime().add(BigInteger.ONE));
+            signatureParameters.setPrime(CARMICHAEL);
         }
         if (config.getFault("faultSchnorrPIssafeprime")) {
-            signatureParameters.setPrime(PrimeGenerator.getPrime(config.getSignatureKeyLength()));
+            BigInteger p = new PrimeGenerator().getPrime(config.getSignatureKeyLength());
+            //while prime (p-1)/2 <> prime
+            while (millerRabin.millerRabinTest((p.subtract(BigInteger.ONE)).divide(BigInteger.valueOf(2)), 10)) {
+                p = new PrimeGenerator().getPrime(config.getSignatureKeyLength());
+            }
+            signatureParameters.setPrime(p);
         }
         if (config.getFault("faultSchnorrQIsprime")) {
-            signatureParameters.setGroupOrder(signatureParameters.getPrime().add(BigInteger.ONE));
+            signatureParameters.setGroupOrder(CARMICHAEL);
         }
         if (config.getFault("faultSchnorrGIsgenerator")) {
-            signatureParameters.setGenerator(signatureParameters.getGenerator().subtract(BigInteger.ONE));
+            BigInteger p = signatureParameters.getPrime();
+            BigInteger q = signatureParameters.getGroupOrder();
+            BigInteger g = new BigInteger("2");
+            //while group order g^q mod p <> 1
+            while (g.modPow(q, p).equals(BigInteger.ONE)) {
+                g = g.add(BigInteger.ONE);
+            }
+            signatureParameters.setGenerator(g);
         }
         if (config.getFault("faultSchnorrParameterLength")) {
             signatureParameters.setPrime(signatureParameters.getPrime().divide(BigInteger.TEN));
@@ -70,16 +86,28 @@ public class FaultGeneratorTask {
         //ElGamal Paramaters
         EncryptionParameters encryptionParameters = electionBoard.getEncryptionParameters();
         if (config.getFault("faultElGamalPIsprime")) {
-            encryptionParameters.setPrime(encryptionParameters.getPrime().add(BigInteger.ONE));
+            encryptionParameters.setPrime(CARMICHAEL);
         }
         if (config.getFault("faultElGamalPIssafeprime")) {
-            encryptionParameters.setPrime(PrimeGenerator.getPrime(config.getEncryptionKeyLength()));
+            BigInteger P = encryptionParameters.getPrime();
+            //while prime (p-1)/2 <> prime
+            while (millerRabin.millerRabinTest((P.subtract(BigInteger.ONE)).divide(BigInteger.valueOf(2)), 10)) {
+                P = new PrimeGenerator().getPrime(config.getSignatureKeyLength());
+            }
+            encryptionParameters.setPrime(P);
         }
         if (config.getFault("faultElGamalQIsprime")) {
-            encryptionParameters.setGroupOrder(encryptionParameters.getGroupOrder().add(BigInteger.ONE));
+            encryptionParameters.setGroupOrder(CARMICHAEL);
         }
         if (config.getFault("faultElGamalGIsgenerator")) {
-            encryptionParameters.setGenerator(encryptionParameters.getGenerator().subtract(BigInteger.ONE));
+            BigInteger P = encryptionParameters.getPrime();
+            BigInteger Q = encryptionParameters.getGroupOrder();
+            BigInteger G = new BigInteger("2");
+            //while group order g^q mod p <> 1
+            while (G.modPow(Q, P).equals(BigInteger.ONE)) {
+                G = G.add(BigInteger.ONE);
+            }
+            encryptionParameters.setGenerator(G);
         }
         if (config.getFault("faultElGamalParameterLength")) {
             encryptionParameters.setPrime(encryptionParameters.getPrime().divide(BigInteger.TEN));

@@ -25,33 +25,40 @@ public class MillerRabin {
     private static final BigInteger BIGINT13 = BigInteger.valueOf(13);
     private static final BigInteger BIGINT17 = BigInteger.valueOf(17);
     private static final BigInteger BIGINT31 = BigInteger.valueOf(31);
-    private static final BigInteger BIGINT61 = BigInteger.valueOf(61);  
-    private static final BigInteger BIGINT73 = BigInteger.valueOf(73); 
+    private static final BigInteger BIGINT61 = BigInteger.valueOf(61);
+    private static final BigInteger BIGINT73 = BigInteger.valueOf(73);
 
-    public static boolean millerRabinTest(BigInteger n, int s) {
+    public boolean millerRabinTest(BigInteger n, int s) {
         if (n.equals(BIGINT2) || n.equals(BIGINT3) || n.equals(BIGINT5) || n.equals(BIGINT7)) {
             return true;
-        }
-        if (basicTests(n)) {
-            ArrayList<BigInteger> listA = getA(n, s);
-            int i = 0;
-            for (int j = 0; j < listA.size(); j++) {
-                if (isPrime(n, listA.get(j))) {
-                    i++;
-                } else {
-                    return false;
+        } else {
+            if (basicTests(n)) {
+                ArrayList<BigInteger> listA = getA(n, s);
+                int i = 0;
+                for (int j = 0; j < listA.size(); j++) {
+                    //System.out.println("a" + j + ": " + listA.get(j));
+                    if (isPrime(n, listA.get(j))) {
+                        i++;
+                    } else {
+                        if (i > 1) {
+                            //System.out.println("Anzahl Runden: " + (i + 1));
+                            //System.out.println(n);
+                        }
+                        return false;
+                    }
+                }
+                if (i == listA.size()) {
+                //System.out.println("Unsicherheit " + 1 / Math.pow(4, i) * 100 + "%");
+                //System.out.println(n);
+
+                    return true;
                 }
             }
-            if (i == listA.size()) {
-                //System.out.println("Unsicherheit " + 1 / Math.pow(4, i) * 100 + "%");
-                return true;
-            }
         }
-
         return false;
     }
 
-    private static boolean basicTests(BigInteger n) {
+    private boolean basicTests(BigInteger n) {
         if (n.compareTo(BIGINT2) > 0) {
             if (!n.mod(BIGINT2).equals(BIGINT0)) {
                 if (!n.mod(BIGINT3).equals(BIGINT0)) {
@@ -62,13 +69,12 @@ public class MillerRabin {
                     }
                 }
             }
-
         }
         return false;
     }
 
     //n = natuerliche ungerade Zahl groesser 2 als Funktion einbinden
-    private static boolean isPrime(BigInteger n, BigInteger a) {
+    private boolean isPrime(BigInteger n, BigInteger a) {
         int j = 0;
         BigInteger n_1 = n.subtract(BIGINT1);
 
@@ -99,7 +105,7 @@ public class MillerRabin {
     }
 
     // Choice the testing a's randomly from s or if is a small number with given a's -> (Pomerance, Selfridge, Wagstaff, Jaeschke)
-    private static ArrayList<BigInteger> getA(BigInteger n, int s) {
+    private ArrayList<BigInteger> getA(BigInteger n, int s) {
         ArrayList<BigInteger> a = new ArrayList<>();
 
         if (n.compareTo(new BigInteger("1373653")) < 0) {
